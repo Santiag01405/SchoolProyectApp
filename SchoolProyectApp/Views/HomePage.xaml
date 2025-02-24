@@ -35,7 +35,7 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <!-- Barra de Navegación Inferior -->
+        <!-- Barra de Navegaciï¿½n Inferior -->
         <StackLayout Grid.Row="2" BackgroundColor="White" Padding="10" Orientation="Horizontal" HorizontalOptions="Fill" VerticalOptions="End">
             <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="Center">
                 <ImageButton Source="home_icon.png" Command="{Binding HomeCommand}" />
@@ -51,7 +51,7 @@
             </StackLayout>
             <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="Center">
                 <ImageButton Source="menu_icon.png" Command="{Binding MenuCommand}" />
-                <Label Text="Menú" HorizontalOptions="Center" FontSize="10" />
+                <Label Text="Menï¿½" HorizontalOptions="Center" FontSize="10" />
             </StackLayout>
         </StackLayout>
     </Grid>

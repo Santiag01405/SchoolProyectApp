@@ -11,9 +11,9 @@
             <Label Text="The Hive" FontSize="24" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
 
             <StackLayout Orientation="Horizontal" Spacing="15" VerticalOptions="Center">
-                <ImageButton Source="example_icon.png" Command="{Binding ExampleCommand}" />
-                <ImageButton Source="example_icon.png" Command="{Binding ExampleCommand}" />
-                <ImageButton Source="example_icon.png" Command="{Binding ExampleCommand}" />
+                <ImageButton Source="example1_icon.png" Command="{Binding Example1Command}" />
+                <ImageButton Source="example2_icon.png" Command="{Binding Example2Command}" />
+                <ImageButton Source="example3_icon.png" Command="{Binding Example3Command}" />
             </StackLayout>
         </StackLayout>
 
@@ -50,8 +50,8 @@
                 <Label Text="Perfil" HorizontalOptions="Center" FontSize="10" />
             </StackLayout>
             <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="Center">
-                <ImageButton Source="menu_icon.png" Command="{Binding MenuCommand}" />
-                <Label Text="Men�" HorizontalOptions="Center" FontSize="10" />
+                <ImageButton Source="menu_icon.png" Command="{Binding OpenMenuCommand}" />
+                <Label Text="Menú" HorizontalOptions="Center" FontSize="10" />
             </StackLayout>
         </StackLayout>
     </Grid>

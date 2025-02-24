@@ -1,0 +1,67 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SchoolProyectApp.Views.ProfilePage">
+
+    <ContentPage.Content>
+        <ScrollView>
+            <VerticalStackLayout Padding="0">
+                <!-- Header con imagen de fondo -->
+                <Grid>
+                    <Image Source="profile_background.png" Aspect="AspectFill" HeightRequest="200"/>
+                    <StackLayout Orientation="Vertical" VerticalOptions="End" HorizontalOptions="Center" Padding="10">
+                        <!-- Imagen de perfil con borde -->
+                        <Frame Padding="3" CornerRadius="50" IsClippedToBounds="True" BackgroundColor="White">
+                            <Image Source="profile_picture.png" HeightRequest="100" WidthRequest="100" Aspect="AspectFill"/>
+                        </Frame>
+                        <Label Text="Example Name" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        <Label Text="Example Location" FontSize="14" HorizontalOptions="Center" TextColor="Gray"/>
+                    </StackLayout>
+                </Grid>
+
+                <!-- Contadores de Seguidores -->
+                <Grid Padding="10" ColumnDefinitions="*,*" HorizontalOptions="Center">
+                    <StackLayout HorizontalOptions="Center">
+                        <Label Text="13" FontSize="16" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        <Label Text="Seguidores" FontSize="12" HorizontalOptions="Center"/>
+                    </StackLayout>
+                    <StackLayout HorizontalOptions="Center">
+                        <Label Text="13" FontSize="16" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        <Label Text="Siguiendo" FontSize="12" HorizontalOptions="Center"/>
+                    </StackLayout>
+                </Grid>
+
+                <!-- Opciones del usuario -->
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="20" Padding="10">
+                    <StackLayout HorizontalOptions="Center">
+                        <Image Source="status_icon.png" HeightRequest="30"/>
+                        <Label Text="Estado" FontSize="12" HorizontalOptions="Center"/>
+                    </StackLayout>
+
+                    <StackLayout HorizontalOptions="Center">
+                        <Image Source="pr_icon.png" HeightRequest="30"/>
+                        <Label Text="PR's" FontSize="12" HorizontalOptions="Center"/>
+                    </StackLayout>
+
+                    <StackLayout HorizontalOptions="Center">
+                        <Image Source="benchmarks_icon.png" HeightRequest="30"/>
+                        <Label Text="Benchmarks" FontSize="12" HorizontalOptions="Center"/>
+                    </StackLayout>
+                </HorizontalStackLayout>
+
+                <!-- Posts -->
+                <ListView ItemsSource="{Binding Posts}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <StackLayout Padding="10">
+                                    <Label Text="{Binding Title}" FontSize="16" FontAttributes="Bold"/>
+                                    <Label Text="{Binding Description}" FontSize="14" TextColor="Gray"/>
+                                </StackLayout>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

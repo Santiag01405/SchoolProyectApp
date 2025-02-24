@@ -9,32 +9,24 @@ namespace SchoolProyectApp.ViewModels
     {
         public ObservableCollection<Post> Posts { get; set; }
         public ICommand HomeCommand { get; }
-        public ICommand ExampleCommand { get; }
         public ICommand ProfileCommand { get; }
-        public ICommand MenuCommand { get; }
-        public ICommand Example2Command { get; }
-        public ICommand Example3Command { get; }
-        public ICommand Example4Command { get; }
+        public ICommand OpenMenuCommand { get; }
 
         public HomePageViewModel()
         {
             Posts = new ObservableCollection<Post>
             {
-                new Post { ProfileImage = "user1.png", Name = "Fabio Spizuoco", Subtitle = "The Hive · Hoy", Message = "Solo los miembros de The Hive pueden ver este WOD" },
-                new Post { ProfileImage = "user2.png", Name = "Flory Fernández", Subtitle = "The Hive · Jueves", Message = "Solo los miembros de The Hive pueden ver este WOD" },
-                new Post { ProfileImage = "user3.png", Name = "Pedro Barrueta", Subtitle = "The Hive · Jueves", Message = "Solo los miembros de The Hive pueden ver este WOD" }
+                new Post { ProfileImage = "user1.png", Name = "FExample", Subtitle = "Example" },
+                new Post { ProfileImage = "user2.png", Name = "Example", Subtitle = "Example", Message = "Example" },
+                new Post { ProfileImage = "user3.png", Name = "Example", Subtitle = "Example", Message = "Example" }
             };
 
-            HomeCommand = new Command(() => NavigateTo("HomePage"));
-            ExampleCommand = new Command(() => NavigateTo("ExamplePage"));
-            ProfileCommand = new Command(() => NavigateTo("ProfilePage"));
-            MenuCommand = new Command(() => NavigateTo("MenuPage"));
-            Example2Command = new Command(() => NavigateTo("Example2Page"));
-            Example3Command = new Command(() => NavigateTo("Example3Page"));
-            Example4Command = new Command(() => NavigateTo("Example4Page"));
+            HomeCommand = new Command(async () => await NavigateTo("homepage"));
+            ProfileCommand = new Command(async () => await NavigateTo("profile"));
+            OpenMenuCommand = new Command(async () => await NavigateTo("menu"));
         }
 
-        private async void NavigateTo(string page)
+        private async Task NavigateTo(string page)
         {
             await Shell.Current.GoToAsync(page);
         }

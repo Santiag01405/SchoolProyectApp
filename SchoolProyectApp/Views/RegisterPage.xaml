@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SchoolProyectApp.Views.RegisterPage">
+
+    <ContentPage.Content>
+        <VerticalStackLayout Padding="20">
+            <Label Text="Registro" FontSize="24" HorizontalOptions="Center"/>
+
+            <Entry Placeholder="Email" Text="{Binding Email}" Keyboard="Email"/>
+            <Entry Placeholder="Password" Text="{Binding Password}" IsPassword="True"/>
+
+            <Label Text="Selecciona tu rol:" />
+            <Picker ItemsSource="{Binding Roles}" SelectedItem="{Binding SelectedRole}" />
+
+            <Button Text="Registrarse" Command="{Binding RegisterCommand}"/>
+            <Button Text="Volver al Login" Command="{Binding GoToLoginCommand}"/>
+
+            <Label Text="{Binding Message}" TextColor="Red" HorizontalOptions="Center"/>
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>

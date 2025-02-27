@@ -6,7 +6,7 @@
     <Grid RowDefinitions="Auto,*">
         <!-- Barra Superior -->
         <StackLayout Grid.Row="0" BackgroundColor="#2196F3" Padding="10" Orientation="Horizontal" HorizontalOptions="Fill">
-            <Label Text="Menú" FontSize="24" FontAttributes="Bold" TextColor="White" HorizontalOptions="CenterAndExpand"/>
+            <Label Text="Menï¿½" FontSize="24" FontAttributes="Bold" TextColor="White" HorizontalOptions="CenterAndExpand"/>
         </StackLayout>
 
         <!-- Lista de Opciones -->

@@ -42,12 +42,15 @@ namespace SchoolProyectApp.ViewModels
         }
 
         public ICommand LoginCommand { get; }
+        public ICommand NavigateToRegisterCommand { get; }
 
         public LoginViewModel()
         {
             _apiService = new ApiService();
             LoginCommand = new Command(async () => await LoginAsync());
+            NavigateToRegisterCommand = new Command(async () => await Shell.Current.GoToAsync("//register")); // 🔹 Se corrigió la ruta
         }
+
 
         private async Task LoginAsync()
         {
@@ -66,23 +69,9 @@ namespace SchoolProyectApp.ViewModels
                 await SecureStorage.SetAsync("auth_token", authResponse.Token);
                 Message = "Login exitoso";
 
-                // 🔹 Optimizado con switch
-                string route = authResponse.RoleID switch
-                {
-                    1 => "studentmenu",
-                    2 => "parentmenu",
-                    3 => "teachermenu",
-                    _ => string.Empty
-                };
-
-                if (!string.IsNullOrEmpty(route))
-                {
-                    await Shell.Current.GoToAsync(route);
-                }
-                else
-                {
-                    Message = "Rol de usuario no reconocido";
-                }
+                // 🔹 Solución: Primero ir a login y luego a HomePage
+                await Shell.Current.GoToAsync("//login"); // 🔹 Limpia la pila
+                await Shell.Current.GoToAsync("HomePage"); // 🔹 Luego navega a HomePage
             }
             else
             {
@@ -99,18 +88,20 @@ namespace SchoolProyectApp.ViewModels
 
 
 
+
 /*using System.ComponentModel;
 using System.Windows.Input;
 using SchoolProyectApp.Models;
 using SchoolProyectApp.Services;
 using Microsoft.Maui.Storage;
+using Microsoft.Maui.Controls;
 
 namespace SchoolProyectApp.ViewModels
 {
     public class LoginViewModel : INotifyPropertyChanged
     {
         private readonly ApiService _apiService;
-        private string _email = string.Empty;  // Inicializamos con valores vacíos
+        private string _email = string.Empty;
         private string _password = string.Empty;
         private string _message = string.Empty;
         private bool _isBusy;
@@ -120,41 +111,25 @@ namespace SchoolProyectApp.ViewModels
         public string Email
         {
             get => _email;
-            set
-            {
-                _email = value;
-                OnPropertyChanged(nameof(Email));
-            }
+            set { _email = value; OnPropertyChanged(nameof(Email)); }
         }
 
         public string Password
         {
             get => _password;
-            set
-            {
-                _password = value;
-                OnPropertyChanged(nameof(Password));
-            }
+            set { _password = value; OnPropertyChanged(nameof(Password)); }
         }
 
         public string Message
         {
             get => _message;
-            set
-            {
-                _message = value;
-                OnPropertyChanged(nameof(Message));
-            }
+            set { _message = value; OnPropertyChanged(nameof(Message)); }
         }
 
         public bool IsBusy
         {
             get => _isBusy;
-            set
-            {
-                _isBusy = value;
-                OnPropertyChanged(nameof(IsBusy));
-            }
+            set { _isBusy = value; OnPropertyChanged(nameof(IsBusy)); }
         }
 
         public ICommand LoginCommand { get; }
@@ -181,6 +156,9 @@ namespace SchoolProyectApp.ViewModels
             {
                 await SecureStorage.SetAsync("auth_token", authResponse.Token);
                 Message = "Login exitoso";
+
+                // 🔹 Redirigir a HomePage después del login
+                await Shell.Current.GoToAsync("//homepage");
             }
             else
             {
@@ -194,3 +172,7 @@ namespace SchoolProyectApp.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }*/
+
+
+
+

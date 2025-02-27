@@ -8,7 +8,7 @@
         <!-- Barra Superior -->
         <StackLayout Grid.Row="0" BackgroundColor="LightGray" Padding="10" Orientation="Horizontal" HorizontalOptions="Fill">
             <Image Source="logo.png" HeightRequest="40" WidthRequest="40" />
-            <Label Text="The Hive" FontSize="24" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
+            <Label Text="App para escuela" FontSize="24" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
 
             <StackLayout Orientation="Horizontal" Spacing="15" VerticalOptions="Center">
                 <ImageButton Source="example1_icon.png" Command="{Binding Example1Command}" />

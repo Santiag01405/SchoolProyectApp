@@ -1,67 +1,44 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using Microsoft.Maui.Controls;
 
 namespace SchoolProyectApp.ViewModels
 {
     public class MenuViewModel : BaseViewModel
     {
-        public ObservableCollection<MenuItemModel> MenuOptions { get; set; }
-        public ICommand NavigateCommand { get; }
+        public ICommand MessagesCommand { get; }
+        public ICommand RankingCommand { get; }
+        public ICommand TimerCommand { get; }
+        public ICommand CompetitionsCommand { get; }
+        public ICommand CalendarCommand { get; }
+        public ICommand MaxRecordsCommand { get; }
+        public ICommand BenchmarksCommand { get; }
+        public ICommand PhysicalEvolutionCommand { get; }
+        public ICommand AnalyticsCommand { get; }
+        public ICommand ExerciseLibraryCommand { get; }
+        public ICommand VideosCommand { get; }
+        public ICommand HomeCommand { get; }
+
+        //public ICommand ProfileCommand { get; }
+        public ICommand OpenMenuCommand { get; }
 
         public MenuViewModel()
         {
-            MenuOptions = new ObservableCollection<MenuItemModel>();
-            NavigateCommand = new Command<MenuItemModel>(NavigateToPage);
-            LoadMenuItems();
+
+            //Barra de navegacion
+            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
+           // ProfileCommand = new Command(async () => await NavigateTo("profile"));
+            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+            MessagesCommand = new Command(async () => await Shell.Current.GoToAsync("messages"));
+            RankingCommand = new Command(async () => await Shell.Current.GoToAsync("ranking"));
+            TimerCommand = new Command(async () => await Shell.Current.GoToAsync("timer"));
+            CompetitionsCommand = new Command(async () => await Shell.Current.GoToAsync("competitions"));
+            CalendarCommand = new Command(async () => await Shell.Current.GoToAsync("calendar"));
+            MaxRecordsCommand = new Command(async () => await Shell.Current.GoToAsync("maxrecords"));
+            BenchmarksCommand = new Command(async () => await Shell.Current.GoToAsync("benchmarks"));
+            PhysicalEvolutionCommand = new Command(async () => await Shell.Current.GoToAsync("physicalevolution"));
+            AnalyticsCommand = new Command(async () => await Shell.Current.GoToAsync("analytics"));
+            ExerciseLibraryCommand = new Command(async () => await Shell.Current.GoToAsync("exerciselibrary"));
+            VideosCommand = new Command(async () => await Shell.Current.GoToAsync("videos"));
         }
-
-        private void LoadMenuItems()
-        {
-            // Obtener el rol del usuario desde SecureStorage o API
-            int userRole = GetUserRole();
-
-            if (userRole == 1) // Student
-            {
-                MenuOptions.Add(new MenuItemModel { Title = "Notificaciones", Icon = "notif_icon.png", Route = "notifications" });
-                MenuOptions.Add(new MenuItemModel { Title = "Cursos", Icon = "courses_icon.png", Route = "courses" });
-                MenuOptions.Add(new MenuItemModel { Title = "Calificaciones", Icon = "grades_icon.png", Route = "grades" });
-            }
-            else if (userRole == 2) // Parent
-            {
-                MenuOptions.Add(new MenuItemModel { Title = "Notificaciones", Icon = "notif_icon.png", Route = "notifications" });
-                MenuOptions.Add(new MenuItemModel { Title = "Cursos", Icon = "courses_icon.png", Route = "courses" });
-                MenuOptions.Add(new MenuItemModel { Title = "Calificaciones del estudiante", Icon = "grades_icon.png", Route = "studentgrades" });
-            }
-            else if (userRole == 3) // Teacher
-            {
-                MenuOptions.Add(new MenuItemModel { Title = "Notificaciones", Icon = "notif_icon.png", Route = "notifications" });
-                MenuOptions.Add(new MenuItemModel { Title = "Cursos", Icon = "courses_icon.png", Route = "courses" });
-                MenuOptions.Add(new MenuItemModel { Title = "Estudiantes", Icon = "students_icon.png", Route = "students" });
-                MenuOptions.Add(new MenuItemModel { Title = "Asignar Calificaciones", Icon = "assigngrades_icon.png", Route = "assigngrades" });
-            }
-        }
-
-        private int GetUserRole()
-        {
-            // Obtener el rol del usuario desde SecureStorage
-            var roleString = SecureStorage.GetAsync("user_role").Result;
-            return int.TryParse(roleString, out int role) ? role : 0;
-        }
-
-        private async void NavigateToPage(MenuItemModel menuItem)
-        {
-            if (menuItem != null)
-            {
-                await Shell.Current.GoToAsync(menuItem.Route);
-            }
-        }
-    }
-
-    public class MenuItemModel
-    {
-        public string Title { get; set; }
-        public string Icon { get; set; }
-        public string Route { get; set; }
     }
 }

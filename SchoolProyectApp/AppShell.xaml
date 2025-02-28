@@ -11,16 +11,15 @@
     <!-- Página de Registro -->
     <ShellContent Title="Registro" Route="register" ContentTemplate="{DataTemplate views:RegisterPage}" />
 
-    <!-- Menús según el rol del usuario -->
-    <ShellContent Title="Menú Estudiante" Route="studentmenu" ContentTemplate="{DataTemplate views:StudentMenuPage}" />
-    <ShellContent Title="Menú Maestro" Route="teachermenu" ContentTemplate="{DataTemplate views:TeacherMenuPage}" />
-    <ShellContent Title="Menú Padre" Route="parentmenu" ContentTemplate="{DataTemplate views:ParentMenuPage}" />
+    <!-- Página de Inicio -->
+    <ShellContent Title="Inicio" Route="homepage" ContentTemplate="{DataTemplate views:HomePage}" />
     
     <!--Nuevo menu-->
     <ShellContent Title="Menú" Route="menu" ContentTemplate="{DataTemplate views:MenuPage}" />
     
     <!--Perfil del usuario-->
     <ShellContent Title="Perfil" Route="profile" ContentTemplate="{DataTemplate views:ProfilePage}" />
+    
 
 </Shell>
 

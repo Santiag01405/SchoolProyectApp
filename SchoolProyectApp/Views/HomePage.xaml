@@ -1,29 +1,48 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SchoolProyectApp.Views.HomePage">
 
-    <Grid RowDefinitions="Auto,*,Auto">
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <!-- Barra de búsqueda -->
+        <StackLayout Grid.Row="0" BackgroundColor="#007AFF" Padding="10" Orientation="Horizontal">
+            <ImageButton Source="icon_search.png" WidthRequest="30" HeightRequest="30" />
+            <Entry Placeholder="Buscar..." BackgroundColor="White" HorizontalOptions="FillAndExpand"/>
+            <ImageButton Source="icon_chat.png" WidthRequest="30" HeightRequest="30" />
+            <ImageButton Source="icon_flag.png" WidthRequest="30" HeightRequest="30" />
+        </StackLayout>
 
-        <!-- Barra Superior -->
-        <StackLayout Grid.Row="0" BackgroundColor="LightGray" Padding="10" Orientation="Horizontal" HorizontalOptions="Fill">
-            <Image Source="logo.png" HeightRequest="40" WidthRequest="40" />
-            <Label Text="App para escuela" FontSize="24" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
-
-            <StackLayout Orientation="Horizontal" Spacing="15" VerticalOptions="Center">
-                <ImageButton Source="example1_icon.png" Command="{Binding Example1Command}" />
-                <ImageButton Source="example2_icon.png" Command="{Binding Example2Command}" />
-                <ImageButton Source="example3_icon.png" Command="{Binding Example3Command}" />
+        <!-- Encabezado con Logo y Botones -->
+        <StackLayout Grid.Row="1" Padding="10" Orientation="Vertical" BackgroundColor="White">
+            <Image Source="logo.png" HeightRequest="50" HorizontalOptions="Center" />
+            <Label Text="App para escuelas" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" />
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
+                <StackLayout Orientation="Vertical" HorizontalOptions="Center">
+                    <ImageButton Source="icon_publicaciones.png" WidthRequest="30" HeightRequest="30" />
+                    <Label Text="Ejemplo" FontSize="12" HorizontalOptions="Center" />
+                </StackLayout>
+                <StackLayout Orientation="Vertical">
+                    <ImageButton Source="icon_agenda.png" WidthRequest="30" HeightRequest="30" />
+                    <Label Text="Ejemplo" FontSize="12" HorizontalOptions="Center" />
+                </StackLayout>
+                <StackLayout Orientation="Vertical">
+                    <ImageButton Source="icon_reservas.png" WidthRequest="30" HeightRequest="30" />
+                    <Label Text="Ejemplo" FontSize="12" HorizontalOptions="Center" />
+                </StackLayout>
+                <StackLayout Orientation="Vertical">
+                    <ImageButton Source="icon_horario.png" WidthRequest="30" HeightRequest="30" />
+                    <Label Text="Ejemplo" FontSize="12" HorizontalOptions="Center" />
+                </StackLayout>
             </StackLayout>
         </StackLayout>
 
-        <!-- Lista de Publicaciones -->
-        <ListView Grid.Row="1" ItemsSource="{Binding Posts}" HasUnevenRows="True">
+        <!-- Lista de publicaciones -->
+        <ListView Grid.Row="2" ItemsSource="{Binding Posts}" HasUnevenRows="True">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
-                        <StackLayout Padding="10" Orientation="Horizontal">
-                            <Image Source="{Binding ProfileImage}" HeightRequest="50" WidthRequest="50" Aspect="AspectFill"/>
+                        <StackLayout Padding="5" Orientation="Horizontal">
+                            <Image Source="{Binding ProfileImage}" HeightRequest="24" WidthRequest="24" Aspect="AspectFill" Margin="0,0,15,0"/>
                             <StackLayout>
                                 <Label Text="{Binding Name}" FontAttributes="Bold" />
                                 <Label Text="{Binding Subtitle}" FontSize="12" TextColor="Gray" />
@@ -35,24 +54,36 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <!-- Barra de Navegaci�n Inferior -->
-        <StackLayout Grid.Row="2" BackgroundColor="White" Padding="10" Orientation="Horizontal" HorizontalOptions="Fill" VerticalOptions="End">
-            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="Center">
-                <ImageButton Source="home_icon.png" Command="{Binding HomeCommand}" />
-                <Label Text="Inicio" HorizontalOptions="Center" FontSize="10" />
+        <!-- Barra de navegación inferior -->
+        <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
+                <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
             </StackLayout>
-            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="Center">
-                <ImageButton Source="example_icon.png" Command="{Binding ExampleCommand}" />
-                <Label Text="WOD" HorizontalOptions="Center" FontSize="10" />
+
+            <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding CourseCommand}" Clicked="AnimateButton" />
+                <Label Text="Cursos" FontSize="10" HorizontalOptions="Center" />
             </StackLayout>
-            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="Center">
-                <ImageButton Source="perfil_icon.png" Command="{Binding ProfileCommand}" />
-                <Label Text="Perfil" HorizontalOptions="Center" FontSize="10" />
+
+            <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding ProfileCommand}" Clicked="AnimateButton" />
+                <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
             </StackLayout>
-            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="Center">
-                <ImageButton Source="menu_icon.png" Command="{Binding OpenMenuCommand}" />
-                <Label Text="Menú" HorizontalOptions="Center" FontSize="10" />
+
+            <StackLayout Grid.Column="3" HorizontalOptions="Center">
+                <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
+                <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
             </StackLayout>
-        </StackLayout>
+        </Grid>
     </Grid>
 </ContentPage>
+
+

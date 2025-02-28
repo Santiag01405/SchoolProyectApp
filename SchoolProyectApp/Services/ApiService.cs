@@ -63,25 +63,91 @@ namespace SchoolProyectApp.Services
         }
 
         // 🔹 Registro de usuario
-        public async Task<AuthResponse?> RegisterAsync(User user)
+
+        public async Task<bool> RegisterAsync(User user)
         {
             try
             {
-                var json = JsonSerializer.Serialize(user);
+                var userData = new
+                {
+                    userName = user.UserName,
+                    email = user.Email,
+                    passwordHash = user.Password,
+                    roleID = user.RoleID
+                };
+
+                var json = JsonSerializer.Serialize(userData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync("api/auth/register", content);
-                if (!response.IsSuccessStatusCode) return null;
-
                 var responseJson = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<AuthResponse>(responseJson);
+
+                Console.WriteLine($"🔹 Código de respuesta: {response.StatusCode}");
+                Console.WriteLine($"🔹 Respuesta del backend: {responseJson}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("✅ Registro exitoso.");
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine("❌ Error en la solicitud de registro.");
+                    return false;
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Error en RegisterAsync: {ex.Message}");
-                return null;
+                Console.WriteLine($"❌ Excepción en RegisterAsync: {ex.Message}");
+                return false;
             }
         }
+
+
+        /*public async Task<AuthResponse?> RegisterAsync(User user)
+        {
+            try
+            {
+                var userData = new
+                {
+                    userName = user.UserName,
+                    email = user.Email,
+                    passwordHash = user.Password,
+                    roleID = user.RoleID
+                };
+
+                var json = JsonSerializer.Serialize(userData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync("api/auth/register", content);
+                var responseJson = await response.Content.ReadAsStringAsync();
+
+                Console.WriteLine($"🔹 Código de respuesta: {response.StatusCode}");
+                Console.WriteLine($"🔹 Respuesta del backend: {responseJson}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("❌ Error en la solicitud de registro.");
+                    return null;
+                }
+
+                // 🔹 Si la respuesta solo contiene un mensaje, lo manejamos aquí
+                var authResponse = JsonSerializer.Deserialize<AuthResponse>(responseJson);
+                if (authResponse != null && !string.IsNullOrEmpty(authResponse.Message))
+                {
+                    Console.WriteLine("✅ Registro exitoso.");
+                    return authResponse;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Excepción en RegisterAsync: {ex.Message}");
+                return null;
+            }
+        }*/
+
 
         // 🔹 Obtener lista de usuarios
         public async Task<List<User>?> GetUsersAsync()

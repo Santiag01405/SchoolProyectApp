@@ -45,7 +45,7 @@ namespace SchoolProyectApp.ViewModels
 
         public ObservableCollection<string> Roles { get; } = new ObservableCollection<string>
         {
-            "Student", "Parent", "Teacher"
+            "Estudiante", "Padre", "Profesor"
         };
 
         public string SelectedRole
@@ -61,7 +61,7 @@ namespace SchoolProyectApp.ViewModels
         {
             _apiService = new ApiService();
             RegisterCommand = new Command(async () => await RegisterAsync());
-            GoToLoginCommand = new Command(async () => await Shell.Current.GoToAsync("//login")); // 🔹 Se corrigió la ruta
+            GoToLoginCommand = new Command(async () => await Shell.Current.GoToAsync("//login")); 
         }
 
         private async Task RegisterAsync()
@@ -76,9 +76,9 @@ namespace SchoolProyectApp.ViewModels
 
             int roleID = SelectedRole switch
             {
-                "Student" => 1,
-                "Parent" => 2,
-                "Teacher" => 3,
+                "Estudiante" => 1,
+                "Padre" => 2,
+                "Profesor" => 3,
                 _ => 0
             };
 
@@ -89,14 +89,14 @@ namespace SchoolProyectApp.ViewModels
                 return;
             }
 
-            var user = new User { Email = Email, Password = Password, RoleID = roleID };
-            var authResponse = await _apiService.RegisterAsync(user);
+            var user = new User { UserName = Email, Email = Email, Password = Password, RoleID = roleID };
+            bool isRegistered = await _apiService.RegisterAsync(user);
 
-            if (authResponse != null && !string.IsNullOrEmpty(authResponse.Token))
+            if (isRegistered)
             {
-                await SecureStorage.SetAsync("auth_token", authResponse.Token);
                 Message = "Registro exitoso. Redirigiendo...";
-                await Shell.Current.GoToAsync("//login"); // 🔹 Se corrigió la ruta
+                await Task.Delay(2000); // Espera 2 segundos antes de redirigir
+                await Shell.Current.GoToAsync("//login");
             }
             else
             {
@@ -105,6 +105,8 @@ namespace SchoolProyectApp.ViewModels
 
             IsBusy = false;
         }
+
+
 
         private void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

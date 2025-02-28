@@ -16,19 +16,24 @@ namespace SchoolProyectApp.ViewModels
         {
             Posts = new ObservableCollection<Post>
             {
-                new Post { ProfileImage = "user1.png", Name = "FExample", Subtitle = "Example" },
-                new Post { ProfileImage = "user2.png", Name = "Example", Subtitle = "Example", Message = "Example" },
-                new Post { ProfileImage = "user3.png", Name = "Example", Subtitle = "Example", Message = "Example" }
+                new Post { ProfileImage = "usuarios.png", Name = "Ejemplo de titulo", Subtitle = "Ejemplo de subtitulo", Message = "Ejemplo de mensaje" },
+                new Post { ProfileImage = "usuarios.png", Name = "Ejemplo de titulo", Subtitle = "Ejemplo de subtitulo", Message = "Ejemplo de mensaje" },
+                new Post { ProfileImage = "usuarios.png", Name = "Ejemplo de titulo", Subtitle = "Ejemplo de subtitulo", Message = "Ejemplo de mensaje" },
+                new Post { ProfileImage = "usuarios.png", Name = "Ejemplo de titulo", Subtitle = "Ejemplo de subtitulo", Message = "Ejemplo de mensaje" },
+                new Post { ProfileImage = "usuarios.png", Name = "Ejemplo de titulo", Subtitle = "Ejemplo de subtitulo", Message = "Ejemplo de mensaje" }
             };
 
-            HomeCommand = new Command(async () => await NavigateTo("homepage"));
+            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
             ProfileCommand = new Command(async () => await NavigateTo("profile"));
-            OpenMenuCommand = new Command(async () => await NavigateTo("menu"));
+            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
         }
 
         private async Task NavigateTo(string page)
         {
             await Shell.Current.GoToAsync(page);
         }
+
+
+
     }
 }

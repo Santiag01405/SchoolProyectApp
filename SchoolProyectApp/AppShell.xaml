@@ -15,11 +15,17 @@
     <ShellContent Title="Inicio" Route="homepage" ContentTemplate="{DataTemplate views:HomePage}" />
     
     <!--Nuevo menu-->
-    <ShellContent Title="Menú" Route="menu" ContentTemplate="{DataTemplate views:MenuPage}" />
+    <ShellContent Title="Menu" Route="menu" ContentTemplate="{DataTemplate views:MenuPage}" />
     
     <!--Perfil del usuario-->
     <ShellContent Title="Perfil" Route="profile" ContentTemplate="{DataTemplate views:ProfilePage}" />
     
+    <!--Horario-->
+    <ShellContent Title="Horario" Route="schedule" ContentTemplate="{DataTemplate views:SchedulePage}" />
+
+    <!-- Página de Edición del Horario (Solo Teachers) -->
+    <ShellContent Title="Editar Horario" Route="editschedule" ContentTemplate="{DataTemplate views:EditSchedulePage}" />
+
 
 </Shell>
 

@@ -45,7 +45,7 @@ namespace SchoolProyectApp.ViewModels
 
         public ObservableCollection<string> Roles { get; } = new ObservableCollection<string>
         {
-            "Estudiante", "Padre", "Profesor"
+            "Estudiante", "Profesor", "Padre"
         };
 
         public string SelectedRole
@@ -77,8 +77,8 @@ namespace SchoolProyectApp.ViewModels
             int roleID = SelectedRole switch
             {
                 "Estudiante" => 1,
-                "Padre" => 2,
-                "Profesor" => 3,
+                "Profesor" => 2,
+                "Padre" => 3,
                 _ => 0
             };
 

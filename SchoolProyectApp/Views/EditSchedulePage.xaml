@@ -1,0 +1,13 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SchoolProyectApp.Views.EditSchedulePage">
+
+    <StackLayout Padding="20">
+        <Label Text="Editar Horario" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />
+
+        <Picker Title="Seleccionar día" ItemsSource="{Binding Days}" SelectedItem="{Binding SelectedDay}" />
+        <Entry Placeholder="Hora" Text="{Binding SelectedTime}" />
+        <Entry Placeholder="Materia" Text="{Binding SelectedSubject}" />
+        <Button Text="Guardar" Command="{Binding SaveScheduleCommand}" />
+    </StackLayout>
+</ContentPage>

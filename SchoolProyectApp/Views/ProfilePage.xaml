@@ -1,68 +1,58 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SchoolProyectApp.Views.ProfilePage">
-
-    <ContentPage.Content>
+             x:Class="SchoolProyectApp.Views.ProfilePage"
+             Title="Perfil">
+    <Grid RowDefinitions="Auto,*,Auto">
         <ScrollView>
-            <VerticalStackLayout Padding="0">
-                <!-- Header con imagen de fondo -->
-                <Grid>
-                    <Image Source="profile_background.png" Aspect="AspectFill" HeightRequest="200"/>
-                    <StackLayout Orientation="Vertical" VerticalOptions="End" HorizontalOptions="Center" Padding="10">
-                        <!-- Imagen de perfil con borde -->
-                        <Frame Padding="3" CornerRadius="50" IsClippedToBounds="True" BackgroundColor="White">
-                            <Image Source="profile_picture.png" HeightRequest="100" WidthRequest="100" Aspect="AspectFill"/>
-                        </Frame>
-                        <Label Text="Example Name" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center"/>
-                        <Label Text="Example Location" FontSize="14" HorizontalOptions="Center" TextColor="Gray"/>
-                    </StackLayout>
-                </Grid>
+        <StackLayout Padding="20" Spacing="15">
+            <Label Text="Perfil" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
 
-                <!-- Contadores de Seguidores -->
-                <Grid Padding="10" ColumnDefinitions="*,*" HorizontalOptions="Center">
-                    <StackLayout HorizontalOptions="Center">
-                        <Label Text="13" FontSize="16" FontAttributes="Bold" HorizontalOptions="Center"/>
-                        <Label Text="Seguidores" FontSize="12" HorizontalOptions="Center"/>
-                    </StackLayout>
-                    <StackLayout HorizontalOptions="Center">
-                        <Label Text="13" FontSize="16" FontAttributes="Bold" HorizontalOptions="Center"/>
-                        <Label Text="Siguiendo" FontSize="12" HorizontalOptions="Center"/>
-                    </StackLayout>
-                </Grid>
+            <Image Source="usuario.png" HeightRequest="100" WidthRequest="100" HorizontalOptions="Center"/>
 
-                <!-- Opciones del usuario -->
-                <HorizontalStackLayout HorizontalOptions="Center" Spacing="20" Padding="10">
-                    <StackLayout HorizontalOptions="Center">
-                        <Image Source="status_icon.png" HeightRequest="30"/>
-                        <Label Text="Estado" FontSize="12" HorizontalOptions="Center"/>
-                    </StackLayout>
+            <Label Text="Nombre" FontSize="14"/>
+            <Entry Text="{Binding UserName}" Placeholder="Nombre"/>
 
-                    <StackLayout HorizontalOptions="Center">
-                        <Image Source="pr_icon.png" HeightRequest="30"/>
-                        <Label Text="PR's" FontSize="12" HorizontalOptions="Center"/>
-                    </StackLayout>
+            <Label Text="Correo Electrónico" FontSize="14"/>
+            <Entry Text="{Binding Email}" Placeholder="Email" Keyboard="Email"/>
 
-                    <StackLayout HorizontalOptions="Center">
-                        <Image Source="benchmarks_icon.png" HeightRequest="30"/>
-                        <Label Text="Benchmarks" FontSize="12" HorizontalOptions="Center"/>
-                    </StackLayout>
-                </HorizontalStackLayout>
+            <Label Text="Nueva Contraseña" FontSize="14"/>
+            <Entry Text="{Binding Password}" Placeholder="Nueva contraseña" IsPassword="True"/>
 
-                <!-- Posts -->
-                <ListView ItemsSource="{Binding Posts}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <StackLayout Padding="10">
-                                    <Label Text="{Binding Title}" FontSize="16" FontAttributes="Bold"/>
-                                    <Label Text="{Binding Description}" FontSize="14" TextColor="Gray"/>
-                                </StackLayout>
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </VerticalStackLayout>
-        </ScrollView>
-    </ContentPage.Content>
+            <Label Text="{Binding Message}" TextColor="Red" HorizontalOptions="Center"/>
+
+            <Button Text="Guardar Cambios" Command="{Binding UpdateUserCommand}" BackgroundColor="#007AFF" TextColor="White"/>
+        </StackLayout>
+    </ScrollView>
+        <!-- Barra de navegación inferior -->
+        <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
+                <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+            </StackLayout>
+
+            <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding CourseCommand}" Clicked="AnimateButton" />
+                <Label Text="Cursos" FontSize="10" HorizontalOptions="Center" />
+            </StackLayout>
+
+            <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding ProfileCommand}" Clicked="AnimateButton" />
+                <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+            </StackLayout>
+
+            <StackLayout Grid.Column="3" HorizontalOptions="Center">
+                <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
+                <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+            </StackLayout>
+        </Grid>
+    </Grid>
 </ContentPage>
+

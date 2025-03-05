@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using SchoolProyectApp.Models;
+
 
 namespace SchoolProyectApp.Services
 {
@@ -102,6 +104,111 @@ namespace SchoolProyectApp.Services
                 return false;
             }
         }
+
+
+        //Actualizacion de usuario
+        public async Task<bool> UpdateUserAsync(User user)
+        {
+            try
+            {
+                var json = JsonSerializer.Serialize(new
+                {
+                    user.UserID,
+                    user.UserName,
+                    user.Email,
+                    PasswordHash = user.Password, // Convertimos Password a PasswordHash
+                    user.RoleID // 🔹 Se incluye RoleID en la solicitud
+                });
+
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                Console.WriteLine($"📤 JSON Enviado: {json}");
+
+                var response = await _httpClient.PutAsync($"api/users/{user.UserID}", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("✅ Usuario actualizado con éxito.");
+                    return true;
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"❌ Error en la actualización: {response.StatusCode} - {errorMessage}");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Excepción en UpdateUserAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<User?> GetUserByIdAsync(int userId)
+        {
+            var response = await _httpClient.GetAsync($"api/users/{userId}");
+
+            if (!response.IsSuccessStatusCode) return null;
+
+            var responseJson = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<User>(responseJson);
+        }
+
+        public async Task<User> GetUserDetailsAsync(int userId)
+        {
+            try
+            {
+                var url = $"api/users/{userId}"; // 
+                Console.WriteLine($"Llamando a la API: {_httpClient.BaseAddress}{url}");
+
+                var response = await _httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Respuesta de la API: {json}");
+
+                    return JsonSerializer.Deserialize<User>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                }
+                else
+                {
+                    Console.WriteLine($"❌ Error en la API: {response.StatusCode}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Excepción en GetUserDetailsAsync: {ex.Message}");
+                return null;
+            }
+        }
+
+
+        //Details
+
+        /*public async Task<User?> GetUserDetailsAsync(string userId)
+        {
+            Console.WriteLine($"📡 Solicitando datos del usuario con ID: {userId}");
+
+            var response = await _httpClient.GetAsync($"api/users/{userId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"✔ Respuesta de la API: {json}");
+                return JsonSerializer.Deserialize<User>(json);
+            }
+            else
+            {
+                Console.WriteLine($"❌ Error en la API: {response.StatusCode}");
+                return null;
+            }
+        }*/
+
 
 
         /*public async Task<AuthResponse?> RegisterAsync(User user)

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SchoolProyectApp.Views.SchedulePage">
+
+	<Grid RowDefinitions="Auto,Auto,*,Auto">
+		<!-- Encabezado -->
+		<StackLayout Grid.Row="0" BackgroundColor="#007AFF" Padding="10">
+			<Label Text="Horario" FontSize="24" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center" />
+
+			<!-- Botón de Editar solo para Teachers -->
+			<Button Text="Editar Horario"
+					Command="{Binding EditScheduleCommand}"
+					IsVisible="{Binding CanEditSchedule}"
+					BackgroundColor="Red"
+					TextColor="White"
+					Padding="10" />
+
+		</StackLayout>
+
+		<!-- Selector de días -->
+		<ScrollView Grid.Row="1" Orientation="Horizontal">
+			<StackLayout Orientation="Horizontal" Padding="10" Spacing="10">
+				<Button Text="Lunes" Command="{Binding SelectDayCommand}" CommandParameter="Lunes" />
+				<Button Text="Martes" Command="{Binding SelectDayCommand}" CommandParameter="Martes" />
+				<Button Text="Miércoles" Command="{Binding SelectDayCommand}" CommandParameter="Miércoles" />
+				<Button Text="Jueves" Command="{Binding SelectDayCommand}" CommandParameter="Jueves" />
+				<Button Text="Viernes" Command="{Binding SelectDayCommand}" CommandParameter="Viernes" />
+				<Button Text="Sábado" Command="{Binding SelectDayCommand}" CommandParameter="Sábado" />
+			</StackLayout>
+		</ScrollView>
+
+		<!-- Horarios del día seleccionado -->
+		<CollectionView Grid.Row="2" ItemsSource="{Binding SelectedDaySchedule}" >
+			<CollectionView.ItemTemplate>
+				<DataTemplate>
+					<StackLayout Padding="10" Orientation="Vertical" BackgroundColor="WhiteSmoke">
+						<Label Text="{Binding Time}" FontSize="16" FontAttributes="Bold" />
+						<Label Text="{Binding Subject}" FontSize="14" />
+					</StackLayout>
+				</DataTemplate>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
+
+		<!-- Barra de navegación inferior -->
+		<Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+
+			<StackLayout Grid.Column="0" HorizontalOptions="Center">
+				<Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
+				<Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+			</StackLayout>
+
+			<StackLayout Grid.Column="1" HorizontalOptions="Center">
+				<Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding CourseCommand}" Clicked="AnimateButton" />
+				<Label Text="Cursos" FontSize="10" HorizontalOptions="Center" />
+			</StackLayout>
+
+			<StackLayout Grid.Column="2" HorizontalOptions="Center">
+				<Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding ProfileCommand}" Clicked="AnimateButton" />
+				<Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+			</StackLayout>
+
+			<StackLayout Grid.Column="3" HorizontalOptions="Center">
+				<Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
+				<Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+			</StackLayout>
+		</Grid>
+	</Grid>
+</ContentPage>
+
+

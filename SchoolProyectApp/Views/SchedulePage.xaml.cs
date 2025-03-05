@@ -3,12 +3,12 @@ using SchoolProyectApp.ViewModels;
 
 namespace SchoolProyectApp.Views
 {
-    public partial class ProfilePage : ContentPage
+    public partial class SchedulePage : ContentPage
     {
-        public ProfilePage()
+        public SchedulePage()
         {
             InitializeComponent();
-            BindingContext = new ProfileViewModel();
+            BindingContext = new SchedulePageViewModel();
         }
         private async void AnimateButton(object sender, EventArgs e)
         {

@@ -24,7 +24,7 @@ namespace SchoolProyectApp.ViewModels
             };
 
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
-            ProfileCommand = new Command(async () => await NavigateTo("profile"));
+            ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
             OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
         }
 

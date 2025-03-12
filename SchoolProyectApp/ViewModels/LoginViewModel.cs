@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace SchoolProyectApp.ViewModels
 {
-    public class LoginViewModel : BaseViewModel // 🔹 Ahora hereda de BaseViewModel para usar OnPropertyChanged
+    public class LoginViewModel : BaseViewModel 
     {
         private readonly ApiService _apiService;
         private string _email = string.Empty;
@@ -80,6 +80,67 @@ namespace SchoolProyectApp.ViewModels
             NavigateToRegisterCommand = new Command(async () => await Shell.Current.GoToAsync("//register"));
         }
 
+        /*private async Task LoginAsync()
+        {
+            if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
+            {
+                Message = "Email y contraseña requeridos";
+                return;
+            }
+
+            IsBusy = true;
+            var user = new User { Email = Email, Password = Password };
+            var authResponse = await _apiService.LoginAsync(user);
+
+            if (authResponse != null && !string.IsNullOrEmpty(authResponse.Token))
+            {
+                await SecureStorage.SetAsync("auth_token", authResponse.Token);
+
+                // 🔹 Extraer `UserID` del JWT Token
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jwtToken = tokenHandler.ReadJwtToken(authResponse.Token);
+
+                var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
+
+                if (!string.IsNullOrEmpty(userIdClaim) && int.TryParse(userIdClaim, out int userId))
+                {
+                    await SecureStorage.SetAsync("user_id", userId.ToString());
+                    Console.WriteLine($"✔ UserID extraído y guardado en SecureStorage: {userId}");
+
+                    // 🔹 Llamar a la API para obtener los detalles completos del usuario
+                    var userDetails = await _apiService.GetUserDetailsAsync(userId);
+
+                    if (userDetails != null)
+                    {
+                        Console.WriteLine($"✔ Datos del usuario obtenidos después del login:");
+                        Console.WriteLine($"   🔹 UserID: {userDetails.UserID}");
+                        Console.WriteLine($"   🔹 Nombre: {userDetails.UserName}");
+                        Console.WriteLine($"   🔹 Email: {userDetails.Email}");
+                        Console.WriteLine($"   🔹 RoleID: {userDetails.RoleID}");
+
+                        // 🔹 Guardar también el RoleID en SecureStorage
+                        await SecureStorage.SetAsync("user_role", userDetails.RoleID.ToString());
+                    }
+                    else
+                    {
+                        Console.WriteLine("⚠ Error: No se pudo obtener detalles del usuario desde la API.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("⚠ Error: No se pudo extraer UserID del token.");
+                }
+
+                Message = "Login exitoso";
+                await Shell.Current.GoToAsync("//homepage"); // Redirigir al homepage
+            }
+            else
+            {
+                Message = "Error en el login";
+            }
+
+            IsBusy = false;
+        }*/
         private async Task LoginAsync()
         {
             if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
@@ -96,28 +157,30 @@ namespace SchoolProyectApp.ViewModels
             {
                 await SecureStorage.SetAsync("auth_token", authResponse.Token);
 
-                // Extraer `UserID` del JWT Token
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var jwtToken = tokenHandler.ReadJwtToken(authResponse.Token);
-
                 var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
 
                 if (!string.IsNullOrEmpty(userIdClaim) && int.TryParse(userIdClaim, out int userId))
                 {
-                    await SecureStorage.SetAsync("user_id", userId.ToString()); // Convertir int a string
-                    Console.WriteLine($" UserID extraído y guardado: {userId}");
-                }
-                else
-                {
-                    Console.WriteLine(" Error: No se pudo extraer UserID del token.");
-                }
+                    await SecureStorage.SetAsync("user_id", userId.ToString());
+                    Console.WriteLine($"✔ UserID guardado: {userId}");
 
-                // Guardar UserID y RoleID en SecureStorage si existen en `authResponse`
-                await SecureStorage.SetAsync("user_id", authResponse.UserID.ToString() ?? ""); // Manejo seguro de `null`
-                await SecureStorage.SetAsync("user_role", authResponse.RoleID.ToString() ?? ""); // Manejo seguro de `null`
+                    var userDetails = await _apiService.GetUserDetailsAsync(userId);
+                    if (userDetails != null)
+                    {
+                        Console.WriteLine($"✔ Usuario cargado: {userDetails.UserName}");
+                        await SecureStorage.SetAsync("user_role", userDetails.RoleID.ToString());
+                    }
 
-                Message = "Login exitoso";
-                await Shell.Current.GoToAsync("//homepage"); // Redirigir al homepage
+                    // 🔹 Redirigir correctamente después del login
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        await Shell.Current.GoToAsync("//homepage");
+                    });
+
+                    Message = "Login exitoso";
+                }
             }
             else
             {
@@ -126,57 +189,17 @@ namespace SchoolProyectApp.ViewModels
 
             IsBusy = false;
         }
+        public void ResetFields()
+        {
+            Email = string.Empty;
+            Password = string.Empty;
+            Message = string.Empty;
+        }
+
+
     }
+
 }
-
-/* private async Task LoginAsync()
- {
-     if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
-     {
-         Message = "Email y contraseña requeridos";
-         return;
-     }
-
-     IsBusy = true;
-     var user = new User { Email = Email, Password = Password };
-     var authResponse = await _apiService.LoginAsync(user);
-
-     if (authResponse != null && !string.IsNullOrEmpty(authResponse.Token))
-     {
-         // 🔹 Guardar datos en SecureStorage
-         await SecureStorage.SetAsync("auth_token", authResponse.Token);
-         await SecureStorage.SetAsync("user_id", authResponse.UserID.ToString());
-         await SecureStorage.SetAsync("user_role", authResponse.RoleID.ToString());
-
-         RoleID = authResponse.RoleID; // Actualizar RoleID en el ViewModel
-
-         Message = "Login exitoso";
-
-         // 🔹 Redirigir según el rol del usuario
-         string route = RoleID switch
-         {
-             1 => "homepage",  // Student
-             2 => "homepage",  // Teacher
-             3 => "homepage",  // Parent
-             _ => "homepage"   // Por defecto, redirigir al homepage
-         };
-
-         await Shell.Current.GoToAsync($"///{route}");
-     }
-     else
-     {
-         Message = "Error en el login";
-     }
-
-     IsBusy = false;
- }
-
- private void OnPropertyChanged(string propertyName) =>
-     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-}
-}*/
-
-
 
 
 

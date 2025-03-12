@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
+             x:Class="SchoolProyectApp.Views.CoursesPage"
+             Title="Mis Cursos">
+
+   <!-- <Grid RowDefinitions="Auto,*,Auto">-->
+    <ContentPage.BindingContext>
+        <vm:CoursesPageViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid Padding="0" RowDefinitions="Auto,*,Auto">
+        <!-- Campo de búsqueda -->
+        <SearchBar Placeholder="Buscar cursos..."
+                   Margin="0,15,0,0"
+                   Text="{Binding SearchText}"
+                   SearchCommand="{Binding SearchCommand}" />
+
+        <!-- Mensaje cuando no hay cursos disponibles -->
+
+        <VerticalStackLayout HorizontalOptions="Center" Spacing="5" Margin="0,140,0,0">
+            
+            <!-- Icono FontAwesome -->
+            <Label Text="&#xf057;" 
+           FontSize="110"
+           FontFamily="FontAwesomeSolid"
+           TextColor="Gray"
+           HorizontalOptions="Center"
+           Margin="0,70,0,20"/>
+
+            <!-- Texto -->
+            <Label Text="No se encontraron cursos"
+            FontSize="22"
+            TextColor="DarkGray"
+            HorizontalOptions="Center"/>    
+
+        </VerticalStackLayout>
+
+
+
+        <CollectionView ItemsSource="{Binding FilteredCourses}"
+                        IsVisible="{Binding IsCourseListEmpty, Converter={StaticResource InverseBooleanConverter}}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="5" BackgroundColor="LightGray">
+                        <StackLayout>
+                            <Label Text="{Binding Name}" FontSize="20" FontAttributes="Bold" />
+                            <Label Text="{Binding Description}" FontSize="16" />
+                            <Label Text="Profesor: {Binding TeacherID}" FontSize="14" FontAttributes="Italic" />
+
+                            <!-- Mostrar notas solo si el usuario es estudiante o padre -->
+                            <Label Text="Nota: {Binding GradeValue}" FontSize="14" IsVisible="{Binding Source={x:Reference Page}, Path=BindingContext.UserRole, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter=1}" />
+
+                            <!-- Botón de edición solo para profesores -->
+                            <Button Text="Editar Curso"
+                                Command="{Binding EditCourseCommand}"
+                                CommandParameter="{Binding}" 
+                                IsVisible="{Binding Source={x:Reference Page}, Path=BindingContext.RoleID, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter=2}" />
+
+                        </StackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <!-- Barra de navegación inferior -->
+        <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
+                <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+            </StackLayout>
+
+            <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding CourseCommand}" Clicked="AnimateButton" />
+                <Label Text="Cursos" FontSize="10" HorizontalOptions="Center" />
+            </StackLayout>
+
+            <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding FirstProfileCommand}" Clicked="AnimateButton" />
+                <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+            </StackLayout>
+
+            <StackLayout Grid.Column="3" HorizontalOptions="Center">
+                <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
+                <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+            </StackLayout>
+        </Grid>
+    </Grid>
+    <!--</Grid>-->
+</ContentPage>
+
+
+<!--<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
+             x:Class="SchoolProyectApp.Views.CoursesPage">
+
+    <ContentPage.BindingContext>
+        <vm:CoursesPageViewModel />
+    </ContentPage.BindingContext>
+
+    <StackLayout Padding="10">
+        <Label Text="Lista de Cursos" FontSize="Large" HorizontalOptions="Center"/>
+
+        <ListView ItemsSource="{Binding Courses}" HasUnevenRows="True">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Padding="10" Orientation="Vertical">
+                            <Label Text="{Binding CourseName}" FontSize="Medium" FontAttributes="Bold"/>
+                            <Label Text="{Binding Description}" FontSize="Small"/>
+                            <Button Text="Editar" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CoursesPageViewModel}}, Path=EditCourseCommand}" CommandParameter="{Binding}" IsVisible="{Binding Source={RelativeSource AncestorType={x:Type vm:CoursesPageViewModel}}, Path=CanEditCourses}" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+</ContentPage>
+
+</ContentPage>-->

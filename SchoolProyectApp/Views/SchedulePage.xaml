@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<!--<?xml version="1.0" encoding="UTF-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SchoolProyectApp.Views.SchedulePage">
 
 	<Grid RowDefinitions="Auto,Auto,*,Auto">
-		<!-- Encabezado -->
+		 Encabezado 
 		<StackLayout Grid.Row="0" BackgroundColor="#007AFF" Padding="10">
 			<Label Text="Horario" FontSize="24" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center" />
 
-			<!-- Botón de Editar solo para Teachers -->
+			 Botón de Editar solo para Teachers
 			<Button Text="Editar Horario"
 					Command="{Binding EditScheduleCommand}"
 					IsVisible="{Binding CanEditSchedule}"
@@ -18,7 +18,7 @@
 
 		</StackLayout>
 
-		<!-- Selector de días -->
+		Selector de días 
 		<ScrollView Grid.Row="1" Orientation="Horizontal">
 			<StackLayout Orientation="Horizontal" Padding="10" Spacing="10">
 				<Button Text="Lunes" Command="{Binding SelectDayCommand}" CommandParameter="Lunes" />
@@ -30,7 +30,7 @@
 			</StackLayout>
 		</ScrollView>
 
-		<!-- Horarios del día seleccionado -->
+		 Horarios del día seleccionado 
 		<CollectionView Grid.Row="2" ItemsSource="{Binding SelectedDaySchedule}" >
 			<CollectionView.ItemTemplate>
 				<DataTemplate>
@@ -42,7 +42,7 @@
 			</CollectionView.ItemTemplate>
 		</CollectionView>
 
-		<!-- Barra de navegación inferior -->
+		 Barra de navegación inferior 
 		<Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
@@ -72,6 +72,6 @@
 			</StackLayout>
 		</Grid>
 	</Grid>
-</ContentPage>
+</ContentPage>-->
 
 

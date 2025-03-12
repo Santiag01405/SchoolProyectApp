@@ -19,5 +19,17 @@ namespace SchoolProyectApp.Views
                 await button.ScaleTo(1, 100, Easing.CubicOut);
             }
         }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if (BindingContext is HomePageViewModel viewModel)
+            {
+                Console.WriteLine("🔄 HomePage está apareciendo, recargando datos del usuario...");
+                viewModel.LoadUserDataFromApi().ConfigureAwait(false);
+            }
+        }
+
+
     }
 }

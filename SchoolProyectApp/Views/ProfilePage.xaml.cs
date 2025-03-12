@@ -5,10 +5,17 @@ namespace SchoolProyectApp.Views
 {
     public partial class ProfilePage : ContentPage
     {
+        public ProfileViewModel _viewModel;
         public ProfilePage()
         {
             InitializeComponent();
-            BindingContext = new ProfileViewModel();
+            _viewModel = new ProfileViewModel();
+            BindingContext = _viewModel;
+        }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            _viewModel.ResetFields();
         }
         private async void AnimateButton(object sender, EventArgs e)
         {

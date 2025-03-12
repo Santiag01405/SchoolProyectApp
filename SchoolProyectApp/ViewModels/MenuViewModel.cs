@@ -6,40 +6,27 @@ namespace SchoolProyectApp.ViewModels
 {
     public class MenuViewModel : BaseViewModel
     {
-        public ICommand MessagesCommand { get; }
-        public ICommand RankingCommand { get; }
-        public ICommand TimerCommand { get; }
-        public ICommand CompetitionsCommand { get; }
-        public ICommand CalendarCommand { get; }
-        public ICommand MaxRecordsCommand { get; }
-        public ICommand BenchmarksCommand { get; }
-        public ICommand PhysicalEvolutionCommand { get; }
-        public ICommand AnalyticsCommand { get; }
-        public ICommand ExerciseLibraryCommand { get; }
-        public ICommand VideosCommand { get; }
         public ICommand HomeCommand { get; }
         public ICommand OpenScheduleCommand { get; }
         public ICommand OpenEditScheduleCommand { get; } 
         public ICommand OpenMenuCommand { get; }
-
+        public ICommand CourseCommand { get; }
+        public ICommand ProfileCommand { get; }
+        public ICommand LoginCommand { get; }
+        public ICommand LogoutCommand { get; }
+        public ICommand FirstProfileCommand { get; }
         public MenuViewModel()
         {
             // Barra de navegación
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
+            ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
             OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+            CourseCommand = new Command(async () => await Shell.Current.GoToAsync("///courses"));
+            FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
 
-            // Comandos de las opciones del menú
-            MessagesCommand = new Command(async () => await Shell.Current.GoToAsync("messages"));
-            RankingCommand = new Command(async () => await Shell.Current.GoToAsync("ranking"));
-            TimerCommand = new Command(async () => await Shell.Current.GoToAsync("timer"));
-            CompetitionsCommand = new Command(async () => await Shell.Current.GoToAsync("competitions"));
-            CalendarCommand = new Command(async () => await Shell.Current.GoToAsync("calendar"));
-            MaxRecordsCommand = new Command(async () => await Shell.Current.GoToAsync("maxrecords"));
-            BenchmarksCommand = new Command(async () => await Shell.Current.GoToAsync("benchmarks"));
-            PhysicalEvolutionCommand = new Command(async () => await Shell.Current.GoToAsync("physicalevolution"));
-            AnalyticsCommand = new Command(async () => await Shell.Current.GoToAsync("analytics"));
-            ExerciseLibraryCommand = new Command(async () => await Shell.Current.GoToAsync("exerciselibrary"));
-            VideosCommand = new Command(async () => await Shell.Current.GoToAsync("videos"));
+            //Cerrar sesion
+            LogoutCommand = new Command(async () => await Logout());
+
 
             // Todos pueden ver el horario
             OpenScheduleCommand = new Command(async () => await Shell.Current.GoToAsync("///schedule"));
@@ -63,6 +50,15 @@ namespace SchoolProyectApp.ViewModels
         {
             var roleString = SecureStorage.GetAsync("user_role").Result;
             return int.TryParse(roleString, out int role) ? role : 0;
+        }
+
+        //Logout
+        private async Task Logout()
+        {
+            if (Application.Current.MainPage is AppShell shell)
+            {
+                await shell.Logout();
+            }
         }
     }
 }

@@ -14,8 +14,8 @@ namespace SchoolProyectApp.ViewModels
             // Aquí podrías cargar las notificaciones desde la API
             Notifications = new ObservableCollection<Notification>
             {
-                new Notification { Title = "Examen Próximo", Description = "Tienes un examen la próxima semana." },
-                new Notification { Title = "Nueva Calificación", Description = "Se ha publicado una nueva calificación en Matemáticas." }
+                //new Notification { Title = "Examen Próximo", Description = "Tienes un examen la próxima semana." },
+                //new Notification { Title = "Nueva Calificación", Description = "Se ha publicado una nueva calificación en Matemáticas." }
             };
         }
     }

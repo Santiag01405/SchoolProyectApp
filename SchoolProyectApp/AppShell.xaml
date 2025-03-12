@@ -5,27 +5,41 @@
        x:Class="SchoolProyectApp.AppShell"
        Shell.FlyoutBehavior="Disabled">
 
+    <Shell.Resources>
+        <Style x:Key="TitleViewStyle" TargetType="Label">
+            <Setter Property="HorizontalOptions" Value="Center"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="TextColor" Value="White"/>
+        </Style>
+    </Shell.Resources>
+
     <!-- Página de Login -->
-    <ShellContent Title="Login" Route="login" ContentTemplate="{DataTemplate views:LoginPage}" />
+    <ShellContent Title="Login" Route="login" ContentTemplate="{DataTemplate views:LoginPage}" Shell.TitleColor="White" Shell.BackgroundColor="White"/>
 
     <!-- Página de Registro -->
-    <ShellContent Title="Registro" Route="register" ContentTemplate="{DataTemplate views:RegisterPage}" />
+    <ShellContent Title="Registro" Route="register" ContentTemplate="{DataTemplate views:RegisterPage}" Shell.TitleColor="White"/>
 
     <!-- Página de Inicio -->
-    <ShellContent Title="Inicio" Route="homepage" ContentTemplate="{DataTemplate views:HomePage}" />
+    <ShellContent Title="Inicio" Route="homepage" ContentTemplate="{DataTemplate views:HomePage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
     
     <!--Nuevo menu-->
-    <ShellContent Title="Menu" Route="menu" ContentTemplate="{DataTemplate views:MenuPage}" />
+    <ShellContent Title="Menu" Route="menu" ContentTemplate="{DataTemplate views:MenuPage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
     
-    <!--Perfil del usuario-->
-    <ShellContent Title="Perfil" Route="profile" ContentTemplate="{DataTemplate views:ProfilePage}" />
+    <!--Perfil de usuario-->
+    <ShellContent Title="Perfil" Route="firtsprofile" ContentTemplate="{DataTemplate views:FirstProfile}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+    
+    <!--Modificar perfil del usuario-->
+    <ShellContent Title="Modicar perfil" Route="profile" ContentTemplate="{DataTemplate views:ProfilePage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
     
     <!--Horario-->
-    <ShellContent Title="Horario" Route="schedule" ContentTemplate="{DataTemplate views:SchedulePage}" />
+    <!--<ShellContent Title="Horario" Route="schedule" ContentTemplate="{DataTemplate views:SchedulePage}" />-->
 
     <!-- Página de Edición del Horario (Solo Teachers) -->
-    <ShellContent Title="Editar Horario" Route="editschedule" ContentTemplate="{DataTemplate views:EditSchedulePage}" />
-
+    <!--<ShellContent Title="Editar Horario" Route="editschedule" ContentTemplate="{DataTemplate views:EditSchedulePage}" />-->
+    
+    <!--Curso-->
+    <ShellContent Title="Cursos" Route="courses" ContentTemplate="{DataTemplate views:CoursesPage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
 
 </Shell>
 

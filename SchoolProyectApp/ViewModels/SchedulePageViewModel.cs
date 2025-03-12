@@ -1,96 +1,86 @@
-﻿using System.Collections.ObjectModel;
+﻿/*using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Storage;
+using SchoolProyectApp.Models;
+using SchoolProyectApp.Services;
+using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace SchoolProyectApp.ViewModels
 {
     public class SchedulePageViewModel : BaseViewModel
     {
-        private ObservableCollection<ScheduleItem> _selectedDaySchedule;
-        private int _userRole;
-
-        public bool CanEditSchedule
-        {
-            get => _userRole == 2; // 🔹 Ahora correctamente asignado a Teachers (rol 2)
-        }
-
-        public ObservableCollection<ScheduleItem> SelectedDaySchedule
-        {
-            get => _selectedDaySchedule;
-            set
-            {
-                _selectedDaySchedule = value;
-                OnPropertyChanged(nameof(SelectedDaySchedule));
-            }
-        }
-
-        public ICommand SelectDayCommand { get; }
-        public ICommand EditScheduleCommand { get; }
-
+        private readonly ApiService _apiService;
+        public ObservableCollection<Course> Courses { get; set; }
         public ICommand HomeCommand { get; }
+        public ICommand WodCommand { get; }
         public ICommand ProfileCommand { get; }
         public ICommand OpenMenuCommand { get; }
+        public ICommand AddStudentCommand { get; }
+        public ICommand RemoveStudentCommand { get; }
 
-        private readonly Dictionary<string, ObservableCollection<ScheduleItem>> _scheduleData;
+        private bool _canEditCourses;
+        public bool CanEditCourses
+        {
+            get => _canEditCourses;
+            set => SetProperty(ref _canEditCourses, value);
+        }
 
         public SchedulePageViewModel()
         {
-            // 🔹 Obtener el rol del usuario y forzar actualización
-            _userRole = GetUserRole();
-            OnPropertyChanged(nameof(CanEditSchedule)); // 🔹 Asegurar que se actualiza en la UI
-
-            _scheduleData = new Dictionary<string, ObservableCollection<ScheduleItem>>
-            {
-                { "Lunes", new ObservableCollection<ScheduleItem> { new ScheduleItem { Time = "07:45AM - 09:15AM", Subject = "Matemáticas" } } },
-                { "Martes", new ObservableCollection<ScheduleItem> { new ScheduleItem { Time = "07:45AM - 09:15AM", Subject = "Ciencias" } } },
-                { "Miércoles", new ObservableCollection<ScheduleItem> { new ScheduleItem { Time = "07:45AM - 09:15AM", Subject = "Inglés" } } },
-                { "Jueves", new ObservableCollection<ScheduleItem> { new ScheduleItem { Time = "07:45AM - 09:15AM", Subject = "API" } } },
-                { "Viernes", new ObservableCollection<ScheduleItem> { new ScheduleItem { Time = "07:45AM - 09:15AM", Subject = "Filosofía" } } },
-                { "Sábado", new ObservableCollection<ScheduleItem> { new ScheduleItem { Time = "07:45AM - 09:15AM", Subject = "Taller de Robótica" } } }
-            };
-
-            SelectedDaySchedule = new ObservableCollection<ScheduleItem>();
-            SelectDayCommand = new Command<string>(SelectDay);
-            EditScheduleCommand = new Command(EditSchedule, () => CanEditSchedule);
-
-            SelectDay("Lunes"); // Cargar el primer día por defecto
-
-            // Barra inferior
-            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
-            ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
-            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+            _apiService = new ApiService();
+            Courses = new ObservableCollection<Course>();
+            HomeCommand = new Command(() => NavigateTo("Home"));
+            WodCommand = new Command(() => NavigateTo("Wod"));
+            ProfileCommand = new Command(() => NavigateTo("Profile"));
+            OpenMenuCommand = new Command(() => NavigateTo("Menu"));
+            AddStudentCommand = new Command<Course>(async (course) => await AddStudentToCourse(course));
+            RemoveStudentCommand = new Command<Course>(async (course) => await RemoveStudentFromCourse(course));
+            LoadCourses();
         }
 
-        private int GetUserRole()
+        private async void LoadCourses()
         {
-            var roleString = SecureStorage.GetAsync("user_role").Result;
-            return int.TryParse(roleString, out int role) ? role : 0;
-        }
+            var userRole = await SecureStorage.GetAsync("user_role");
+            CanEditCourses = userRole == "2"; // Solo los profesores pueden editar
 
-        private void SelectDay(string day)
-        {
-            if (_scheduleData.ContainsKey(day))
+            var userId = await SecureStorage.GetAsync("user_id");
+            if (string.IsNullOrEmpty(userId)) return;
+
+            var courses = await _apiService.GetCoursesForUserAsync(int.Parse(userId));
+            Courses.Clear();
+            foreach (var course in courses)
             {
-                SelectedDaySchedule = new ObservableCollection<ScheduleItem>(_scheduleData[day]);
+                Courses.Add(course);
             }
         }
 
-        private async void EditSchedule()
+        private async Task AddStudentToCourse(Course course)
         {
-            if (!CanEditSchedule)
-                return;
+            var success = await _apiService.AddStudentToCourseAsync(course.CourseId);
+            if (success)
+            {
+                LoadCourses(); // Recargar la lista después de agregar
+            }
+        }
 
-            await Shell.Current.GoToAsync("///editschedule");
+        private async Task RemoveStudentFromCourse(Course course)
+        {
+            var success = await _apiService.RemoveStudentFromCourseAsync(course.CourseId);
+            if (success)
+            {
+                LoadCourses(); // Recargar la lista después de eliminar
+            }
+        }
+
+        private void NavigateTo(string page)
+        {
+            // Implementar navegación a otras páginas
         }
     }
+}*/
 
-    public class ScheduleItem
-    {
-        public string? Time { get; set; }
-        public string? Subject { get; set; }
-    }
-}
 
 
 

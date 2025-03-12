@@ -50,15 +50,42 @@
 		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
 
 		<!-- Custom Fonts -->
-		<MauiFont Include="Resources\Images\Fonts\*" />
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AndroidResource Remove="NewFolder\**" />
+	  <AndroidResource Remove="Resources\Images\Fonts\**" />
+	  <Compile Remove="NewFolder\**" />
+	  <Compile Remove="Resources\Images\Fonts\**" />
+	  <EmbeddedResource Remove="NewFolder\**" />
+	  <EmbeddedResource Remove="Resources\Images\Fonts\**" />
+	  <MauiCss Remove="NewFolder\**" />
+	  <MauiCss Remove="Resources\Images\Fonts\**" />
+	  <MauiImage Remove="Resources\Images\Fonts\**" />
+	  <MauiXaml Remove="NewFolder\**" />
+	  <MauiXaml Remove="Resources\Images\Fonts\**" />
+	  <None Remove="NewFolder\**" />
+	  <None Remove="Resources\Images\Fonts\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="ViewModels\ForgotPasswordViewModel.cs" />
+	  <Compile Remove="ViewModels\SchedulePageViewModel.cs" />
+	  <Compile Remove="Views\ForgotPassword.xaml.cs" />
+	  <Compile Remove="Views\SchedulePage.xaml.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiImage Remove="Resources\Images\menu-hamburguesa.png" />
 	  <MauiImage Remove="Resources\Images\usuarios-alt.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Remove="Views\ForgotPassword.xaml" />
+	  <MauiXaml Remove="Views\SchedulePage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -75,7 +102,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Views\CoursesPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\EditCoursePopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\EditSchedulePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\FirstProfile.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\HomePage.xaml">
@@ -96,9 +132,16 @@
 	  <MauiXaml Update="Views\RegisterPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\SchedulePage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="NewFolder1\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiFont Include="Resources\Fonts\fa-solid-900.ttf" />
+	  <MauiFont Include="Resources\Fonts\OpenSans-Regular.ttf" />
+	  <MauiFont Include="Resources\Fonts\OpenSans-Semibold.ttf" />
 	</ItemGroup>
 
 </Project>

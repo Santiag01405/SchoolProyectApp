@@ -1,14 +1,14 @@
-﻿/*using Microsoft.Maui.Controls;
+﻿using Microsoft.Maui.Controls;
 using SchoolProyectApp.ViewModels;
 
 namespace SchoolProyectApp.Views
 {
-    public partial class SchedulePage : ContentPage
+    public partial class FirstProfile : ContentPage
     {
-        public SchedulePage()
+        public FirstProfile()
         {
             InitializeComponent();
-            BindingContext = new SchedulePageViewModel();
+            BindingContext = new FirstProfileViewModel();
         }
         private async void AnimateButton(object sender, EventArgs e)
         {
@@ -19,4 +19,5 @@ namespace SchoolProyectApp.Views
             }
         }
     }
-}*/
+}
+

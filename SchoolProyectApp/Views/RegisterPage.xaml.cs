@@ -5,10 +5,17 @@ namespace SchoolProyectApp.Views
 {
     public partial class RegisterPage : ContentPage
     {
+        public RegisterViewModel _viewModel; 
         public RegisterPage()
         {
             InitializeComponent();
-            BindingContext = new RegisterViewModel();
+            _viewModel = new RegisterViewModel();
+            BindingContext = _viewModel;
+        }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            _viewModel.ResetFields();
         }
     }
 }

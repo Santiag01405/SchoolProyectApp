@@ -75,7 +75,6 @@
 	  <Compile Remove="ViewModels\ForgotPasswordViewModel.cs" />
 	  <Compile Remove="ViewModels\SchedulePageViewModel.cs" />
 	  <Compile Remove="Views\ForgotPassword.xaml.cs" />
-	  <Compile Remove="Views\SchedulePage.xaml.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -85,7 +84,6 @@
 
 	<ItemGroup>
 	  <MauiXaml Remove="Views\ForgotPassword.xaml" />
-	  <MauiXaml Remove="Views\SchedulePage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -130,6 +128,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\RegisterPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\SchedulePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

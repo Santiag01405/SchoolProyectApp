@@ -17,7 +17,7 @@
                 <!--Horario-->
                 <StackLayout Orientation="Horizontal" Padding="0,0,0,5" Margin="0,30,0,0">
                     <Label Text="&#xf073;" FontSize="30" FontFamily="FontAwesomeSolid" TextColor="Gray" Margin="0,0,20,0" />
-                    <Button Text="Horario" Command="{Binding OpenScheduleCommand}" Padding="50,0,50,0"/>
+                    <Button Text="Horario" Command="{Binding GoToSchedulePage}" Padding="50,0,50,0"/>
                 </StackLayout>
 
                 <BoxView HeightRequest="1" BackgroundColor="Gray" Margin="10,40"/>

@@ -35,7 +35,7 @@
                    Grid.Column="1"
                    VerticalOptions="Center"
                    HorizontalOptions="Center"
-                   TextColor="Black">
+                   TextColor="Gray">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Tapped="TogglePasswordLabel_Tapped"/>
                     </Label.GestureRecognizers>

@@ -33,7 +33,7 @@
     <ShellContent Title="Modicar perfil" Route="profile" ContentTemplate="{DataTemplate views:ProfilePage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
     
     <!--Horario-->
-    <!--<ShellContent Title="Horario" Route="schedule" ContentTemplate="{DataTemplate views:SchedulePage}" />-->
+    <ShellContent Title="Horario" Route="schedule" ContentTemplate="{DataTemplate views:SchedulePage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
 
     <!-- Página de Edición del Horario (Solo Teachers) -->
     <!--<ShellContent Title="Editar Horario" Route="editschedule" ContentTemplate="{DataTemplate views:EditSchedulePage}" />-->

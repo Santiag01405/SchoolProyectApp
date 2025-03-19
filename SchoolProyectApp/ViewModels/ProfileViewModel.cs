@@ -189,23 +189,5 @@ namespace SchoolProyectApp.ViewModels
             Message = string.Empty;
         }
 
-        //Mostrar y ocultar contrasena
-        private bool _isPasswordHidden = true;
-        public bool IsPasswordHidden
-        {
-            get => _isPasswordHidden;
-            set
-            {
-                _isPasswordHidden = value;
-                OnPropertyChanged(nameof(IsPasswordHidden));
-                OnPropertyChanged(nameof(EyeIcon));
-            }
-        }
-
-        // Cambia el ícono del ojo según si la contraseña está oculta o visible
-        public string EyeIcon => IsPasswordHidden ? "\uf06e" : "\uf070"; // FontAwesome: f06e (ojo abierto), f070 (ojo cerrado)
-
-        public ICommand TogglePasswordVisibilityCommand { get; }
-
     }
 }

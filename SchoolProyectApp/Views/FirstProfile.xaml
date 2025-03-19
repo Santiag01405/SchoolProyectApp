@@ -23,6 +23,7 @@
 
 					<Label Text="Rol:" FontAttributes="Bold" FontSize="20"/>
 					<Label Text="{Binding Role}" FontSize="16"/>
+
 				</VerticalStackLayout>
 			</Frame>
 

@@ -2,6 +2,7 @@
 using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -342,8 +343,10 @@ namespace SchoolProyectApp.Services
                     return null;
                 }
 
+
+
                 // 🔹 Filtrar inscripciones del usuario autenticado
-                var userEnrollments = allEnrollments.Where(e => e.StudentID == student.StudentID).ToList();
+                var userEnrollments = allEnrollments.Where(e => e.UserID == student.StudentID).ToList();
 
                 Console.WriteLine($"✅ {userEnrollments.Count} inscripciones encontradas para el usuario {userId} con StudentID {student.StudentID}");
 
@@ -355,9 +358,6 @@ namespace SchoolProyectApp.Services
                 return null;
             }
         }
-
-
-
 
         // Obtener un curso por su ID
         public async Task<Course?> GetCourseByIdAsync(int courseId)
@@ -422,6 +422,137 @@ namespace SchoolProyectApp.Services
         }
 
 
+        private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+
+        //Horario
+        public async Task<List<Course>> GetUserSchedule(int userId)
+        {
+            try
+            {
+                var url = $"https://SchoolProject123.somee.com/api/schedule/{userId}";
+                var response = await _httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonSerializer.Deserialize<List<Course>>(json, _jsonOptions);
+                }
+                else
+                {
+                    Console.WriteLine($"❌ Error al obtener horario: {response.StatusCode}");
+                    return new List<Course>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Excepción al obtener horario: {ex.Message}");
+                return new List<Course>();
+            }
+        }
+        public async Task<T?> GetAsync<T>(string endpoint)
+        {
+            try
+            {
+                // 🔹 Construimos la URL completa combinando BaseAddress con el endpoint
+                var fullUrl = new Uri(_httpClient.BaseAddress, endpoint);
+                Console.WriteLine($"🌍 Haciendo GET a: {fullUrl}");
+
+                var response = await _httpClient.GetAsync(fullUrl);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"❌ Error en GET {fullUrl}: {response.StatusCode}");
+                    return default;
+                }
+
+                // 🔹 Leer y deserializar la respuesta JSON
+                var json = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"📜 Respuesta JSON: {json}");
+
+                return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Excepción en GetAsync<{typeof(T).Name}>: {ex.Message}");
+                return default;
+            }
+        }
+
+        public async Task<List<Enrollment>> GetUserWeeklySchedule(int userId)
+        {
+            return await GetAsync<List<Enrollment>>($"api/enrollments/user/{userId}/schedule");
+        }
+
+
+        /*Estoy haciendo un horario en una app .net maui, ya hice el backend, esto es lo que manda postman de este: [{"enrollmentID":3,"userID":61,"userName":"Gabriel Ramirez ","courseID":1,"courseName":"Matemáticas","dayOfWeek":1,"studentID":"No aplica"},{"enrollmentID":5,"userID":61,"userName":"Gabriel Ramirez ","courseID":2,"courseName":"Matemáticas","dayOfWeek":1,"studentID":"No aplica"}]. Este es el link de este: https://SchoolProject123.somee.com/api/enrollments/user/61/schedule. Quiero mostrarlo en una list view, que en la parte superior de la pagina haya un boton de dias y asi poder variar entre los dias. Aqui te muestro como esta el api service public async Task<List<Enrollment>> GetUserWeeklySchedule(int userId)
+ {
+     return await GetAsync<List<Enrollment>>($"api/enrollments/user/{userId}/schedule");
+ }. Aqui te muestro el controller del backend: [HttpGet("user/{userId}/schedule")]
+public async Task<ActionResult<IEnumerable<object>>> GetUserWeeklySchedule(int userId) // ✅ Usar ActionResult en lugar de IActionResult<>
+{
+    var enrollments = await _context.Enrollments
+        .Where(e => e.UserID == userId) // ✅ Asegurar que UserID es una propiedad
+        .Select(e => new
+        {
+            e.EnrollmentID,
+            e.UserID,
+            UserName = e.User != null ? e.User.UserName : "Usuario no encontrado",
+            e.CourseID,
+            CourseName = e.Course != null ? e.Course.Name : "Curso no encontrado",
+            DayOfWeek = e.Course != null ? (DayOfWeek?)e.Course.DayOfWeek : null, // ✅ Convertir a DayOfWeek? para permitir null
+            StudentID = e.GetType().GetProperty("StudentID") != null
+                ? (e.GetType().GetProperty("StudentID")!.GetValue(e, null) ?? "Sin información")
+                : "No aplica"
+        })
+        .ToListAsync();
+
+    if (enrollments == null || enrollments.Count == 0)
+        return NotFound("El usuario no tiene inscripciones.");
+
+    return Ok(enrollments);
+}
+ .Quiero que simplemente se muestre la informacion que manda el backend en la app de la manera que ya te dije. Antes de que empieces a dar el codigo, te ayudaria tener algo mas?
+
+
+        /*public async Task<List<Course>> GetUserSchedule(int userId)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<Course>>($"schedule/{userId}");
+            }
+            catch
+            {
+                return new List<Course>();
+            }
+        }
+
+        // ✅ Crear un nuevo horario
+        public async Task<bool> CreateCourse(Course newCourse)
+        {
+            var response = await _httpClient.PostAsJsonAsync("schedule/create", newCourse);
+            return response.IsSuccessStatusCode;
+        }
+
+        // ✅ Editar un horario existente
+        public async Task<bool> EditCourse(Course course)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"schedule/edit/{course.CourseID}", course);
+            return response.IsSuccessStatusCode;
+        }
+
+        // ✅ Eliminar un horario
+        public async Task<bool> DeleteCourse(int courseId)
+        {
+            var response = await _httpClient.DeleteAsync($"schedule/delete/{courseId}");
+            return response.IsSuccessStatusCode;
+        }*/
 
     }
 }

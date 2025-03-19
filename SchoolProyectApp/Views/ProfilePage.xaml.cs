@@ -25,5 +25,19 @@ namespace SchoolProyectApp.Views
                 await button.ScaleTo(1, 100, Easing.CubicOut);
             }
         }
+
+        private void TogglePasswordLabel_Tapped(object sender, EventArgs e)
+        {
+            PasswordEntry.IsPassword = !PasswordEntry.IsPassword;
+
+
+            // Verifica si el Label está en el contexto
+            if (TogglePasswordLabel != null)
+            {
+                // Cambiar el icono entre ojo abierto y cerrado
+                TogglePasswordLabel.Text = PasswordEntry.IsPassword ? "\uf06e" : "\uf070"; // fa-eye / fa-eye-slash
+
+            }
+        }
     }
 }

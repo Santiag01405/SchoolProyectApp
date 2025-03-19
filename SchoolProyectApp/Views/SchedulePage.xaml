@@ -1,77 +1,217 @@
-<!--<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
+
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SchoolApp.SchedulePage">
+
+    <StackLayout Padding="20">
+        <!-- Picker para seleccionar el día de la semana -->
+        <Picker x:Name="DayPicker"
+                Title="Seleccionar Día"
+                SelectedIndexChanged="DayPicker_SelectedIndexChanged">
+            <Picker.Items>
+                <x:String>Domingo</x:String>
+                <x:String>Lunes</x:String>
+                <x:String>Martes</x:String>
+                <x:String>Miércoles</x:String>
+                <x:String>Jueves</x:String>
+                <x:String>Viernes</x:String>
+                <x:String>Sábado</x:String>
+            </Picker.Items>
+        </Picker>
+
+        <!-- ListView para mostrar los cursos -->
+        <ListView x:Name="ScheduleListView">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell Text="{Binding .}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- Mensaje cuando no hay datos -->
+        <Label x:Name="NoDataLabel"
+               Text="No hay cursos para este día"
+               IsVisible="False"
+               HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand"
+               TextColor="Red"/>
+    </StackLayout>
+</ContentPage>
+
+
+<!--ANTERIOR INTENTO-->
+<!--<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:SchoolProyectApp.ViewModels"
              x:Class="SchoolProyectApp.Views.SchedulePage">
+    
+    
+    <ContentPage.BindingContext>
+        <viewmodels:ScheduleViewModel />
+    </ContentPage.BindingContext>
 
-	<Grid RowDefinitions="Auto,Auto,*,Auto">
-		 Encabezado 
-		<StackLayout Grid.Row="0" BackgroundColor="#007AFF" Padding="10">
-			<Label Text="Horario" FontSize="24" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center" />
-
-			 Botón de Editar solo para Teachers
-			<Button Text="Editar Horario"
-					Command="{Binding EditScheduleCommand}"
-					IsVisible="{Binding CanEditSchedule}"
-					BackgroundColor="Red"
-					TextColor="White"
-					Padding="10" />
-
-		</StackLayout>
-
-		Selector de días 
-		<ScrollView Grid.Row="1" Orientation="Horizontal">
-			<StackLayout Orientation="Horizontal" Padding="10" Spacing="10">
-				<Button Text="Lunes" Command="{Binding SelectDayCommand}" CommandParameter="Lunes" />
-				<Button Text="Martes" Command="{Binding SelectDayCommand}" CommandParameter="Martes" />
-				<Button Text="Miércoles" Command="{Binding SelectDayCommand}" CommandParameter="Miércoles" />
-				<Button Text="Jueves" Command="{Binding SelectDayCommand}" CommandParameter="Jueves" />
-				<Button Text="Viernes" Command="{Binding SelectDayCommand}" CommandParameter="Viernes" />
-				<Button Text="Sábado" Command="{Binding SelectDayCommand}" CommandParameter="Sábado" />
-			</StackLayout>
-		</ScrollView>
-
-		 Horarios del día seleccionado 
-		<CollectionView Grid.Row="2" ItemsSource="{Binding SelectedDaySchedule}" >
-			<CollectionView.ItemTemplate>
-				<DataTemplate>
-					<StackLayout Padding="10" Orientation="Vertical" BackgroundColor="WhiteSmoke">
-						<Label Text="{Binding Time}" FontSize="16" FontAttributes="Bold" />
-						<Label Text="{Binding Subject}" FontSize="14" />
-					</StackLayout>
-				</DataTemplate>
-			</CollectionView.ItemTemplate>
-		</CollectionView>
-
-		 Barra de navegación inferior 
-		<Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
-
-			<StackLayout Grid.Column="0" HorizontalOptions="Center">
-				<Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
-				<Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
-			</StackLayout>
-
-			<StackLayout Grid.Column="1" HorizontalOptions="Center">
-				<Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding CourseCommand}" Clicked="AnimateButton" />
-				<Label Text="Cursos" FontSize="10" HorizontalOptions="Center" />
-			</StackLayout>
-
-			<StackLayout Grid.Column="2" HorizontalOptions="Center">
-				<Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding ProfileCommand}" Clicked="AnimateButton" />
-				<Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
-			</StackLayout>
-
-			<StackLayout Grid.Column="3" HorizontalOptions="Center">
-				<Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="Black" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
-				<Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
-			</StackLayout>
-		</Grid>
-	</Grid>
+    <StackLayout Padding="10">
+        <ListView ItemsSource="{Binding ScheduleEntries}" HasUnevenRows="True">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Padding="10">
+                            <Label Text="{Binding CourseName}" FontSize="18" FontAttributes="Bold"/>
+                            <Label Text="{Binding UserName}" FontSize="14" />
+                            <Label Text="{Binding DayOfWeek}" FontSize="14" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
 </ContentPage>-->
 
 
+
+
+<!--ANTERIOR INTENTO-->
+<!--<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SchoolProyectApp.Views.SchedulePage"
+             Title="Horario">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <StackLayout Padding="20" Spacing="10">
+
+        <Label Text="Horario del Día" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
+
+        <Label Text="{Binding Message}" FontSize="16" TextColor="Red" HorizontalOptions="Center" />
+
+       <Label IsVisible="{Binding WeeklySchedule.Count, Converter={StaticResource IntToVisibilityConverter}}" 
+       Text="No hay horarios disponibles."
+       FontSize="16" TextColor="Red" HorizontalOptions="Center"/>
+
+
+            <ListView ItemsSource="{Binding WeeklySchedule}" HasUnevenRows="True"
+          IsGroupingEnabled="True" GroupDisplayBinding="{Binding DayOfWeek}">
+
+                <ListView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid BackgroundColor="LightGray" Padding="10">
+                                <Label Text="{Binding DayOfWeek}" FontSize="18" FontAttributes="Bold"/>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.GroupHeaderTemplate>
+
+           
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Frame Padding="10" Margin="5" BorderColor="Gray" CornerRadius="10">
+                                <StackLayout>
+                                    <Label Text="{Binding CourseName}" FontSize="18" FontAttributes="Bold"/>
+                                    <Label Text="{Binding Description}" FontSize="14" />
+                                </StackLayout>
+                            </Frame>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+
+            <Button Text="Actualizar" Command="{Binding RefreshCommand}" BackgroundColor="#007AFF" TextColor="White"/>
+
+    </StackLayout>
+   
+    <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackLayout Grid.Column="0" HorizontalOptions="Center">
+            <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
+            <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+        </StackLayout>
+
+        <StackLayout Grid.Column="1" HorizontalOptions="Center">
+            <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding CourseCommand}" Clicked="AnimateButton" />
+            <Label Text="Cursos" FontSize="10" HorizontalOptions="Center" />
+        </StackLayout>
+
+        <StackLayout Grid.Column="2" HorizontalOptions="Center">
+            <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding FirstProfileCommand}" Clicked="AnimateButton" />
+            <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+        </StackLayout>
+
+        <StackLayout Grid.Column="3" HorizontalOptions="Center">
+            <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
+            <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+        </StackLayout>
+    </Grid>
+    </Grid>
+
+</ContentPage>-->
+
+
+<!--<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SchoolProyectApp.Views.SchedulePage"
+             Title="Horario">
+    
+    <Grid RowDefinitions="Auto,*,Auto">
+	<StackLayout Padding="20">
+		<Button Text="Cargar Horario" Command="{Binding LoadScheduleCommand}" />
+
+		<ListView ItemsSource="{Binding Courses}">
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<ViewCell>
+						<StackLayout Padding="10">
+							<Label Text="{Binding Name}" FontSize="18" FontAttributes="Bold"/>
+							<Label Text="{Binding Description}" FontSize="14"/>
+							<Label Text="{Binding DayOfWeek}" FontSize="14"/>
+
+							<StackLayout Orientation="Horizontal">
+								<Button Text="Editar" Command="{Binding Path=BindingContext.EditScheduleCommand, Source={x:Reference SchedulePage}}" CommandParameter="{Binding}" />
+								<Button Text="Eliminar" Command="{Binding Path=BindingContext.DeleteScheduleCommand, Source={x:Reference SchedulePage}}" CommandParameter="{Binding}" />
+							</StackLayout>
+						</StackLayout>
+					</ViewCell>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+	</StackLayout>
+    
+    <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackLayout Grid.Column="0" HorizontalOptions="Center">
+            <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
+            <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+        </StackLayout>
+
+        <StackLayout Grid.Column="1" HorizontalOptions="Center">
+            <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding CourseCommand}" Clicked="AnimateButton" />
+            <Label Text="Cursos" FontSize="10" HorizontalOptions="Center" />
+        </StackLayout>
+
+        <StackLayout Grid.Column="2" HorizontalOptions="Center">
+            <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding FirstProfileCommand}" Clicked="AnimateButton" />
+            <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+        </StackLayout>
+
+        <StackLayout Grid.Column="3" HorizontalOptions="Center">
+            <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
+            <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+        </StackLayout>
+    </Grid>
+    </Grid>
+</ContentPage>-->

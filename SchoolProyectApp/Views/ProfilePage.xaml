@@ -70,9 +70,9 @@
                 <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
             </StackLayout>
 
-            <StackLayout Grid.Column="1" HorizontalOptions="Center">
-                <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding CourseCommand}" Clicked="AnimateButton" />
-                <Label Text="Cursos" FontSize="10" HorizontalOptions="Center" />
+            <StackLayout Grid.Column="1" HorizontalOptions="Center" IsVisible="{Binding IsStudent}">
+                <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding EvaluationCommand}" Clicked="AnimateButton" />
+                <Label Text="Evaluaciones" FontSize="10" HorizontalOptions="Center" />
             </StackLayout>
 
             <StackLayout Grid.Column="2" HorizontalOptions="Center">

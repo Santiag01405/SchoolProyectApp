@@ -39,7 +39,32 @@
     <!--<ShellContent Title="Editar Horario" Route="editschedule" ContentTemplate="{DataTemplate views:EditSchedulePage}" />-->
     
     <!--Curso-->
-    <ShellContent Title="Cursos" Route="courses" ContentTemplate="{DataTemplate views:CoursesPage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+    <!--<ShellContent Title="Cursos" Route="courses" ContentTemplate="{DataTemplate views:CoursesPage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>-->
+
+    <!--Notificaciones-->
+    <ShellContent Title="Notificaciones" Route="notification" ContentTemplate="{DataTemplate views:NotificationPage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+    
+    <!--Enviar notificaciones-->
+    <ShellContent Title="Enviar Notificaciones" Route="sendNotification" ContentTemplate="{DataTemplate views:SendNotificationPage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+
+    <!--Crear evaluaciones-->
+    <ShellContent Title="Crear evaluaciones" Route="createEvaluation" ContentTemplate="{DataTemplate views:EvaluationsPage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+
+    <!--Ver evaluaciones-->
+    <ShellContent Title="Plan de evaluación" Route="evaluation">
+        <ShellContent.ContentTemplate>
+            <DataTemplate>
+                <views:EvaluationsListPage />
+            </DataTemplate>
+        </ShellContent.ContentTemplate>
+    </ShellContent>
+    
+    <!--Marcar asistencia-->
+    <ShellContent Title="Asistencia" Route="attendance" ContentTemplate="{DataTemplate views:AttendancePage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+
+    <!--<ShellContent Title="Plan de evaluacion" Route="planEvaluation" 
+          ContentTemplate="{DataTemplate views: EvaluationsListPage}" 
+                  Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>-->
 
 </Shell>
 

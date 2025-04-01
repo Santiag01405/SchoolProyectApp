@@ -16,9 +16,9 @@
                FontAttributes="Bold"
                HorizontalOptions="Center"
                Grid.Row="0"
-               Margin="0,50,0,150" />
+               Margin="0,50,0,130" />
 
-        <Grid Margin="0,130,0,0" Padding="20">
+        <Grid Margin="0,100,0,0" Padding="20" IsVisible="{Binding IsHiddenForStudent }">
             <!-- Sección de notificaciones -->
             <StackLayout Grid.Row="1">
                 <Frame 
@@ -44,41 +44,44 @@
                     <Label 
                         Text="&#xf1f6;"
                         FontFamily="FontAwesomeSolid"
-                        FontSize="70"
+                        FontSize="100"
                         TextColor="Gray"
                         HorizontalOptions="Center"
-                        Margin="0,100,0,20"/>
+                        Margin="0,80,0,20"/>
 
                         <!-- Texto de No Notificaciones -->
                         <Label Text="No hay notificaciones recientes"
                             FontSize="20"
                             HorizontalOptions="Center"
-                            Margin="0,10,0,0"
+                            Margin="0,10,0,50"
                             TextColor="Gray"/>
                 </StackLayout>
 
                 <!-- Lista de notificaciones -->
 
-            <CollectionView ItemsSource="{Binding Notifications}"
-                            IsVisible="{Binding HasNotifications}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame Padding="10" Margin="5" BackgroundColor="LightGray">
-                            <Grid ColumnDefinitions="Auto,*">
-                                <!-- Icono de libro -->
-                                <Label Text="" FontSize="24" VerticalOptions="Center" Grid.Column="0" />
+                <CollectionView ItemsSource="{Binding Notifications}"
+                IsVisible="{Binding HasNotifications}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Padding="10" Margin="0,20,0,0" BackgroundColor="LightGray">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Label Text="&#xf0f3;" FontSize="15" FontFamily="FontAwesomeSolid" VerticalOptions="Center" Grid.Column="0" Margin="0,0,10,0" />
 
-                                <StackLayout Grid.Column="1">
-                                    <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" />
-                                    <Label Text="{Binding Content}" FontSize="14" />
-                                    <Label Text="{Binding Date}" FontSize="12" FontAttributes="Italic" />
-                                </StackLayout>
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </StackLayout>
+                                    <StackLayout Grid.Column="1">
+                                        <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" />
+                                        <Label Text="{Binding Content}" FontSize="14" />
+                                        <Label Text="{Binding Date, StringFormat='{0:dd/MM/yyyy HH:mm}'}" FontSize="12" FontAttributes="Italic" />
+                                    </StackLayout>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <StackLayout Orientation="Vertical" Padding="5">
+                    <Button Text="Ir a pagina de notificaciones" Command="{Binding  NotificationCommand}" Padding="0" Margin="30,10,30,0"/>
+                </StackLayout>
+            </StackLayout>
         </Grid>
 
         <!-- Barra de navegación inferior -->
@@ -95,9 +98,9 @@
                 <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
             </StackLayout>
 
-            <StackLayout Grid.Column="1" HorizontalOptions="Center">
-                <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding CourseCommand}" Clicked="AnimateButton" />
-                <Label Text="Cursos" FontSize="10" HorizontalOptions="Center" />
+            <StackLayout Grid.Column="1" HorizontalOptions="Center" IsVisible="{Binding IsStudent}">
+                <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding EvaluationCommand}" Clicked="AnimateButton" />
+                <Label Text="Evaluaciones" FontSize="10" HorizontalOptions="Center" />
             </StackLayout>
 
             <StackLayout Grid.Column="2" HorizontalOptions="Center">

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
+             x:Class="SchoolProyectApp.Views.EvaluationsListPage">
+
+    <ContentPage.BindingContext>
+        <vm:EvaluationsListViewModel/>
+    </ContentPage.BindingContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <ScrollView Grid.Row="1">
+            <StackLayout Padding="10">
+            <Label Text="Plan de Evaluaciones"
+                   FontSize="Large"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <CollectionView ItemsSource="{Binding Evaluations}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="10" Margin="5" CornerRadius="10" BackgroundColor="LightGray">
+                            <StackLayout>
+                                <Label Text="{Binding Title}" FontSize="Medium" FontAttributes="Bold" />
+                                <Label Text="{Binding Description}" FontSize="Small" />
+                                <Label Text="{Binding Date, StringFormat='Fecha: {0:dd/MM/yyyy}'}" FontSize="Small" TextColor="Gray" />
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+            </ScrollView>
+            <!-- Barra de navegación inferior -->
+            <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                    <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
+                    <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+                </StackLayout>
+
+                <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                    <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding EvaluationCommand}" Clicked="AnimateButton" />
+                    <Label Text="Evaluaciones" FontSize="10" HorizontalOptions="Center" />
+                </StackLayout>
+
+                <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                    <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding FirstProfileCommand}" Clicked="AnimateButton" />
+                    <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+                </StackLayout>
+
+                <StackLayout Grid.Column="3" HorizontalOptions="Center">
+                    <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
+                    <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+                </StackLayout>
+                
+            </Grid>
+    </Grid>
+</ContentPage>

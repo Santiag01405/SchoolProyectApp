@@ -13,6 +13,36 @@ namespace SchoolProyectApp.ViewModels
         private string _userName;
         private int _userId;
 
+        private int _roleId;
+
+        public int RoleID
+        {
+            get => _roleId;
+            set
+            {
+                if (_roleId != value)
+                {
+                    _roleId = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(IsProfessor));
+                    OnPropertyChanged(nameof(IsStudent));
+                    OnPropertyChanged(nameof(IsParent));
+                    OnPropertyChanged(nameof(IsHiddenForProfessor));
+                    OnPropertyChanged(nameof(IsHiddenForStudent));
+                }
+            }
+        }
+
+
+        // Propiedades booleanas para Binding en XAML
+        public bool IsProfessor => RoleID == 2;
+        public bool IsStudent => RoleID == 1;
+        public bool IsParent => RoleID == 3;
+
+        public bool IsHiddenForProfessor => !IsProfessor;
+        public bool IsHiddenForStudent => !IsStudent;
+
+
         public string UserName
         {
             get => _userName;
@@ -37,6 +67,9 @@ namespace SchoolProyectApp.ViewModels
         public ICommand RefreshCommand { get; }
         public ICommand LogoutCommand { get; }
         public ICommand FirstProfileCommand { get; }
+        public ICommand NotificationCommand { get; }
+        public ICommand CreateEvaluationCommand { get; }
+        public ICommand EvaluationCommand { get; }
 
         private bool _hasNotifications;
         public bool HasNotifications
@@ -67,6 +100,11 @@ namespace SchoolProyectApp.ViewModels
             LogoutCommand = new Command(async () => await Logout());
             RefreshCommand = new Command(async () => await LoadUserDataFromApi());
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
+            CreateEvaluationCommand = new Command(async () => await Shell.Current.GoToAsync("///createEvaluation"));
+            EvaluationCommand = new Command(async () => await Shell.Current.GoToAsync("///evaluation"));
+
+            //Notificaciones
+            NotificationCommand = new Command(async () => await Shell.Current.GoToAsync("///notification"));
 
             // 🔹 Automatically update username when modified in ProfilePage
             MessagingCenter.Subscribe<ProfileViewModel, string>(this, "UserUpdated", async (sender, newUserName) =>
@@ -74,6 +112,43 @@ namespace SchoolProyectApp.ViewModels
                 Console.WriteLine($"🔄 Received new username from Profile: {newUserName}");
                 UserName = newUserName;
             });
+
+            _apiService = new ApiService();
+            Task.Run(async () => await LoadUserData());
+        }
+
+        private async Task LoadUserData()
+        {
+            try
+            {
+                var storedUserId = await SecureStorage.GetAsync("user_id");
+
+                if (!string.IsNullOrEmpty(storedUserId) && int.TryParse(storedUserId, out int userId))
+                {
+                    var user = await _apiService.GetUserDetailsAsync(userId);
+
+                    if (user != null)
+                    {
+
+                        RoleID = user.RoleID; // 🔹 Aquí nos aseguramos de que se asigne correctamente
+
+
+                        // 🔹 Forzar actualización en UI
+                        OnPropertyChanged(nameof(RoleID));
+                        OnPropertyChanged(nameof(IsProfessor));
+                        OnPropertyChanged(nameof(IsStudent));
+                        OnPropertyChanged(nameof(IsParent));
+                    }
+                }
+                else
+                {
+                    RoleID = 0; // Asignar un valor por defecto si no se encuentra el usuario
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "No se pudo cargar el usuario: " + ex.Message, "OK");
+            }
         }
 
         public async Task LoadUserDataFromApi()
@@ -112,31 +187,45 @@ namespace SchoolProyectApp.ViewModels
 
         private async Task LoadNotifications()
         {
-            var notificationsFromApi = await _apiService.GetNotificationsAsync();
-
-            Console.WriteLine($"📥 Notificaciones recibidas de la API: {notificationsFromApi?.Count ?? 0}");
-
-            Notifications.Clear();
-
-            if (notificationsFromApi != null)
+            try
             {
-                var validNotifications = notificationsFromApi
-                    .Where(n => !string.IsNullOrWhiteSpace(n.Title)) // Filtra las vacías
-                    .ToList();
+                var userId = await SecureStorage.GetAsync("user_id");
+                if (string.IsNullOrEmpty(userId)) return;
 
-                foreach (var notification in validNotifications)
+                var notificationsFromApi = await _apiService.GetUserNotifications(int.Parse(userId));
+
+                Console.WriteLine($"📥 Notificaciones recibidas: {notificationsFromApi?.Count ?? 0}");
+
+                Notifications.Clear();
+
+                if (notificationsFromApi != null && notificationsFromApi.Any())
                 {
-                    Notifications.Add(notification);
+                    var recentNotifications = notificationsFromApi
+                        .OrderByDescending(n => n.Date) // Ordenar por fecha descendente
+                        .Take(3) // Solo las 3 más recientes
+                        .ToList();
+
+                    foreach (var notification in recentNotifications)
+                    {
+                        Console.WriteLine($"📢 Agregando notificación: {notification.Title} - {notification.Date}");
+                        Notifications.Add(notification);
+                    }
+
+                    HasNotifications = Notifications.Count > 0;
+                    Console.WriteLine($"🔄 HasNotifications actualizado a: {HasNotifications}");
                 }
-
-                Console.WriteLine($"📋 Notificaciones válidas después del filtrado: {Notifications.Count}");
+                else
+                {
+                    Console.WriteLine("❌ No hay notificaciones en la API.");
+                }
             }
-
-            // Actualiza HasNotifications correctamente
-            HasNotifications = Notifications.Count > 0;
-
-            Console.WriteLine($"📢 HasNotifications actualizado a: {HasNotifications}");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error en LoadNotifications: {ex.Message}");
+            }
         }
+
+
 
         private async Task Logout()
         {

@@ -1,25 +1,25 @@
 ﻿using Microsoft.Maui.Controls;
 using SchoolProyectApp.ViewModels;
-using SchoolProyectApp.Services;
 
 namespace SchoolProyectApp.Views
 {
-    public partial class SchedulePage : ContentPage
+    public partial class EvaluationsPage : ContentPage
     {
-        private ScheduleViewModel _viewModel;
+        private readonly EvaluationsViewModel _viewModel;
 
-        public SchedulePage()
+        public EvaluationsPage()
         {
             InitializeComponent();
-            _viewModel = new ScheduleViewModel();
+            _viewModel = new EvaluationsViewModel();
             BindingContext = _viewModel;
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            await _viewModel.LoadWeeklySchedule(); 
+            await _viewModel.LoadEvaluations();
         }
+
         private async void AnimateButton(object sender, EventArgs e)
         {
             if (sender is ImageButton button)
@@ -30,4 +30,3 @@ namespace SchoolProyectApp.Views
         }
     }
 }
-

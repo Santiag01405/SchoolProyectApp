@@ -3,12 +3,13 @@ using SchoolProyectApp.ViewModels;
 
 namespace SchoolProyectApp.Views
 {
-    public partial class NotificationsPage : ContentPage
+    public partial class AttendancePage : ContentPage
     {
-        public NotificationsPage()
+        public AttendancePage()
         {
             InitializeComponent();
-            BindingContext = new NotificationsViewModel();
+            BindingContext = new AttendanceViewModel();
         }
     }
 }
+

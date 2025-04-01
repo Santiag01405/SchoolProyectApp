@@ -1,25 +1,23 @@
 ﻿using Microsoft.Maui.Controls;
 using SchoolProyectApp.ViewModels;
-using SchoolProyectApp.Services;
 
 namespace SchoolProyectApp.Views
 {
-    public partial class SchedulePage : ContentPage
+    public partial class NotificationPage : ContentPage
     {
-        private ScheduleViewModel _viewModel;
+        private readonly NotificationViewModel _viewModel;
 
-        public SchedulePage()
+        public NotificationPage()
         {
             InitializeComponent();
-            _viewModel = new ScheduleViewModel();
+            _viewModel = new NotificationViewModel();
             BindingContext = _viewModel;
         }
-
-        protected override async void OnAppearing()
+        /*protected override void OnDisappearing()
         {
-            base.OnAppearing();
-            await _viewModel.LoadWeeklySchedule(); 
-        }
+            base.OnDisappearing();
+            _viewModel.OnDisappearing(); // Llamamos a la limpieza de datos
+        }*/
         private async void AnimateButton(object sender, EventArgs e)
         {
             if (sender is ImageButton button)

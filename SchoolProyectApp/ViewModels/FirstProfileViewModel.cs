@@ -13,6 +13,35 @@ namespace SchoolProyectApp.ViewModels
         private string _userName;
         private string _email;
         private string _role;
+        private int _roleId;
+
+        public int RoleID
+        {
+            get => _roleId;
+            set
+            {
+                if (_roleId != value)
+                {
+                    _roleId = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(IsProfessor));
+                    OnPropertyChanged(nameof(IsStudent));
+                    OnPropertyChanged(nameof(IsParent));
+                    OnPropertyChanged(nameof(IsHiddenForProfessor));
+                    OnPropertyChanged(nameof(IsHiddenForStudent));
+                }
+            }
+        }
+
+
+        // Propiedades booleanas para Binding en XAML
+        public bool IsProfessor => RoleID == 2;
+        public bool IsStudent => RoleID == 1;
+        public bool IsParent => RoleID == 3;
+
+        public bool IsHiddenForProfessor => !IsProfessor;
+        public bool IsHiddenForStudent => !IsStudent;
+
 
         public string UserName
         {
@@ -61,6 +90,9 @@ namespace SchoolProyectApp.ViewModels
             OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
             CourseCommand = new Command(async () => await Shell.Current.GoToAsync("///courses"));
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
+
+            _apiService = new ApiService();
+            Task.Run(async () => await LoadUserData());
         }
 
         private async Task LoadUserData()
@@ -76,9 +108,23 @@ namespace SchoolProyectApp.ViewModels
                     UserName = user.UserName;
                     Email = user.Email;
                     Role = user.RoleID == 1 ? "Estudiante" : user.RoleID == 2 ? "Profesor" : user.RoleID == 3 ? "Padre" : "Desconocido";
+                    RoleID = user.RoleID; // 🔹 Aquí nos aseguramos de que se asigne correctamente
+
+
+                    // 🔹 Forzar actualización en UI
+                    OnPropertyChanged(nameof(RoleID));
+                    OnPropertyChanged(nameof(IsProfessor));
+                    OnPropertyChanged(nameof(IsStudent));
+                    OnPropertyChanged(nameof(IsParent));
                 }
-            }
+                else
+                {
+                    RoleID = 0; // Asignar un valor por defecto si no se encuentra el usuario
+                }
+
         }
+        }
+        
 
         private async Task GoToProfilePage()
         {

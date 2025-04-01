@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers.Text;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
@@ -254,7 +255,7 @@ namespace SchoolProyectApp.Services
 
 
         // Obtener cursos
-        public async Task<List<Course>?> GetCoursesAsync()
+       /* public async Task<List<Course>?> GetCoursesAsync()
         {
             try
             {
@@ -269,7 +270,7 @@ namespace SchoolProyectApp.Services
                 Console.WriteLine($"❌ Error en GetCoursesAsync: {ex.Message}");
                 return null;
             }
-        }
+        }*/
 
         // Obtener calificaciones (grades)
         public async Task<List<Grade>?> GetGradesAsync()
@@ -315,7 +316,7 @@ namespace SchoolProyectApp.Services
                 }
 
                 // 🔹 Buscar el StudentID que pertenece al userID del usuario autenticado
-                var student = students.FirstOrDefault(s => s.UserID == userId);
+              var student = students.FirstOrDefault(s => s.UserID == userId);
 
                 if (student == null)
                 {
@@ -323,7 +324,7 @@ namespace SchoolProyectApp.Services
                     return null;
                 }
 
-                Console.WriteLine($"✅ StudentID encontrado: {student.StudentID}");
+                Console.WriteLine($"✅ StudentID encontrado: {student.UserID}");
 
                 // 🔹 Obtener todas las inscripciones
                 var enrollmentsResponse = await _httpClient.GetAsync("api/enrollments");
@@ -346,9 +347,9 @@ namespace SchoolProyectApp.Services
 
 
                 // 🔹 Filtrar inscripciones del usuario autenticado
-                var userEnrollments = allEnrollments.Where(e => e.UserID == student.StudentID).ToList();
+                var userEnrollments = allEnrollments.Where(e => e.UserID == student.UserID).ToList();
 
-                Console.WriteLine($"✅ {userEnrollments.Count} inscripciones encontradas para el usuario {userId} con StudentID {student.StudentID}");
+                Console.WriteLine($"✅ {userEnrollments.Count} inscripciones encontradas para el usuario {userId} con StudentID {student.UserID}");
 
                 return userEnrollments;
             }
@@ -393,7 +394,7 @@ namespace SchoolProyectApp.Services
                     course.CourseID,
                     course.Name,
                     course.Description,
-                    course.TeacherID
+                    course.UserID
                 });
 
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -487,72 +488,231 @@ namespace SchoolProyectApp.Services
 
         public async Task<List<Enrollment>> GetUserWeeklySchedule(int userId)
         {
-            return await GetAsync<List<Enrollment>>($"api/enrollments/user/{userId}/schedule");
+            try
+            {
+                var response = await GetAsync<List<Enrollment>>($"api/enrollments/user/{userId}/schedule");
+
+                if (response == null || response.Count == 0)
+                {
+                    Debug.WriteLine("API no devolvió datos.");
+                }
+                else
+                {
+                    Debug.WriteLine($"Datos recibidos: {response.Count} registros.");
+                }
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error en GetUserWeeklySchedule: {ex.Message}");
+                return null;
+            }
         }
 
 
-        /*Estoy haciendo un horario en una app .net maui, ya hice el backend, esto es lo que manda postman de este: [{"enrollmentID":3,"userID":61,"userName":"Gabriel Ramirez ","courseID":1,"courseName":"Matemáticas","dayOfWeek":1,"studentID":"No aplica"},{"enrollmentID":5,"userID":61,"userName":"Gabriel Ramirez ","courseID":2,"courseName":"Matemáticas","dayOfWeek":1,"studentID":"No aplica"}]. Este es el link de este: https://SchoolProject123.somee.com/api/enrollments/user/61/schedule. Quiero mostrarlo en una list view, que en la parte superior de la pagina haya un boton de dias y asi poder variar entre los dias. Aqui te muestro como esta el api service public async Task<List<Enrollment>> GetUserWeeklySchedule(int userId)
- {
-     return await GetAsync<List<Enrollment>>($"api/enrollments/user/{userId}/schedule");
- }. Aqui te muestro el controller del backend: [HttpGet("user/{userId}/schedule")]
-public async Task<ActionResult<IEnumerable<object>>> GetUserWeeklySchedule(int userId) // ✅ Usar ActionResult en lugar de IActionResult<>
-{
-    var enrollments = await _context.Enrollments
-        .Where(e => e.UserID == userId) // ✅ Asegurar que UserID es una propiedad
-        .Select(e => new
+        /*public async Task<List<Enrollment>> GetUserWeeklySchedule(int userId)
         {
-            e.EnrollmentID,
-            e.UserID,
-            UserName = e.User != null ? e.User.UserName : "Usuario no encontrado",
-            e.CourseID,
-            CourseName = e.Course != null ? e.Course.Name : "Curso no encontrado",
-            DayOfWeek = e.Course != null ? (DayOfWeek?)e.Course.DayOfWeek : null, // ✅ Convertir a DayOfWeek? para permitir null
-            StudentID = e.GetType().GetProperty("StudentID") != null
-                ? (e.GetType().GetProperty("StudentID")!.GetValue(e, null) ?? "Sin información")
-                : "No aplica"
-        })
-        .ToListAsync();
+            return await GetAsync<List<Enrollment>>($"api/enrollments/user/{userId}/schedule");
+        }*/
 
-    if (enrollments == null || enrollments.Count == 0)
-        return NotFound("El usuario no tiene inscripciones.");
-
-    return Ok(enrollments);
-}
- .Quiero que simplemente se muestre la informacion que manda el backend en la app de la manera que ya te dije. Antes de que empieces a dar el codigo, te ayudaria tener algo mas?
+        public async Task<List<Notification>> GetUserNotifications(int userId)
+        {
+            return await _httpClient.GetFromJsonAsync<List<Notification>>($"api/notifications?userID={userId}");
+        }
 
 
-        /*public async Task<List<Course>> GetUserSchedule(int userId)
+        //Busqueda de usuario
+
+        public async Task<List<User>> SearchUsersAsync(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                Console.WriteLine("⚠ No se puede buscar un usuario sin nombre.");
+                return new List<User>();
+            }
+
+            try
+            {
+                string encodedQuery = Uri.EscapeDataString(query); // 🔹 Escapa caracteres especiales
+                string url = $"api/users/search?query={encodedQuery}";
+
+                Console.WriteLine($"🌍 GET: {url}");
+
+                var response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"❌ Error en la API: {response.StatusCode}");
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"🔍 Detalle del error: {errorContent}");
+                    return new List<User>();
+                }
+
+                return await response.Content.ReadFromJsonAsync<List<User>>() ?? new List<User>();
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"❌ Error HTTP: {ex.Message}");
+                return new List<User>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error desconocido: {ex.Message}");
+                return new List<User>();
+            }
+        }
+
+        /*public async Task<List<User>> SearchUsersAsync(string query)
+        {
+            return await _httpClient.GetFromJsonAsync<List<User>>($"api/users/search?name={query}");
+        }*/
+
+
+        //Envio de notificacion a usuario
+        public async Task<bool> SendNotificationAsync(Notification notification)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/notifications", notification);
+            return response.IsSuccessStatusCode;
+        }
+
+
+        //Metodos para las evaluaciones
+        public async Task<List<Evaluation>> GetEvaluationsAsync(int userId)
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<Course>>($"schedule/{userId}");
+                return await _httpClient.GetFromJsonAsync<List<Evaluation>>($"api/evaluations?userID={userId}") ?? new List<Evaluation>();
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"❌ Error al obtener evaluaciones: {ex.Message}");
+                return new List<Evaluation>();
+            }
+        }
+
+        public async Task<bool> CreateEvaluationAsync(Evaluation evaluation)
+        {
+            try
+            {
+                string url = "api/evaluations";
+
+                var response = await _httpClient.PostAsJsonAsync(url, evaluation);
+
+                string responseContent = await response.Content.ReadAsStringAsync(); // 🔹 Lee el mensaje de error
+
+                Console.WriteLine($"🌍 POST {url} - Código: {response.StatusCode}");
+                Console.WriteLine($"📜 Respuesta API: {responseContent}"); // 🔍 Muestra la respuesta completa
+
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error en CreateEvaluationAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+
+        /*public async Task<bool> CreateEvaluationAsync(Evaluation evaluation)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/evaluations", evaluation);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error al crear evaluación: {ex.Message}");
+                return false;
+            }
+        }*/
+
+        public async Task<bool> UpdateEvaluationAsync(Evaluation evaluation)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"api/evaluations/{evaluation.EvaluationID}", evaluation);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error al actualizar evaluación: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteEvaluationAsync(int evaluationId, int userId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"api/evaluations/{evaluationId}?userID={userId}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error al eliminar evaluación: {ex.Message}");
+                return false;
+            }
+        }
+
+        //Cursos
+        public async Task<List<Course>> GetCoursesAsync()
+        {
+            try
+            {
+                string url = $"api/courses";
+                Console.WriteLine($"🌍 GET: {url}");
+
+                var response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"❌ Error en la API: {response.StatusCode}");
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"🔍 Detalle del error: {errorContent}");
+                    return new List<Course>();
+                }
+
+                return await response.Content.ReadFromJsonAsync<List<Course>>() ?? new List<Course>();
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"❌ Error HTTP: {ex.Message}");
+                return new List<Course>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error desconocido: {ex.Message}");
                 return new List<Course>();
             }
         }
 
-        // ✅ Crear un nuevo horario
-        public async Task<bool> CreateCourse(Course newCourse)
+        //Asistencia
+        public async Task<bool> PostAsync<T>(string endpoint, T data)
         {
-            var response = await _httpClient.PostAsJsonAsync("schedule/create", newCourse);
-            return response.IsSuccessStatusCode;
+            try
+            {
+                var json = JsonSerializer.Serialize(data);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync(endpoint, content);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"❌ Error POST {endpoint}: {response.StatusCode} - {error}");
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Excepción en PostAsync<{typeof(T).Name}>: {ex.Message}");
+                return false;
+            }
         }
 
-        // ✅ Editar un horario existente
-        public async Task<bool> EditCourse(Course course)
-        {
-            var response = await _httpClient.PutAsJsonAsync($"schedule/edit/{course.CourseID}", course);
-            return response.IsSuccessStatusCode;
-        }
-
-        // ✅ Eliminar un horario
-        public async Task<bool> DeleteCourse(int courseId)
-        {
-            var response = await _httpClient.DeleteAsync($"schedule/delete/{courseId}");
-            return response.IsSuccessStatusCode;
-        }*/
 
     }
 }

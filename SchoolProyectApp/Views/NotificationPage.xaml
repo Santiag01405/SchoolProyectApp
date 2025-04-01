@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SchoolProyectApp.Views.NotificationPage"
+             Title="Notificaciones">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+    <StackLayout Padding="20">
+        <Label Text="Notificaciones" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
+
+        <ListView ItemsSource="{Binding Notifications}" HasUnevenRows="True">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Frame Padding="10" Margin="5" BorderColor="Gray" CornerRadius="10">
+                            <StackLayout>
+                                <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold"/>
+                                <Label Text="{Binding Content}" FontSize="14"/>
+                                <Label Text="{Binding Date, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}" FontSize="12" TextColor="Gray"/>
+                            </StackLayout>
+                        </Frame>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+
+		<!-- Barra de navegación inferior -->
+		<Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+
+			<StackLayout Grid.Column="0" HorizontalOptions="Center">
+				<Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
+				<Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+			</StackLayout>
+
+			<StackLayout Grid.Column="1" HorizontalOptions="Center" IsVisible="{Binding IsStudent}">
+				<Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding EvaluationCommand}" Clicked="AnimateButton" />
+				<Label Text="Evaluaciones" FontSize="10" HorizontalOptions="Center" />
+			</StackLayout>
+
+			<StackLayout Grid.Column="2" HorizontalOptions="Center">
+				<Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding FirstProfileCommand}" Clicked="AnimateButton" />
+				<Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+			</StackLayout>
+
+			<StackLayout Grid.Column="3" HorizontalOptions="Center">
+				<Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
+				<Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+			</StackLayout>
+		</Grid>
+    </Grid>
+</ContentPage>
+
+<!-- Barra de navegación inferior 
+        <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
+                <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+            </StackLayout>
+
+            <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding CourseCommand}" Clicked="AnimateButton" />
+                <Label Text="Cursos" FontSize="10" HorizontalOptions="Center" />
+            </StackLayout>
+
+            <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding FirstProfileCommand}" Clicked="AnimateButton" />
+                <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+            </StackLayout>
+
+            <StackLayout Grid.Column="3" HorizontalOptions="Center">
+                <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
+                <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+            </StackLayout>
+        </Grid>
+    </Grid>-->
+

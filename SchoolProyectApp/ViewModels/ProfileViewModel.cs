@@ -25,7 +25,35 @@ namespace SchoolProyectApp.ViewModels
         private string _password = string.Empty;
         private bool _isBusy;
         private string _message = string.Empty;
-        private int _roleID;
+        private int _roleId;
+
+        public int RoleID
+        {
+            get => _roleId;
+            set 
+            { 
+                if (_roleId != value)
+                {
+                    OnPropertyChanged(nameof(RoleID));
+                    _roleId = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(IsProfessor));
+                    OnPropertyChanged(nameof(IsStudent));
+                    OnPropertyChanged(nameof(IsParent));
+                    OnPropertyChanged(nameof(IsHiddenForProfessor));
+                    OnPropertyChanged(nameof(IsHiddenForStudent));
+                }
+            }
+        }
+
+
+        // Propiedades booleanas para Binding en XAML
+        public bool IsProfessor => RoleID == 2;
+        public bool IsStudent => RoleID == 1;
+        public bool IsParent => RoleID == 3;
+
+        public bool IsHiddenForProfessor => !IsProfessor;
+        public bool IsHiddenForStudent => !IsStudent;
 
         public string UserName
         {
@@ -57,11 +85,11 @@ namespace SchoolProyectApp.ViewModels
             set { _isBusy = value; OnPropertyChanged(nameof(IsBusy)); }
         }
 
-        public int RoleID
+        /*public int RoleID
         {
             get => _roleID;
             set { _roleID = value; OnPropertyChanged(nameof(RoleID)); }
-        }
+        }*/
 
         public ICommand UpdateUserCommand { get; }
         public ICommand LoadUserCommand { get; }
@@ -80,8 +108,44 @@ namespace SchoolProyectApp.ViewModels
             OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
             CourseCommand = new Command(async () => await Shell.Current.GoToAsync("///courses"));
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
+
+            _apiService = new ApiService();
+            Task.Run(async () => await LoadUserData());
         }
 
+        private async Task LoadUserData()
+        {
+            try
+            {
+                var storedUserId = await SecureStorage.GetAsync("user_id");
+
+                if (!string.IsNullOrEmpty(storedUserId) && int.TryParse(storedUserId, out int userId))
+                {
+                    var user = await _apiService.GetUserDetailsAsync(userId);
+
+                    if (user != null)
+                    {
+
+                        RoleID = user.RoleID; // 🔹 Aquí nos aseguramos de que se asigne correctamente
+
+
+                        // 🔹 Forzar actualización en UI
+                        OnPropertyChanged(nameof(RoleID));
+                        OnPropertyChanged(nameof(IsProfessor));
+                        OnPropertyChanged(nameof(IsStudent));
+                        OnPropertyChanged(nameof(IsParent));
+                    }
+                }
+                else
+                {
+                    RoleID = 0; // Asignar un valor por defecto si no se encuentra el usuario
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "No se pudo cargar el usuario: " + ex.Message, "OK");
+            }
+        }
 
         public async Task LoadUserDataAsync()
         {

@@ -43,7 +43,7 @@
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+		<!--<MauiSplashScreen Include="Resources\Raw\splash.svg" Color="#512BD4" BaseSize="128,128" />-->
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
@@ -72,8 +72,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AndroidResource Remove="Platforms\Android\Resources\drawable\splashscreen.xml" />
+	  <AndroidResource Remove="Platforms\Android\Resources\values\styles.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="ViewModels\CoursePageViewModel.cs" />
 	  <Compile Remove="ViewModels\ForgotPasswordViewModel.cs" />
 	  <Compile Remove="ViewModels\SchedulePageViewModel.cs" />
+	  <Compile Remove="ViewModels\ScheduleViewModel - Copy.cs" />
+	  <Compile Remove="Views\CoursesPage.xaml.cs" />
+	  <Compile Remove="Views\EditCoursePopup.xaml.cs" />
 	  <Compile Remove="Views\ForgotPassword.xaml.cs" />
 	</ItemGroup>
 
@@ -83,6 +92,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Remove="Views\CoursesPage.xaml" />
+	  <MauiXaml Remove="Views\EditCoursePopup.xaml" />
 	  <MauiXaml Remove="Views\ForgotPassword.xaml" />
 	</ItemGroup>
 
@@ -100,13 +111,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Views\CoursesPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\EditCoursePopup.xaml">
+	  <MauiXaml Update="Views\AttendancePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\EditSchedulePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\EvaluationsListPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\EvaluationsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\FirstProfile.xaml">
@@ -121,7 +135,7 @@
 	  <MauiXaml Update="Views\MenuPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\NotificationsPage.xaml">
+	  <MauiXaml Update="Views\NotificationPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\ProfilePage.xaml">
@@ -131,6 +145,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\SchedulePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\SendNotificationPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
@@ -143,6 +160,10 @@
 	  <MauiFont Include="Resources\Fonts\fa-solid-900.ttf" />
 	  <MauiFont Include="Resources\Fonts\OpenSans-Regular.ttf" />
 	  <MauiFont Include="Resources\Fonts\OpenSans-Semibold.ttf" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiSplashScreen Include="Resources\Splash\splashscreen.jpeg" />
 	</ItemGroup>
 
 </Project>

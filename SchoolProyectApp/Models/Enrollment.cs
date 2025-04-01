@@ -7,7 +7,7 @@
         public string UserName { get; set; }
         public int CourseID { get; set; }
         public string CourseName { get; set; }
-        public int? DayOfWeek { get; set; } // Puede ser null, lo hacemos nullable
+        public int DayOfWeek { get; set; } // Puede ser null, lo hacemos nullable
         public string? StudentID { get; set; }
     }
 

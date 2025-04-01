@@ -21,10 +21,11 @@ namespace SchoolProyectApp
 #if DEBUG
     		builder.Logging.AddDebug();
 #endif
+            //builder.Services.AddSingleton<UserSessionService>();
 
             return builder.Build();
 
-
+            
         }
     }
 }

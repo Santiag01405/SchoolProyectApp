@@ -65,6 +65,8 @@ namespace SchoolProyectApp.ViewModels
 
             _apiService = new ApiService();
             Task.Run(async () => await LoadUserData());
+            Task.Run(async () => await LoadAttendanceAsNotifications());
+
 
         }
 
@@ -114,6 +116,35 @@ namespace SchoolProyectApp.ViewModels
                 Notifications.Add(notification);
             }
         }
+
+        //Notidicaciones de asistencias a padres
+        private async Task LoadAttendanceAsNotifications()
+        {
+
+            var userId = await SecureStorage.GetAsync("user_id");
+            if (string.IsNullOrEmpty(userId)) return;
+
+            var attendanceRecords = await _apiService.GetAttendanceNotifications(int.Parse(userId));
+
+            if (attendanceRecords == null || attendanceRecords.Count == 0) return;
+
+            Console.WriteLine($"🔍 Se recibieron {attendanceRecords.Count} registros de asistencia");
+
+            var rawId = await SecureStorage.GetAsync("user_id");
+            Console.WriteLine($"🧠 ID de usuario actual: {rawId}");
+
+
+            foreach (var a in attendanceRecords)
+            {
+                Notifications.Add(new Notification
+                {
+                    Title = $"Asistencia de {a.StudentName}",
+                    Content = $"Su hijo estuvo {a.Status} en el curso {a.CourseName}",
+                    Date = a.Date
+                });
+            }
+        }
+
     }
 }
 

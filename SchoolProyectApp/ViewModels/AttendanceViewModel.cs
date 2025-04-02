@@ -45,6 +45,8 @@ namespace SchoolProyectApp.ViewModels
         public ICommand LoadCoursesCommand { get; }
         public ICommand LoadStudentsCommand { get; }
         public ICommand MarkAttendanceCommand { get; }
+        public ICommand MarkAbsentCommand { get; }
+        public ICommand MarkPresentCommand { get; }
 
         public AttendanceViewModel()
         {
@@ -52,7 +54,9 @@ namespace SchoolProyectApp.ViewModels
 
             LoadCoursesCommand = new Command(async () => await LoadCoursesAsync());
             LoadStudentsCommand = new Command(async () => await LoadStudentsAsync());
-            MarkAttendanceCommand = new Command<bool>(async (isPresent) => await MarkAttendanceAsync(isPresent));
+            MarkPresentCommand = new Command<Student>(async (student) => await MarkAttendanceAsync(student, true));
+            MarkAbsentCommand = new Command<Student>(async (student) => await MarkAttendanceAsync(student, false));
+
 
             Task.Run(async () => await LoadCoursesAsync());
         }
@@ -78,27 +82,60 @@ namespace SchoolProyectApp.ViewModels
                     Students.Add(s);
         }
 
-        private async Task MarkAttendanceAsync(bool isPresent)
+        private async Task MarkAttendanceAsync(Student student, bool isPresent)
         {
-            if (SelectedStudent == null || SelectedCourse == null) return;
+            if (student == null || SelectedCourse == null)
+                return;
 
-            var attendanceList = new List<Attendance>
-            {
-                new Attendance
-                {
-                    UserID = SelectedStudent.UserID,
-                    RelatedUserID = SelectedStudent.UserID,
-                    CourseID = SelectedCourse.CourseID,
-                    Status = isPresent ? "Presente" : "Ausente",
-                    Date = DateTime.UtcNow
-                }
-            };
+            var userId = await SecureStorage.GetAsync("user_id");
+            if (!int.TryParse(userId, out int relatedUserId))
+                return;
 
-            var response = await _apiService.PostAsync("api/attendance/mark", attendanceList);
-            await Application.Current.MainPage.DisplayAlert("Asistencia", isPresent ? "Marcado como presente" : "Marcado como ausente", "OK");
+            var attendances = new List<Attendance>
+    {
+        new Attendance
+        {
+            UserID = student.UserID,
+            RelatedUserID = relatedUserId,
+            CourseID = SelectedCourse.CourseID,
+            Status = isPresent ? "Presente" : "Ausente",
+            Date = DateTime.UtcNow
+        }
+    };
+
+            Console.WriteLine($"📤 Mandando asistencia: {JsonSerializer.Serialize(attendances)}");
+
+            bool success = await _apiService.PostAsync("api/attendance/mark", attendances);
+
+            if (success)
+                await Application.Current.MainPage.DisplayAlert("✔", "Asistencia registrada", "OK");
+            else
+                await Application.Current.MainPage.DisplayAlert("❌", "Error al registrar", "OK");
         }
     }
 }
+
+        /* private async Task MarkAttendanceAsync(bool isPresent)
+         {
+             if (SelectedStudent == null || SelectedCourse == null) return;
+
+             var attendanceList = new List<Attendance>
+             {
+                 new Attendance
+                 {
+                     UserID = SelectedStudent.UserID,
+                     RelatedUserID = SelectedStudent.UserID,
+                     CourseID = SelectedCourse.CourseID,
+                     Status = isPresent ? "Presente" : "Ausente",
+                     Date = DateTime.UtcNow
+                 }
+             };
+
+             var response = await _apiService.PostAsync("api/attendance/mark", attendanceList);
+             await Application.Current.MainPage.DisplayAlert("Asistencia", isPresent ? "Marcado como presente" : "Marcado como ausente", "OK");
+         */
+
+
 
 
 

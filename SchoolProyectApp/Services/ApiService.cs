@@ -521,6 +521,10 @@ namespace SchoolProyectApp.Services
             return await _httpClient.GetFromJsonAsync<List<Notification>>($"api/notifications?userID={userId}");
         }
 
+        public async Task<List<AttendanceNotification>> GetAttendanceNotifications(int userId)
+        {
+            return await _httpClient.GetFromJsonAsync<List<AttendanceNotification>>($"api/attendance/parent/{userId}");
+        }
 
         //Busqueda de usuario
 
@@ -689,18 +693,25 @@ namespace SchoolProyectApp.Services
         }
 
         //Asistencia
+
         public async Task<bool> PostAsync<T>(string endpoint, T data)
         {
             try
             {
-                var json = JsonSerializer.Serialize(data);
+                var json = JsonSerializer.Serialize(data, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                Console.WriteLine($"📤 Enviando a {endpoint}: {json}");
 
                 var response = await _httpClient.PostAsync(endpoint, content);
                 if (!response.IsSuccessStatusCode)
                 {
                     var error = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"❌ Error POST {endpoint}: {response.StatusCode} - {error}");
+                    Console.WriteLine($"❌ POST {endpoint}: {response.StatusCode} - {error}");
                     return false;
                 }
 
@@ -712,6 +723,30 @@ namespace SchoolProyectApp.Services
                 return false;
             }
         }
+
+        /* public async Task<bool> PostAsync<T>(string endpoint, T data)
+         {
+             try
+             {
+                 var json = JsonSerializer.Serialize(data);
+                 var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                 var response = await _httpClient.PostAsync(endpoint, content);
+                 if (!response.IsSuccessStatusCode)
+                 {
+                     var error = await response.Content.ReadAsStringAsync();
+                     Console.WriteLine($"❌ Error POST {endpoint}: {response.StatusCode} - {error}");
+                     return false;
+                 }
+
+                 return true;
+             }
+             catch (Exception ex)
+             {
+                 Console.WriteLine($"❌ Excepción en PostAsync<{typeof(T).Name}>: {ex.Message}");
+                 return false;
+             }
+         }*/
 
 
     }

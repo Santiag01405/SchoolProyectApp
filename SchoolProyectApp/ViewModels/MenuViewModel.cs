@@ -50,6 +50,7 @@ namespace SchoolProyectApp.ViewModels
         public ICommand LogoutCommand { get; }
         public ICommand ScheduleCommand { get;  }
         public ICommand AttendanceCommand { get; }
+        public ICommand NotificationCommand { get; }
 
 
         public MenuViewModel()
@@ -70,6 +71,7 @@ namespace SchoolProyectApp.ViewModels
             LogoutCommand = new Command(async () => await Logout());
             ScheduleCommand = new Command(async () => await Shell.Current.GoToAsync("///schedule"));
             AttendanceCommand = new Command(async () => await Shell.Current.GoToAsync("///attendance"));
+            NotificationCommand = new Command(async () => await Shell.Current.GoToAsync("///notification"));
         }
         private async Task LoadUserData()
         {

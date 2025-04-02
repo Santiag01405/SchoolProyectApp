@@ -13,11 +13,14 @@ namespace SchoolProyectApp.Views
             _viewModel = new NotificationViewModel();
             BindingContext = _viewModel;
         }
-        /*protected override void OnDisappearing()
+      
+
+        protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            _viewModel.OnDisappearing(); // Llamamos a la limpieza de datos
-        }*/
+            _viewModel.CancelTasks();
+        }
+
         private async void AnimateButton(object sender, EventArgs e)
         {
             if (sender is ImageButton button)

@@ -47,6 +47,12 @@ namespace SchoolProyectApp.ViewModels
         public ICommand MarkAttendanceCommand { get; }
         public ICommand MarkAbsentCommand { get; }
         public ICommand MarkPresentCommand { get; }
+        public ICommand HomeCommand { get; }
+        public ICommand ProfileCommand { get; }
+        public ICommand OpenMenuCommand { get; }
+        public ICommand CourseCommand { get; }
+        public ICommand FirstProfileCommand { get; }
+        public ICommand EvaluationCommand { get; }
 
         public AttendanceViewModel()
         {
@@ -56,6 +62,14 @@ namespace SchoolProyectApp.ViewModels
             LoadStudentsCommand = new Command(async () => await LoadStudentsAsync());
             MarkPresentCommand = new Command<Student>(async (student) => await MarkAttendanceAsync(student, true));
             MarkAbsentCommand = new Command<Student>(async (student) => await MarkAttendanceAsync(student, false));
+
+            //Barra de navegacion inferior
+            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
+            ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
+            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+            CourseCommand = new Command(async () => await Shell.Current.GoToAsync("///courses"));
+            FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
+
 
 
             Task.Run(async () => await LoadCoursesAsync());

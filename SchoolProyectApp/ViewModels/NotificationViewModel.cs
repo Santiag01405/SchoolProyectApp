@@ -11,6 +11,7 @@ namespace SchoolProyectApp.ViewModels
     {
         private readonly ApiService _apiService;
         private int _roleId;
+        private CancellationTokenSource _cancellationTokenSource = new();
 
         public int RoleID
         {
@@ -52,9 +53,9 @@ namespace SchoolProyectApp.ViewModels
         public NotificationViewModel()
         {
             _apiService = new ApiService();
-            RefreshCommand = new Command(async () => await LoadNotifications());
+            //RefreshCommand = new Command(async () => await LoadNotifications());
 
-            Task.Run(async () => await LoadNotifications()); // Carga inicial
+           // Task.Run(async () => await LoadNotifications()); // Carga inicial
 
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
             ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
@@ -64,85 +65,105 @@ namespace SchoolProyectApp.ViewModels
             SendNotificationCommand = new Command(async () => await Shell.Current.GoToAsync("///sendNotification"));
 
             _apiService = new ApiService();
-            Task.Run(async () => await LoadUserData());
-            Task.Run(async () => await LoadAttendanceAsNotifications());
+            //Task.Run(async () => await LoadUserData());
+            //Task.Run(async () => await LoadAttendanceAsNotifications());
+
+            Task.Run(async () =>
+            {
+                await LoadNotifications(_cancellationTokenSource.Token);
+                await LoadAttendanceAsNotifications(_cancellationTokenSource.Token);
+                await LoadUserData(_cancellationTokenSource.Token);
+            });
 
 
         }
 
-        private async Task LoadUserData()
+        public void CancelTasks()
+        {
+            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource = new();
+        }
+
+        private async Task LoadUserData(CancellationToken token)
         {
             try
             {
+                if (token.IsCancellationRequested) return;
+
                 var storedUserId = await SecureStorage.GetAsync("user_id");
-
-                if (!string.IsNullOrEmpty(storedUserId) && int.TryParse(storedUserId, out int userId))
+                if (string.IsNullOrEmpty(storedUserId) || !int.TryParse(storedUserId, out int userId))
                 {
-                    var user = await _apiService.GetUserDetailsAsync(userId);
-
-                    if (user != null)
-                    {
-
-                        RoleID = user.RoleID; // 🔹 Aquí nos aseguramos de que se asigne correctamente
-
-
-                        // 🔹 Forzar actualización en UI
-                        OnPropertyChanged(nameof(RoleID));
-                        OnPropertyChanged(nameof(IsProfessor));
-                        OnPropertyChanged(nameof(IsStudent));
-                        OnPropertyChanged(nameof(IsParent));
-                    }
+                    RoleID = 0;
+                    return;
                 }
-                else
+
+                var user = await _apiService.GetUserDetailsAsync(userId);
+                if (token.IsCancellationRequested || user == null) return;
+
+                MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    RoleID = 0; // Asignar un valor por defecto si no se encuentra el usuario
-                }
+                    RoleID = user.RoleID;
+                    OnPropertyChanged(nameof(RoleID));
+                    OnPropertyChanged(nameof(IsProfessor));
+                    OnPropertyChanged(nameof(IsStudent));
+                    OnPropertyChanged(nameof(IsParent));
+                });
             }
             catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "No se pudo cargar el usuario: " + ex.Message, "OK");
+                if (!token.IsCancellationRequested)
+                {
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                        Application.Current.MainPage.DisplayAlert("Error", "No se pudo cargar el usuario: " + ex.Message, "OK"));
+                }
             }
         }
-        private async Task LoadNotifications()
+
+        private async Task LoadNotifications(CancellationToken token)
         {
+            if (token.IsCancellationRequested) return;
+
             var userId = await SecureStorage.GetAsync("user_id");
             if (string.IsNullOrEmpty(userId)) return;
 
             var notifications = await _apiService.GetUserNotifications(int.Parse(userId));
+            if (token.IsCancellationRequested) return;
 
-            Notifications.Clear();
-            foreach (var notification in notifications)
+            MainThread.BeginInvokeOnMainThread(() =>
             {
-                Notifications.Add(notification);
-            }
+                Notifications.Clear();
+                foreach (var notification in notifications)
+                {
+                    Notifications.Add(notification);
+                }
+            });
         }
 
-        //Notidicaciones de asistencias a padres
-        private async Task LoadAttendanceAsNotifications()
+        private async Task LoadAttendanceAsNotifications(CancellationToken token)
         {
+            if (token.IsCancellationRequested) return;
 
             var userId = await SecureStorage.GetAsync("user_id");
             if (string.IsNullOrEmpty(userId)) return;
 
             var attendanceRecords = await _apiService.GetAttendanceNotifications(int.Parse(userId));
+            if (token.IsCancellationRequested || attendanceRecords == null || attendanceRecords.Count == 0) return;
 
-            if (attendanceRecords == null || attendanceRecords.Count == 0) return;
+            Console.WriteLine($"Se recibieron {attendanceRecords.Count} registros de asistencia");
 
-            Console.WriteLine($"🔍 Se recibieron {attendanceRecords.Count} registros de asistencia");
-
-            var rawId = await SecureStorage.GetAsync("user_id");
-            Console.WriteLine($"🧠 ID de usuario actual: {rawId}");
-
-
-            foreach (var a in attendanceRecords)
+            MainThread.BeginInvokeOnMainThread(() =>
             {
-                Notifications.Add(new Notification
+                foreach (var a in attendanceRecords)
                 {
-                    Title = $"Asistencia de {a.StudentName}",
-                    Content = $"Su hijo estuvo {a.Status} en el curso {a.CourseName}",
-                    Date = a.Date
-                });
-            }
+                    Notifications.Add(new Notification
+                    {
+                        Title = $"Asistencia de su representado",
+                        Content = $"Su representado estuvo {a.Status} en el curso {a.CourseName}",
+                        Date = a.Date
+                    });
+                }
+            });
         }
 
     }

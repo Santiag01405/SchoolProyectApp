@@ -92,6 +92,7 @@ namespace SchoolProyectApp.ViewModels
             // 🔹 Load user from API instead of SecureStorage
             Task.Run(async () => await LoadUserDataFromApi());
             Task.Run(async () => await LoadNotifications());
+            Task.Run(async () => await LoadAttendanceAsNotifications());
 
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
             ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
@@ -225,6 +226,33 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+        //Notidicaciones de asistencias a padres
+        private async Task LoadAttendanceAsNotifications()
+        {
+
+            var userId = await SecureStorage.GetAsync("user_id");
+            if (string.IsNullOrEmpty(userId)) return;
+
+            var attendanceRecords = await _apiService.GetAttendanceNotifications(int.Parse(userId));
+
+            if (attendanceRecords == null || attendanceRecords.Count == 0) return;
+
+            Console.WriteLine($"Se recibieron {attendanceRecords.Count} registros de asistencia");
+
+            var rawId = await SecureStorage.GetAsync("user_id");
+            Console.WriteLine($"ID de usuario actual: {rawId}");
+
+
+            foreach (var a in attendanceRecords)
+            {
+                Notifications.Add(new Notification
+                {
+                    Title = $"Asistencia de su representado",
+                    Content = $"Su representado estuvo {a.Status} en el curso {a.CourseName}",
+                    Date = a.Date
+                });
+            }
+        }
 
 
         private async Task Logout()

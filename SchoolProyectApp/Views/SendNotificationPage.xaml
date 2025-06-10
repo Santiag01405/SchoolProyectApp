@@ -1,79 +1,148 @@
 <?xml version="1.0" encoding="utf-8" ?>
+
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SchoolProyectApp.Views.SendNotificationPage"
              xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
-             Title="Enviar Notificación">
+             xmlns:local="clr-namespace:SchoolProyectApp.Views"
+             x:Class="SchoolProyectApp.Views.SendNotificationPage"
+             Title="Enviar Notificación"         
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
+             droid:NavigationBar.Color="white"
+             droid:NavigationBar.Style="LightContent">
 
-	<ContentPage.BindingContext>
-		<vm:SendNotificationViewModel />
-	</ContentPage.BindingContext>
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="White"
+                               StatusBarStyle="LightContent" />
+    </ContentPage.Behaviors>
+    
+    <ContentPage.BindingContext>
+        <vm:SendNotificationViewModel />
+    </ContentPage.BindingContext>
 
-	<Grid RowDefinitions="Auto,*,Auto">
+    <AbsoluteLayout>
 
-	<StackLayout Padding="20" Spacing="10">
-		<Label Text="Buscar Usuario" FontSize="18" FontAttributes="Bold"/>
+        <!-- Capa principal -->
+        <ContentView x:Name="MainContent"
+                     AbsoluteLayout.LayoutBounds="0,0,1,1"
+                     AbsoluteLayout.LayoutFlags="All">
 
-		<Entry Placeholder="Buscar usuario..."
-           Text="{Binding SearchQuery, Mode=TwoWay}"
-           Completed="SearchEntry_Completed"/>
+            <Grid RowDefinitions="Auto,*,Auto">
+                <ScrollView Grid.Row="1">
+                    <StackLayout Padding="20" Spacing="10">
+                        <Label Text="Enviar notificación" 
+                               FontSize="30" 
+                               TextColor="#0C4251" 
+                               FontAttributes="Bold" 
+                               HorizontalOptions="Center"
+                               Margin="0,20,0,20"/>
+                        <Label Text="Buscar Usuario" FontSize="18" FontAttributes="Bold" TextColor="#0C4251"/>
 
-		<Button Text="Buscar" Command="{Binding SearchCommand}" BackgroundColor="#007AFF" TextColor="White"/>
+                        <Entry Placeholder="Buscar usuario..."
+                               Text="{Binding SearchQuery, Mode=TwoWay}"
+                               Completed="SearchEntry_Completed"/>
+                        <BoxView HeightRequest="1" BackgroundColor="Black" Margin="0,0,6,0" />
+                        
+                        <StackLayout>
+                            <StackLayout IsVisible="{Binding HasSearchResults}">
+                                <Label Text="Resultados:"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   Margin="0,0,0,0" />
 
-		<ListView ItemsSource="{Binding SearchResults}"
-                  SelectionMode="Single"
-                  SelectedItem="{Binding SelectedUser}">
-			<ListView.ItemTemplate>
-				<DataTemplate>
-					<ViewCell>
-						<StackLayout Padding="10">
-							<Label Text="{Binding UserName}" FontSize="16" FontAttributes="Bold"/>
-							<Label Text="{Binding Role}" FontSize="14" TextColor="Gray"/>
-						</StackLayout>
-					</ViewCell>
-				</DataTemplate>
-			</ListView.ItemTemplate>
-		</ListView>
+                                <ScrollView HeightRequest="200">
+                                    <StackLayout>
+                                        <ListView ItemsSource="{Binding SearchResults}"
+                                          SelectionMode="Single"
+                                          SelectedItem="{Binding SelectedUser}"
+                                          HasUnevenRows="True"
+                                          SeparatorVisibility="Default"
+                                          Margin="0"
+                                          HeightRequest="200">  
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <ViewCell>
+                                                        <StackLayout Padding="10,10,0,0">
+                                                            <Label Text="{Binding UserName}" FontSize="16" FontAttributes="Bold"/>
+                                                            <Label Text="{Binding Role}" FontSize="14" TextColor="Gray"/>
+                                                        </StackLayout>
+                                                    </ViewCell>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </StackLayout>
+                                </ScrollView>
+                            </StackLayout>
+                        </StackLayout>
+                        <Button Text="Buscar" Command="{Binding SearchCommand}"   
+                                BackgroundColor="#f1c864" 
+                                TextColor="#0C4251" 
+                                FontAttributes="Bold"
+                                Margin="40,10,40,0"/>
+                        <Button Text="Reiniciar"
+                                Command="{Binding ResetCommand}"
+                                BackgroundColor="LightGray"
+                                TextColor="Black"
+                                FontAttributes="Bold"
+                                Margin="40,0,40,0"/>
 
-		<Label Text="Título de la Notificación" FontSize="18" FontAttributes="Bold"/>
-		<Entry Placeholder="Ingrese el título..." Text="{Binding Title}" />
+                        <Label Text="Título de la Notificación" FontSize="18" FontAttributes="Bold" TextColor="#0C4251" Margin="0,20,0,0"/>
+                        <Entry Placeholder="Ingrese el título..." Text="{Binding Title}" />
+                        <BoxView HeightRequest="1" BackgroundColor="Black" Margin="0,0,6,0" />
 
-		<Label Text="Contenido" FontSize="18" FontAttributes="Bold"/>
-		<Editor Placeholder="Ingrese el contenido..." Text="{Binding Content}" HeightRequest="100"/>
+                        <Label Text="Contenido" FontSize="18" FontAttributes="Bold" TextColor="#0C4251" Margin="0,30,0,0"/>
+                        <Editor Placeholder="Ingrese el contenido..." Text="{Binding Content}" HeightRequest="50"/>
 
-		<Button Text="Enviar Notificación"
-                Command="{Binding SendCommand}"
-                IsEnabled="{Binding CanSendNotification}"
-                BackgroundColor="Green" TextColor="White"/>
-	</StackLayout>
-	<!-- Barra de navegación inferior -->
-	<Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
+                        <Button Text="Enviar Notificación"
+                                Command="{Binding SendCommand}"
+                                IsEnabled="{Binding CanSendNotification}"
+                                 BackgroundColor="#f1c864" 
+                                 TextColor="#0C4251" 
+                                 FontAttributes="Bold"
+                                 Margin="40,10,40,0"/>  
+                    </StackLayout>
+                </ScrollView>
 
-		<StackLayout Grid.Column="0" HorizontalOptions="Center">
-			<Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
-			<Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
-		</StackLayout>
+                <!-- Barra de navegación inferior -->
+                <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-		<StackLayout Grid.Column="1" HorizontalOptions="Center" IsVisible="{Binding IsStudent}">
-			<Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding EvaluationCommand}" Clicked="AnimateButton" />
-			<Label Text="Evaluaciones" FontSize="10" HorizontalOptions="Center" />
-		</StackLayout>
+                    <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                        <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
+                        <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
 
-		<StackLayout Grid.Column="2" HorizontalOptions="Center">
-			<Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding FirstProfileCommand}" Clicked="AnimateButton" />
-			<Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
-		</StackLayout>
+                    <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                        <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
+                        <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
 
-		<StackLayout Grid.Column="3" HorizontalOptions="Center">
-			<Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
-			<Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
-		</StackLayout>
-	</Grid>
-	</Grid>
+                    <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                        <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="#0C4251" BackgroundColor="WhiteSmoke"
+                                Clicked="MenuButton_Clicked" />
+                        <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
+                </Grid>
+            </Grid>
+        </ContentView>
+
+        <!-- Menú lateral oculto -->
+        <ContentView x:Name="SideMenu"
+                     WidthRequest="260"
+                     BackgroundColor="#0C4251"
+                     IsVisible="False"
+                     TranslationX="-260"
+                     AbsoluteLayout.LayoutBounds="0,0,260,1"
+                     AbsoluteLayout.LayoutFlags="PositionProportional,HeightProportional">
+            <local:MenuPage />
+        </ContentView>
+    </AbsoluteLayout>
 </ContentPage>
+

@@ -186,6 +186,7 @@ namespace SchoolProyectApp.ViewModels
                 Email = user.Email;
                 RoleID = user.RoleID;
                 Password = user.Password;
+                OnPropertyChanged(nameof(Password));
                 Message = "Ingrese sus nuevos datos.";
             }
             else
@@ -199,7 +200,7 @@ namespace SchoolProyectApp.ViewModels
         //Update
         public async Task UpdateUserAsync()
         {
-            if (string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
+            if ( string.IsNullOrEmpty(Password))
             {
                 Message = "Nombre, contraseña e email son obligatorios.";
                 return;

@@ -3,7 +3,12 @@
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        xmlns:views="clr-namespace:SchoolProyectApp.Views"
        x:Class="SchoolProyectApp.AppShell"
-       Shell.FlyoutBehavior="Disabled">
+       Shell.FlyoutBehavior="Disabled"
+       BackgroundColor="{StaticResource PrimaryColor}"
+       Shell.TabBarBackgroundColor="{StaticResource PrimaryColor}"
+       Shell.TitleColor="White"
+       Shell.NavBarHasShadow="False">
+
 
     <Shell.Resources>
         <Style x:Key="TitleViewStyle" TargetType="Label">
@@ -15,25 +20,25 @@
     </Shell.Resources>
 
     <!-- Página de Login -->
-    <ShellContent Title="Login" Route="login" ContentTemplate="{DataTemplate views:LoginPage}" Shell.TitleColor="White" Shell.BackgroundColor="White"/>
+    <ShellContent Title="Login" Route="login" ContentTemplate="{DataTemplate views:LoginPage}" Shell.TitleColor="white" Shell.BackgroundColor="white"/>
 
     <!-- Página de Registro -->
     <ShellContent Title="Registro" Route="register" ContentTemplate="{DataTemplate views:RegisterPage}" Shell.TitleColor="White"/>
 
     <!-- Página de Inicio -->
-    <ShellContent Title="Inicio" Route="homepage" ContentTemplate="{DataTemplate views:HomePage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+    <ShellContent Route="homepage" Icon="Images/artboard.png" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:HomePage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
     
     <!--Nuevo menu-->
-    <ShellContent Title="Menu" Route="menu" ContentTemplate="{DataTemplate views:MenuPage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+    <ShellContent Title="Menu" Route="menu" ContentTemplate="{DataTemplate views:MenuPage}" Shell.TitleColor="#0C4251" Shell.BackgroundColor="#0C4251"/>
     
     <!--Perfil de usuario-->
-    <ShellContent Title="Perfil" Route="firtsprofile" ContentTemplate="{DataTemplate views:FirstProfile}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+    <ShellContent Title="Perfil" Route="firtsprofile" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:FirstProfile}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
     
     <!--Modificar perfil del usuario-->
-    <ShellContent Title="Modicar perfil" Route="profile" ContentTemplate="{DataTemplate views:ProfilePage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+    <ShellContent Title="Modicar perfil" Route="profile" ContentTemplate="{DataTemplate views:ProfilePage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
     
     <!--Horario-->
-    <ShellContent Title="Horario" Route="schedule" ContentTemplate="{DataTemplate views:SchedulePage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+    <ShellContent Title="Horario" Route="schedule" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:SchedulePage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
 
     <!-- Página de Edición del Horario (Solo Teachers) -->
     <!--<ShellContent Title="Editar Horario" Route="editschedule" ContentTemplate="{DataTemplate views:EditSchedulePage}" />-->
@@ -42,16 +47,16 @@
     <!--<ShellContent Title="Cursos" Route="courses" ContentTemplate="{DataTemplate views:CoursesPage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>-->
 
     <!--Notificaciones-->
-    <ShellContent Title="Notificaciones" Route="notification" ContentTemplate="{DataTemplate views:NotificationPage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+    <ShellContent Title="Notificaciones" Route="notification" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:NotificationPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
     
     <!--Enviar notificaciones-->
-    <ShellContent Title="Enviar Notificaciones" Route="sendNotification" ContentTemplate="{DataTemplate views:SendNotificationPage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+    <ShellContent Title="Enviar Notificaciones" Route="sendNotification" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:SendNotificationPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
 
     <!--Crear evaluaciones-->
-    <ShellContent Title="Crear evaluaciones" Route="createEvaluation" ContentTemplate="{DataTemplate views:EvaluationsPage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+    <ShellContent Title="Crear evaluaciones" Route="createEvaluation" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:EvaluationsPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
 
     <!--Ver evaluaciones-->
-    <ShellContent Title="Plan de evaluación" Route="evaluation">
+    <ShellContent Title="Plan de evaluación" Route="evaluation" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False">
         <ShellContent.ContentTemplate>
             <DataTemplate>
                 <views:EvaluationsListPage />
@@ -60,7 +65,7 @@
     </ShellContent>
     
     <!--Marcar asistencia-->
-    <ShellContent Title="Asistencia" Route="attendance" ContentTemplate="{DataTemplate views:AttendancePage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>
+    <ShellContent Title="Asistencia" Route="attendance" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:AttendancePage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
 
     <!--<ShellContent Title="Plan de evaluacion" Route="planEvaluation" 
           ContentTemplate="{DataTemplate views: EvaluationsListPage}" 

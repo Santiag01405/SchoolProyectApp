@@ -43,6 +43,7 @@ namespace SchoolProyectApp.ViewModels
 
         public bool IsHiddenForProfessor => !IsProfessor;
         public bool IsHiddenForStudent => !IsStudent;
+        public bool HasSearchResults => SearchResults?.Any() == true;
 
 
         public ObservableCollection<User> SearchResults { get; set; } = new ObservableCollection<User>();
@@ -96,6 +97,7 @@ namespace SchoolProyectApp.ViewModels
         public ICommand SendCommand { get; }
         public ICommand HomeCommand { get; }
         public ICommand NotificationCommand { get; }
+        public ICommand ResetCommand { get; }
 
         public SendNotificationViewModel()
         {
@@ -105,13 +107,29 @@ namespace SchoolProyectApp.ViewModels
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
             NotificationCommand = new Command(async () => await Shell.Current.GoToAsync("///notification"));
 
+            ResetCommand = new Command(ResetPage);
+
             Task.Run(async () => await CheckUserRole());
 
             _apiService = new ApiService();
             Task.Run(async () => await LoadUserData());
 
         }
+        private void ResetPage()
+        {
+            SearchQuery = string.Empty;
+            SelectedUser = null;
+            Title = string.Empty;
+            Content = string.Empty;
+            SearchResults.Clear();
 
+            OnPropertyChanged(nameof(SearchQuery));
+            OnPropertyChanged(nameof(SelectedUser));
+            OnPropertyChanged(nameof(Title));
+            OnPropertyChanged(nameof(Content));
+            OnPropertyChanged(nameof(HasSearchResults));
+            OnPropertyChanged(nameof(CanSendNotification)); // si dependes de este
+        }
         private async Task LoadUserData()
         {
             try
@@ -169,6 +187,7 @@ namespace SchoolProyectApp.ViewModels
             foreach (var user in users)
             {
                 SearchResults.Add(user);
+                OnPropertyChanged(nameof(HasSearchResults));
             }
         }
 

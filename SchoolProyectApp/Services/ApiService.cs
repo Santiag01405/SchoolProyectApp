@@ -705,13 +705,13 @@ namespace SchoolProyectApp.Services
 
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                Console.WriteLine($"📤 Enviando a {endpoint}: {json}");
+                Console.WriteLine($"Enviando a {endpoint}: {json}");
 
                 var response = await _httpClient.PostAsync(endpoint, content);
                 if (!response.IsSuccessStatusCode)
                 {
                     var error = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"❌ POST {endpoint}: {response.StatusCode} - {error}");
+                    Console.WriteLine($"POST {endpoint}: {response.StatusCode} - {error}");
                     return false;
                 }
 
@@ -719,7 +719,7 @@ namespace SchoolProyectApp.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Excepción en PostAsync<{typeof(T).Name}>: {ex.Message}");
+                Console.WriteLine($"Excepción en PostAsync<{typeof(T).Name}>: {ex.Message}");
                 return false;
             }
         }
@@ -747,6 +747,59 @@ namespace SchoolProyectApp.Services
                  return false;
              }
          }*/
+
+        // Marcar notificación como leída
+        public async Task<bool> MarkNotificationAsReadAsync(int notificationId)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsync($"api/notifications/{notificationId}/read", null);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"✅ Notificación {notificationId} marcada como leída.");
+                    return true;
+                }
+
+                Console.WriteLine($"❌ Error al marcar como leída: {response.StatusCode}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Excepción en MarkNotificationAsReadAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        // Eliminar notificación
+        public async Task<bool> DeleteNotificationAsync(int notificationId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"api/notifications/{notificationId}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"🗑️ Notificación {notificationId} eliminada correctamente.");
+                    return true;
+                }
+
+                Console.WriteLine($"❌ Error al eliminar: {response.StatusCode}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Excepción en DeleteNotificationAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        //Eliminar asistencia
+        public async Task<bool> DeleteAttendanceAsync(int attendanceId)
+        {
+            var response = await _httpClient.DeleteAsync($"https://SchoolProject123.somee.com/api/attendance/{attendanceId}");
+            return response.IsSuccessStatusCode;
+        }
 
 
     }

@@ -51,6 +51,72 @@ namespace SchoolProyectApp.ViewModels
         public ObservableCollection<Course> Courses { get; set; } = new();
         public ObservableCollection<Evaluation> Evaluations { get; set; } = new();
 
+        private bool _isCourseVisible;
+        public bool IsCourseVisible
+        {
+            get => _isCourseVisible;
+            set
+            {
+                _isCourseVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isSearchPopupVisible;
+        public bool IsSearchPopupVisible
+        {
+            get => _isSearchPopupVisible;
+            set
+            {
+                _isSearchPopupVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isTitleVisible;
+        public bool IsTitleVisible
+        {
+            get => _isTitleVisible;
+            set
+            {
+                _isTitleVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isDescriptionVisible;
+        public bool IsDescriptionVisible
+        {
+            get => _isDescriptionVisible;
+            set
+            {
+                _isDescriptionVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isDateVisible;
+        public bool IsDateVisible
+        {
+            get => _isDateVisible;
+            set
+            {
+                _isDateVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        /*public string SearchQuery
+        {
+            get => _searchQuery;
+            set
+            {
+                _searchQuery = value;
+                OnPropertyChanged();
+            }
+        }*/
+
         public string SearchQuery
         {
             get => _searchQuery;
@@ -58,6 +124,7 @@ namespace SchoolProyectApp.ViewModels
             {
                 _searchQuery = value;
                 OnPropertyChanged();
+                IsCourseVisible = !string.IsNullOrWhiteSpace(_searchQuery);
             }
         }
 
@@ -71,6 +138,16 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+        /* public Course SelectedCourse
+         {
+             get => _selectedCourse;
+             set
+             {
+                 _selectedCourse = value;
+                 OnPropertyChanged();
+             }
+         }*/
+
         public Course SelectedCourse
         {
             get => _selectedCourse;
@@ -78,8 +155,20 @@ namespace SchoolProyectApp.ViewModels
             {
                 _selectedCourse = value;
                 OnPropertyChanged();
+                IsTitleVisible = _selectedCourse != null;
             }
         }
+
+
+        /*public string EvaluationTitle
+        {
+            get => _evaluationTitle;
+            set
+            {
+                _evaluationTitle = value;
+                OnPropertyChanged();
+            }
+        }*/
 
         public string EvaluationTitle
         {
@@ -88,13 +177,54 @@ namespace SchoolProyectApp.ViewModels
             {
                 _evaluationTitle = value;
                 OnPropertyChanged();
+                IsDescriptionVisible = !string.IsNullOrWhiteSpace(_evaluationTitle);
             }
         }
+
+        private string _description;
+        public string Description
+        {
+            get => _description;
+            set
+            {
+                _description = value;
+                OnPropertyChanged();
+                IsDateVisible = !string.IsNullOrWhiteSpace(_description);
+            }
+        }
+
+        private bool _isCreateButtonVisible;
+        public bool IsCreateButtonVisible
+        {
+            get => _isCreateButtonVisible;
+            set
+            {
+                _isCreateButtonVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public DateTime SelectedDate
+        {
+            get => NewEvaluation.Date;
+            set
+            {
+                if (NewEvaluation.Date != value)
+                {
+                    NewEvaluation.Date = value;
+                    OnPropertyChanged();
+                    IsCreateButtonVisible = NewEvaluation.Date >= DateTime.Today;
+                }
+            }
+        }
+
 
         public Evaluation NewEvaluation { get; set; } = new()
         {
             Date = DateTime.Now
         };
+
+
 
         public ICommand SearchUsersCommand { get; }
         public ICommand CreateEvaluationCommand { get; }
@@ -103,6 +233,10 @@ namespace SchoolProyectApp.ViewModels
         public ICommand ProfileCommand { get; }
         public ICommand OpenMenuCommand { get; }
         public ICommand FirstProfileCommand { get; }
+
+        public ICommand ResetCommand { get; }
+
+        public ICommand CloseSearchPopupCommand { get; }
 
         public EvaluationsViewModel()
         {
@@ -115,6 +249,10 @@ namespace SchoolProyectApp.ViewModels
             ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
             OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
+
+            ResetCommand = new Command(ResetPage);
+
+            CloseSearchPopupCommand = new Command(() => IsSearchPopupVisible = false);
 
             Task.Run(async () =>
             {
@@ -175,6 +313,35 @@ namespace SchoolProyectApp.ViewModels
             });
         }
 
+        private void ResetPage()
+        {
+            SearchQuery = string.Empty;
+            SelectedUser = null;
+            SelectedCourse = null;
+            EvaluationTitle = string.Empty;
+            Description = string.Empty;
+            NewEvaluation = new Evaluation { Date = DateTime.Today };
+            SearchResults.Clear();
+
+            IsCourseVisible = false;
+            IsTitleVisible = false;
+            IsDescriptionVisible = false;
+            IsDateVisible = false;
+
+            OnPropertyChanged(nameof(SearchQuery));
+            OnPropertyChanged(nameof(SelectedUser));
+            OnPropertyChanged(nameof(SelectedCourse));
+            OnPropertyChanged(nameof(EvaluationTitle));
+            OnPropertyChanged(nameof(Description));
+            OnPropertyChanged(nameof(NewEvaluation));
+            OnPropertyChanged(nameof(SearchResults));
+
+            OnPropertyChanged(nameof(IsCourseVisible));
+            OnPropertyChanged(nameof(IsTitleVisible));
+            OnPropertyChanged(nameof(IsDescriptionVisible));
+            OnPropertyChanged(nameof(IsDateVisible));
+        }
+
         private async Task LoadCourses()
         {
             var courses = await _apiService.GetCoursesAsync();
@@ -198,6 +365,8 @@ namespace SchoolProyectApp.ViewModels
             {
                 SearchResults.Add(user);
             }
+
+            //IsSearchPopupVisible = true;
         }
 
         private async Task CreateEvaluation()
@@ -207,12 +376,14 @@ namespace SchoolProyectApp.ViewModels
             if (NewEvaluation.Date < DateTime.Now)
             {
                 Console.WriteLine("❌ No puedes asignar evaluaciones con fecha pasada.");
+                await Shell.Current.DisplayAlert("Fecha inválida", "No puedes asignar evaluaciones con fecha pasada.", "OK");
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(EvaluationTitle))
             {
                 Console.WriteLine("❌ El título de la evaluación es obligatorio.");
+                await Shell.Current.DisplayAlert("Falta título", "El título de la evaluación es obligatorio.", "OK");
                 return;
             }
 
@@ -225,15 +396,19 @@ namespace SchoolProyectApp.ViewModels
             if (success)
             {
                 Console.WriteLine("✔ Evaluación creada correctamente.");
+                await Shell.Current.DisplayAlert("Éxito", "Evaluación creada correctamente.", "OK");
                 await LoadEvaluations();
+                ResetPage();
             }
             else
             {
                 Console.WriteLine("❌ No se pudo asignar una evaluación.");
+                await Shell.Current.DisplayAlert("Error", "No se pudo crear la evaluación. Intenta de nuevo.", "OK");
             }
         }
+        }
     }
-}
+
 
 
 

@@ -4,7 +4,7 @@ using SchoolProyectApp.Services;
 
 namespace SchoolProyectApp.Views
 {
-    public partial class MenuPage : ContentPage
+    public partial class MenuPage : ContentView
     {
         public MenuPage()
         {

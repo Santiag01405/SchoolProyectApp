@@ -43,7 +43,7 @@
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
 
 		<!-- Splash Screen -->
-		<!--<MauiSplashScreen Include="Resources\Raw\splash.svg" Color="#512BD4" BaseSize="128,128" />-->
+		<MauiSplashScreen Include="Resources\Splash\splashscreen.png" Color="#0c4251" BaseSize="256,256" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
@@ -103,6 +103,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
@@ -112,6 +113,9 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="Views\AttendancePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\ChangePasswordPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\EditSchedulePage.xaml">
@@ -153,17 +157,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="NewFolder1\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <MauiFont Include="Resources\Fonts\fa-solid-900.ttf" />
 	  <MauiFont Include="Resources\Fonts\OpenSans-Regular.ttf" />
 	  <MauiFont Include="Resources\Fonts\OpenSans-Semibold.ttf" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiSplashScreen Include="Resources\Splash\splashscreen.jpeg" />
 	</ItemGroup>
 
 </Project>

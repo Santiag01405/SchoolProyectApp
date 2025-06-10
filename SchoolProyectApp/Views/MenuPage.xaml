@@ -1,115 +1,75 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
              x:Class="SchoolProyectApp.Views.MenuPage"
-             BackgroundColor="White"
-             Title="Menú">
+             BackgroundColor="#0C4251">
 
-    <Grid RowDefinitions="Auto,*,Auto">
-        
+    <ContentView.BindingContext>
+        <vm:MenuViewModel />
+    </ContentView.BindingContext>
 
-        <!-- Lista de Opciones del Menú -->
-        <ScrollView Grid.Row="1">
-            <StackLayout Padding="20">
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <StackLayout Padding="20" Spacing="25">
 
-                <!--Logout -->
+                <!-- Logout -->
                 <StackLayout Orientation="Horizontal" Padding="5" Margin="0,30,0,0">
-                    <Label Text="&#xf017;" FontSize="30" FontFamily="FontAwesomeSolid" TextColor="Gray" Margin="0,0,18,0" />
-                    <Button Text="Cerrar sesion" Command="{Binding LogoutCommand}" Padding="30,0,35,0"/>
+                    <Label Text="&#xf2f5;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Cerrar sesión" Command="{Binding LogoutCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
                 </StackLayout>
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" />
 
-                <BoxView HeightRequest="1" BackgroundColor="Gray" Margin="10,40"/>
-                
-                <!--Horario-->
-                <StackLayout Orientation="Horizontal" Padding="0,0,0,5" IsVisible="{Binding IsStudent}">
-                    <Label Text="&#xf073;" FontSize="30" FontFamily="FontAwesomeSolid" TextColor="Gray" Margin="0,0,20,0" />
-                    <Button Text="Horario" Command="{Binding ScheduleCommand}" Padding="50,0,50,0"/>
-                </StackLayout>
-
-                <BoxView HeightRequest="1" BackgroundColor="Gray" Margin="10,40" IsVisible="{Binding IsStudent}"/>
-
-                <!--Notificaciones -->
-                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsHiddenForStudent }">
-                    <Label Text="&#xf0f3;" FontSize="30" FontFamily="FontAwesomeSolid" TextColor="Gray" Margin="0,0,18,0" />
-                    <Button Text="Notificaciones" Command="{Binding  NotificationCommand}" Padding="30,0,35,0"/>
-                </StackLayout>
-
-                <BoxView HeightRequest="1" BackgroundColor="Gray" Margin="10,40" IsVisible="{Binding IsHiddenForStudent }"/>
-
-                <!--Enviar notificacion -->
-                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsProfessor}">
-                    <Label Text="&#xf017;" FontSize="30" FontFamily="FontAwesomeSolid" TextColor="Gray" Margin="0,0,18,0" />
-                    <Button Text="Enviar mensaje" Command="{Binding SendNotificationCommand}" Padding="30,0,35,0"/>
-                </StackLayout>
-
-                <BoxView HeightRequest="1" BackgroundColor="Gray" Margin="10,40" IsVisible="{Binding IsProfessor}"/>
-
-                <!--Asignar evaluacion -->
-                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsProfessor}">
-                    <Label Text="&#xf017;" FontSize="30"  FontFamily="FontAwesomeSolid" TextColor="Gray" Margin="0,0,18,0" />
-                    <Button Text="Crear evaluacion" Command="{Binding CreateEvaluationCommand}"  Padding="30,0,35,0"/>
-                </StackLayout>
-
-                <BoxView HeightRequest="1" BackgroundColor="Gray" Margin="10,40" IsVisible="{Binding IsProfessor}"/>
-
-                <!--Marcar asistencia -->
-                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsProfessor}">
-                    <Label Text="&#xf017;" FontSize="30"  FontFamily="FontAwesomeSolid" TextColor="Gray" Margin="0,0,18,0" />
-                    <Button Text="Marcar asistencia" Command="{Binding AttendanceCommand}"  Padding="30,0,35,0"/>
-                </StackLayout>
-
-                <BoxView HeightRequest="1" BackgroundColor="Gray" Margin="10,40" IsVisible="{Binding IsProfessor}"/>
-
-
-                <!--Plan de evaluacion-->
+                <!-- Horario -->
                 <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsStudent}">
-                    <Label Text="&#xf017;" FontSize="30" FontFamily="FontAwesomeSolid" TextColor="Gray" Margin="0,0,18,0" />
-                    <Button Text="Plan de evaluacion" Command="{Binding EvaluationCommand}" Padding="30,0,35,0"/>
+                    <Label Text="&#xf073;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Horario" Command="{Binding ScheduleCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
                 </StackLayout>
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsStudent}" />
 
-                <BoxView HeightRequest="1" BackgroundColor="Gray" Margin="10,40" IsVisible="{Binding IsStudent}"/>
+                <!-- Notificaciones -->
+                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsHiddenForStudent}">
+                    <Label Text="&#xf0f3;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Notificaciones" Command="{Binding NotificationCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
+                </StackLayout>
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsHiddenForStudent}" />
 
-                <!--Perfil-->
+                <!-- Enviar mensaje -->
+                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsProfessor}">
+                    <Label Text="&#xf1d8;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Enviar mensaje" Command="{Binding SendNotificationCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
+                </StackLayout>
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsProfessor}" />
+
+                <!-- Crear evaluación -->
+                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsProfessor}">
+                    <Label Text="&#xf044;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Crear evaluación" Command="{Binding CreateEvaluationCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
+                </StackLayout>
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsProfessor}" />
+
+                <!-- Marcar asistencia -->
+                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsProfessor}">
+                    <Label Text="&#xf328;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Marcar asistencia" Command="{Binding AttendanceCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
+                </StackLayout>
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsProfessor}" />
+
+                <!-- Plan de evaluación -->
+                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsStudent}">
+                    <Label Text="&#xf15c;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Evaluaciones" Command="{Binding EvaluationCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
+                </StackLayout>
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsStudent}" />
+
+                <!-- Perfil -->
                 <StackLayout Orientation="Horizontal" Padding="5">
-                    <Label Text="&#xf017;" FontSize="30" FontFamily="FontAwesomeSolid" TextColor="Gray" Margin="0,0,18,0" />
-                    <Button Text="Perfil" Command="{Binding FirstProfileCommand}" Padding="30,0,35,0"/>
+                    <Label Text="&#xf007;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Perfil" Command="{Binding FirstProfileCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
                 </StackLayout>
-
-                <BoxView HeightRequest="1" BackgroundColor="Gray" Margin="10,40"/>
-
-
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" />
 
             </StackLayout>
         </ScrollView>
-        <!-- Barra de navegación inferior -->
-        <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <StackLayout Grid.Column="0" HorizontalOptions="Center">
-                <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
-                <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
-
-            <StackLayout Grid.Column="1" HorizontalOptions="Center" IsVisible="{Binding IsStudent}">
-                <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding EvaluationCommand}" Clicked="AnimateButton" />
-                <Label Text="Evaluaciones" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
-
-            <StackLayout Grid.Column="2" HorizontalOptions="Center">
-                <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding FirstProfileCommand}" Clicked="AnimateButton" />
-                <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
-
-            <StackLayout Grid.Column="3" HorizontalOptions="Center">
-                <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
-                <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
-        </Grid>
     </Grid>
-</ContentPage>
+</ContentView>

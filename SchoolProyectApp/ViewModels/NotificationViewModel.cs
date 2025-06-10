@@ -13,6 +13,39 @@ namespace SchoolProyectApp.ViewModels
         private int _roleId;
         private CancellationTokenSource _cancellationTokenSource = new();
 
+        public ObservableCollection<Notification> RegularNotifications { get; set; } = new();
+        public ObservableCollection<AttendanceNotification> AttendanceNotifications { get; set; } = new();
+        public ObservableCollection<object> ActiveNotifications { get; set; } = new();
+
+        private string _selectedTab = "Normales";
+        public string SelectedTab
+        {
+            get => _selectedTab;
+            set
+            {
+                if (_selectedTab != value)
+                {
+                    _selectedTab = value;
+                    OnPropertyChanged();
+                    UpdateActiveNotifications();
+                }
+            }
+        }
+
+        public ICommand SwitchTabCommand => new Command<string>((tab) => SelectedTab = tab);
+
+        public ICommand RefreshCommand { get; }
+        public ICommand HomeCommand { get; }
+        public ICommand ProfileCommand { get; }
+        public ICommand OpenMenuCommand { get; }
+        public ICommand CourseCommand { get; }
+        public ICommand FirstProfileCommand { get; }
+        public ICommand SendNotificationCommand { get; }
+        public ICommand MarkAsReadCommand { get; }
+        public ICommand DeleteNotificationCommand { get; }
+        public ICommand DeleteAttendanceCommand { get; }
+
+
         public int RoleID
         {
             get => _roleId;
@@ -31,31 +64,17 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
-
-        // Propiedades booleanas para Binding en XAML
         public bool IsProfessor => RoleID == 2;
         public bool IsStudent => RoleID == 1;
         public bool IsParent => RoleID == 3;
-
         public bool IsHiddenForProfessor => !IsProfessor;
         public bool IsHiddenForStudent => !IsStudent;
+        public bool HasNotifications => ActiveNotifications.Count > 0;
 
-
-        public ObservableCollection<Notification> Notifications { get; set; } = new ObservableCollection<Notification>();
-        public ICommand RefreshCommand { get; }
-        public ICommand HomeCommand { get; }
-        public ICommand ProfileCommand { get; }
-        public ICommand OpenMenuCommand { get; }
-        public ICommand CourseCommand { get; }
-        public ICommand FirstProfileCommand { get; }
-        public ICommand SendNotificationCommand { get; }
 
         public NotificationViewModel()
         {
             _apiService = new ApiService();
-            //RefreshCommand = new Command(async () => await LoadNotifications());
-
-           // Task.Run(async () => await LoadNotifications()); // Carga inicial
 
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
             ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
@@ -64,9 +83,64 @@ namespace SchoolProyectApp.ViewModels
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
             SendNotificationCommand = new Command(async () => await Shell.Current.GoToAsync("///sendNotification"));
 
-            _apiService = new ApiService();
-            //Task.Run(async () => await LoadUserData());
-            //Task.Run(async () => await LoadAttendanceAsNotifications());
+            MarkAsReadCommand = new Command<Notification>(async (notification) => await MarkAsReadAsync(notification));
+
+
+            //Eliminar notificacion
+            DeleteNotificationCommand = new Command<Notification>(async (notification) =>
+            {
+                if (notification == null) return;
+
+                bool confirm = await Application.Current.MainPage.DisplayAlert(
+                    "Eliminar", "¿Deseas eliminar esta notificación?", "Sí", "No");
+
+                if (!confirm) return;
+
+                if (notification.NotifyID > 0)
+                {
+                    var success = await _apiService.DeleteNotificationAsync(notification.NotifyID);
+                    if (!success)
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Error", "No se pudo eliminar la notificación del servidor.", "OK");
+                        return;
+                    }
+                }
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    RegularNotifications.Remove(notification);
+                    ActiveNotifications.Remove(notification);
+                    UpdateActiveNotifications();
+                });
+            });
+
+            //Eliminar asistencia
+            DeleteAttendanceCommand = new Command<AttendanceNotification>(async (attendance) =>
+            {
+                if (attendance == null) return;
+
+                bool confirm = await Application.Current.MainPage.DisplayAlert(
+                    "Eliminar", "¿Deseas eliminar esta notificación de asistencia?", "Sí", "No");
+
+                if (!confirm) return;
+
+                var success = await _apiService.DeleteAttendanceAsync(attendance.AttendanceID);
+
+                if (success)
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        AttendanceNotifications.Remove(attendance);
+                        UpdateActiveNotifications();
+                    });
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "No se pudo eliminar la asistencia.", "OK");
+                }
+            });
+
+
 
             Task.Run(async () =>
             {
@@ -74,8 +148,6 @@ namespace SchoolProyectApp.ViewModels
                 await LoadAttendanceAsNotifications(_cancellationTokenSource.Token);
                 await LoadUserData(_cancellationTokenSource.Token);
             });
-
-
         }
 
         public void CancelTasks()
@@ -132,15 +204,15 @@ namespace SchoolProyectApp.ViewModels
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                Notifications.Clear();
+                RegularNotifications.Clear();
                 foreach (var notification in notifications)
-                {
-                    Notifications.Add(notification);
-                }
+                    RegularNotifications.Add(notification);
+
+                UpdateActiveNotifications();
             });
         }
 
-        private async Task LoadAttendanceAsNotifications(CancellationToken token)
+       private async Task LoadAttendanceAsNotifications(CancellationToken token)
         {
             if (token.IsCancellationRequested) return;
 
@@ -150,103 +222,50 @@ namespace SchoolProyectApp.ViewModels
             var attendanceRecords = await _apiService.GetAttendanceNotifications(int.Parse(userId));
             if (token.IsCancellationRequested || attendanceRecords == null || attendanceRecords.Count == 0) return;
 
-            Console.WriteLine($"Se recibieron {attendanceRecords.Count} registros de asistencia");
-
             MainThread.BeginInvokeOnMainThread(() =>
             {
+                AttendanceNotifications.Clear();
                 foreach (var a in attendanceRecords)
                 {
-                    Notifications.Add(new Notification
-                    {
-                        Title = $"Asistencia de su representado",
-                        Content = $"Su representado estuvo {a.Status} en el curso {a.CourseName}",
-                        Date = a.Date
-                    });
+                    AttendanceNotifications.Add(a); 
                 }
             });
+
         }
 
+        private void UpdateActiveNotifications()
+        {
+            ActiveNotifications.Clear();
+
+            if (SelectedTab == "Normales")
+            {
+                foreach (var n in RegularNotifications)
+                    ActiveNotifications.Add(n);
+            }
+            else
+            {
+                foreach (var a in AttendanceNotifications)
+                    ActiveNotifications.Add(a);
+            }
+            OnPropertyChanged(nameof(HasNotifications));
+        }
+
+
+        private async Task MarkAsReadAsync(Notification notification)
+        {
+            if (notification == null || notification.IsRead) return;
+
+            var success = await _apiService.MarkNotificationAsReadAsync(notification.NotifyID);
+            if (success)
+            {
+                notification.IsRead = true;
+                OnPropertyChanged(nameof(ActiveNotifications));
+            }
+        }
     }
 }
 
 
-/*using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Microsoft.Maui.Controls;
-using SchoolProyectApp.Models;
-using SchoolProyectApp.Services;
 
-namespace SchoolProyectApp.ViewModels
-{
-    public class NotificationViewModel : BaseViewModel
-    {
-        private readonly ApiService _apiService;
-        public ObservableCollection<Notification> Notifications { get; set; } = new ObservableCollection<Notification>();
-
-        public ICommand RefreshCommand { get; }
-        public ICommand HomeCommand { get; }
-        public ICommand ProfileCommand { get; }
-        public ICommand OpenMenuCommand { get; }
-        public ICommand CourseCommand { get; }
-        public ICommand FirstProfileCommand { get; }
-
-        public NotificationViewModel()
-        {
-            _apiService = new ApiService();
-            RefreshCommand = new Command(async () => await LoadNotifications());
-            Task.Run(async () => await LoadNotifications());
-
-            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
-            ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
-            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
-            CourseCommand = new Command(async () => await Shell.Current.GoToAsync("///courses"));
-            FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
-        }*/
-
-       /* public void OnDisappearing()
-        {
-            Notifications.Clear(); // Limpia la lista para evitar errores de acceso a memoria
-        }*/
-        /*private async Task LoadNotifications()
-        {
-            var userId = await SecureStorage.GetAsync("user_id");
-            if (string.IsNullOrEmpty(userId)) return;
-
-            var notifications = await _apiService.GetUserNotifications(int.Parse(userId));
-
-            // Ejecutamos en el hilo principal para evitar problemas con la UI
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Notifications.Clear(); // Limpiamos antes de agregar
-                foreach (var notification in notifications)
-                {
-                    Notifications.Add(notification);
-                }
-            });
-        }*/
-
-        /*private async Task LoadNotifications()
-        {
-            var userId = await SecureStorage.GetAsync("user_id");
-            if (string.IsNullOrEmpty(userId))
-            {
-                return;
-            }
-
-            var notifications = await _apiService.GetUserNotifications(int.Parse(userId));
-
-            Notifications.Clear();
-
-            if (notifications != null && notifications.Count > 0)
-            {
-                foreach (var item in notifications)
-                {
-                    Notifications.Add(item);
-                }
-            }
-        }*/
 
        
-
-    

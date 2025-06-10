@@ -1,86 +1,107 @@
 <?xml version="1.0" encoding="utf-8" ?>
-    <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SchoolProyectApp.Views.LoginPage">
+             x:Class="SchoolProyectApp.Views.LoginPage"
+             BackgroundColor="white"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
+             droid:NavigationBar.Color="white"
+             droid:NavigationBar.Style="LightContent">
 
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="white"
+                                   StatusBarStyle="LightContent" />
+    </ContentPage.Behaviors>
     <ContentPage.Content>
         <VerticalStackLayout Padding="20" Spacing="15">
-            <Label Text="Iniciar Sesión" FontSize="40" HorizontalOptions="Center" FontAttributes="Bold" Margin="0, 30, 10, 70"/>
-
-            <Entry Placeholder="Email" Text="{Binding Email}" Keyboard="Email" HorizontalOptions="Fill"/>
-
-            <Grid HorizontalOptions="Fill">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <!-- Entry ocupa todo el espacio disponible -->
-                    <ColumnDefinition Width="50" />
-                    <!-- Espacio para el ojo -->
-                </Grid.ColumnDefinitions>
-
-                <!-- Campo de Contraseña -->
-                <Entry Placeholder="Contraseña" 
-                   Text="{Binding Password}" 
-                   IsPassword="True" 
-                   x:Name="PasswordEntry"
-                   Grid.Column="0"
-                   HorizontalOptions="FillAndExpand"
-                   Margin="0,0,10,10"
-                   FontSize="14"/>
-
-                <!-- Icono de Ojo usando Label -->
-                <Label x:Name="TogglePasswordLabel"
-                   Text="&#xf06e;" 
-                   FontFamily="FontAwesomeSolid"
-                   FontSize="24"
-                   Grid.Column="1"
-                   VerticalOptions="Center"
-                   HorizontalOptions="Center"
-                   TextColor="Gray">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="TogglePasswordLabel_Tapped"/>
-                    </Label.GestureRecognizers>
-                </Label>
-            </Grid>
+            <Image Source="Images/artboard.png"
+                   BackgroundColor="Transparent"
+       Aspect="AspectFit"
+       HeightRequest="45"
+       HorizontalOptions="Center"
+       Margin="0,100,10,70"/>
 
 
-            <!--<Grid HorizontalOptions="Fill">
+            <!-- Email con fondo circular -->
+            <Frame BackgroundColor="#0C4251"
+       CornerRadius="3"
+       Padding="10"
+       HeightRequest="60"
+       WidthRequest="300"
+       HorizontalOptions="Center"
+       BorderColor="#6bbdda">
+                <Entry Placeholder="Email"
+       Text="{Binding Email}"
+       Keyboard="Email"
+       BackgroundColor="#f1c864"
+       PlaceholderColor="#6bbdda"
+       HorizontalOptions="FillAndExpand"
+       FontAttributes="Bold"/>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+            </Frame>
 
-                    <ColumnDefinition Width="50" />
+            <!-- Contraseña con fondo circular -->
+            <Frame BackgroundColor="#0C4251"
+       CornerRadius="3"
+       Padding="10"
+       HeightRequest="60"
+       WidthRequest="300"
+       HorizontalOptions="Center"
+       BorderColor="#6bbdda">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="50" />
+                    </Grid.ColumnDefinitions>
 
-                </Grid.ColumnDefinitions>
+                    <Entry Placeholder="Contraseña" 
+               PlaceholderColor="#6bbdda"
+               Text="{Binding Password}"
+               IsPassword="True"
+               x:Name="PasswordEntry"
+               Grid.Column="0"
+               BackgroundColor="#0C4251"
+               HorizontalOptions="FillAndExpand"
+               FontSize="15"
+               FontAttributes="Bold"/>
 
-                <Entry Placeholder="Contraseña" 
-           Text="{Binding Password}" 
-           IsPassword="True" 
-           x:Name="PasswordEntry"
-           Grid.Column="0"
-           HorizontalOptions="FillAndExpand"
-           Margin="0,0,10,10"/>
-
-                <Button x:Name="TogglePasswordButton"
-            Text="👁️"
-            Clicked="TogglePasswordButton_Clicked"
-            Grid.Column="1"
-            WidthRequest="50"
-            HeightRequest="40"
-            BackgroundColor="Transparent"
-            Padding="0"
-            VerticalOptions="Center"/>
-            </Grid>-->
-
+                    <Label x:Name="TogglePasswordLabel"
+               Text="&#xf06e;"
+               FontFamily="FontAwesomeSolid"
+               FontSize="24"
+               Grid.Column="1"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               TextColor="#6bbdda">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="TogglePasswordLabel_Tapped" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+            </Frame>
 
             <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"/>
 
-            <Button Text="Iniciar Sesión" Command="{Binding LoginCommand}" BackgroundColor="Blue" TextColor="White" FontAttributes="Bold" HorizontalOptions="Fill" Margin="0, 50, 0, 10"/>
+            <Button Text="Iniciar Sesión" 
+        Command="{Binding LoginCommand}" 
+        BackgroundColor="#f1c864" 
+        TextColor="#0C4251" 
+        FontAttributes="Bold" 
+        WidthRequest="300"
+        HorizontalOptions="Center"
+        Margin="0, 40, 0, 10"
+        CornerRadius="3">
+                <Button.Shadow>
+                    <Shadow Brush="black" Opacity="0.3" Offset="0,8" Radius="8" />
+                </Button.Shadow>
+            </Button>
+
 
             <!-- Mensaje de error o éxito -->
             <Label Text="{Binding Message}" TextColor="Red" HorizontalOptions="Center"/>
 
             <!-- Botón para ir a la página de registro -->
-            <Button Text="Registrarse" Command="{Binding NavigateToRegisterCommand}" BackgroundColor="Gray" TextColor="White" FontAttributes="Bold" HorizontalOptions="Fill" Margin="10, 0, 10, 20"/>
+            <!--<Button Text="Registrarse" Command="{Binding NavigateToRegisterCommand}" BackgroundColor="Gray" TextColor="White" FontAttributes="Bold" HorizontalOptions="Fill" Margin="10, 0, 10, 20"/>-->
         </VerticalStackLayout>
     </ContentPage.Content>
 </ContentPage>

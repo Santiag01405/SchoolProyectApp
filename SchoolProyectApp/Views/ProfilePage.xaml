@@ -1,90 +1,110 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:SchoolProyectApp.Views"
              x:Class="SchoolProyectApp.Views.ProfilePage"
              Title="Perfil">
-    <Grid RowDefinitions="Auto,*,Auto">
-        <ScrollView>
-            <StackLayout Padding="20" Spacing="15">
 
-                <Label Text="&#xf2bd;" Margin="0,20,0,0" FontFamily="FontAwesomeSolid" FontSize="150" HorizontalOptions="Center" TextColor="Gray"/>
+    <AbsoluteLayout>
 
-                <Label Text="Nombre" FontSize="14"/>
-            <Entry Text="{Binding UserName}" Placeholder="Nombre"/>
+        <!-- Menú lateral -->
+        <ContentView x:Name="SideMenu"
+                     WidthRequest="260"
+                     BackgroundColor="#0C4251"
+                     IsVisible="False"
+                     TranslationX="-260"
+                     AbsoluteLayout.LayoutBounds="0,0,260,1"
+                     AbsoluteLayout.LayoutFlags="PositionProportional,HeightProportional">
+            <local:MenuPage />
+        </ContentView>
 
-            <Label Text="Correo Electrónico" FontSize="14"/>
-                <Entry Text="{Binding Email}" Placeholder="Email" Keyboard="Email"/>
+        <!-- Contenido principal -->
+        <ContentView x:Name="MainContent"
+                     AbsoluteLayout.LayoutBounds="0,0,1,1"
+                     AbsoluteLayout.LayoutFlags="All">
 
-                <Grid HorizontalOptions="Fill">
+            <Grid RowDefinitions="Auto,*,Auto">
+
+                <ScrollView Grid.Row="1">
+                    <StackLayout Padding="20" Spacing="15">
+
+                        <Label Text="&#xf2bd;" Margin="0,20,0,0" FontFamily="FontAwesomeSolid" FontSize="150"
+                               HorizontalOptions="Center" TextColor="Gray"/>
+
+                        <Label Text="Nombre" FontSize="14"/>
+                        <Label Text="{Binding UserName}" FontSize="16" Margin="0,0,0,10" />
+
+                        <Label Text="Correo Electrónico" FontSize="14"/>
+                        <Label Text="{Binding Email}" FontSize="16" Margin="0,0,0,10" />
+                        <Label Text="{Binding Password}" FontSize="16" Margin="0,0,0,10" />
+
+                        <Grid HorizontalOptions="Fill">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="50" />
+                            </Grid.ColumnDefinitions>
+
+                            <Entry Placeholder="Contraseña"
+                                   Text="{Binding Password}"
+                                   IsPassword="True"
+                                   x:Name="PasswordEntry"
+                                   Grid.Column="0"
+                                   HorizontalOptions="FillAndExpand"
+                                   Margin="0,0,10,10"
+                                   FontSize="14"/>
+
+                            <Label x:Name="TogglePasswordLabel"
+                                   Text="&#xf06e;"
+                                   FontFamily="FontAwesomeSolid"
+                                   FontSize="24"
+                                   Grid.Column="1"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center"
+                                   TextColor="Gray">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="TogglePasswordLabel_Tapped"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Grid>
+
+                        <Label Text="{Binding Message}" TextColor="Red" HorizontalOptions="Center" />
+
+                        <Button Text="Guardar Cambios"
+                                Command="{Binding UpdateUserCommand}"
+                                Margin="0,0,0,210"
+                                BackgroundColor="#007AFF"
+                                TextColor="White" />
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Barra inferior -->
+                <Grid Grid.Row="2" BackgroundColor="WhiteSmoke" Padding="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <!-- Entry ocupa todo el espacio disponible -->
-                        <ColumnDefinition Width="50" />
-                        <!-- Espacio para el ojo -->
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- Campo de Contraseña -->
-                    <Entry Placeholder="Contraseña" 
-                       Text="{Binding Password}" 
-                       IsPassword="True" 
-                       x:Name="PasswordEntry"
-                       Grid.Column="0"
-                       HorizontalOptions="FillAndExpand"
-                       Margin="0,0,10,10"
-                       FontSize="14"/>
+                    <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                        <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
+                        <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
 
-                                    <!-- Icono de Ojo usando Label -->
-                    <Label x:Name="TogglePasswordLabel"
-                       Text="&#xf06e;" 
-                       FontFamily="FontAwesomeSolid"
-                       FontSize="24"
-                       Grid.Column="1"
-                       VerticalOptions="Center"
-                       HorizontalOptions="Center"
-                       TextColor="Gray">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="TogglePasswordLabel_Tapped"/>
-                        </Label.GestureRecognizers>
-                    </Label>
+                    <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                        <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
+                        <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
+
+                    <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                        <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="#0C4251" BackgroundColor="WhiteSmoke"
+                                Clicked="MenuButton_Clicked" />
+                        <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
                 </Grid>
-                
-                <!--<Label Text="Nueva Contraseña" FontSize="14"/>
-                <Entry Text="{Binding Password}" Placeholder="Nueva contraseña"/>-->
-
-                <Label Text="{Binding Message}" TextColor="Red" HorizontalOptions="Center" Margin="0,0,0,0"/>
-
-                <Button Text="Guardar Cambios" Command="{Binding UpdateUserCommand}" Margin="0,0,0,210" BackgroundColor="#007AFF" TextColor="White" />
-        </StackLayout>
-    </ScrollView>
-        <!-- Barra de navegación inferior -->
-        <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <StackLayout Grid.Column="0" HorizontalOptions="Center">
-                <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
-                <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
-
-            <StackLayout Grid.Column="1" HorizontalOptions="Center" IsVisible="{Binding IsStudent}">
-                <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding EvaluationCommand}" Clicked="AnimateButton" />
-                <Label Text="Evaluaciones" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
-
-            <StackLayout Grid.Column="2" HorizontalOptions="Center">
-                <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding FirstProfileCommand}" Clicked="AnimateButton" />
-                <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
-
-            <StackLayout Grid.Column="3" HorizontalOptions="Center">
-                <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
-                <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
-        </Grid>
-    </Grid>
+            </Grid>
+        </ContentView>
+    </AbsoluteLayout>
 </ContentPage>
-

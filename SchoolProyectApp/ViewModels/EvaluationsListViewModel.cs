@@ -113,14 +113,32 @@ namespace SchoolProyectApp.ViewModels
             if (_userId == 0) return;
 
             var evaluations = await _apiService.GetEvaluationsAsync(_userId);
+
+            // Filtrar solo las evaluaciones con fecha mayor o igual a hoy
+            var filtered = evaluations
+                .Where(e => e.Date.Date >= DateTime.Today)
+                .OrderBy(e => e.Date) // opcional: ordenamos por fecha ascendente
+                .ToList();
+
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 Evaluations.Clear();
-                foreach (var eval in evaluations)
+                foreach (var eval in filtered)
                 {
                     Evaluations.Add(eval);
                 }
             });
+            /* foreach (var eval in evaluations)
+             {
+                 Console.WriteLine($"✅ Eval: {eval.Title}, Curso: {eval.Course?.Name}");
+             }*/
+            var coursesDict = Courses.ToDictionary(c => c.CourseID);
+            foreach (var eval in evaluations)
+            {
+                if (coursesDict.TryGetValue(eval.CourseID, out var course))
+                    eval.Course = course;
+            }
+
         }
 
         private async Task LoadUserData()

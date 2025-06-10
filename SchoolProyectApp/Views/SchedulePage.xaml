@@ -2,94 +2,149 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
+             xmlns:local="clr-namespace:SchoolProyectApp.Views"
              x:Class="SchoolProyectApp.Views.SchedulePage"
-             Title="Horario">
+             Title="Horario"        
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+         xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
+         droid:NavigationBar.Color="white"
+         droid:NavigationBar.Style="LightContent"
+         BackgroundColor="White">
+
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="white"
+                           StatusBarStyle="LightContent" />
+    </ContentPage.Behaviors>
 
     <ContentPage.BindingContext>
         <vm:ScheduleViewModel />
     </ContentPage.BindingContext>
 
-    <Grid RowDefinitions="Auto, *, Auto" Padding="10">
+    <AbsoluteLayout>
 
-        <!-- Mensaje de error si no hay datos -->
-        <Label Text="{Binding Message}" 
-               IsVisible="{Binding Message, Converter={StaticResource StringToVisibilityConverter}}"
-               TextColor="Red"
-               FontSize="16"
-               HorizontalOptions="Center"
-               VerticalOptions="Center"
-               Grid.Row="1"/>
+        <!--Capa principal-->
+        <ContentView x:Name="MainContent"
+                     AbsoluteLayout.LayoutBounds="0,0,1,1"
+                     AbsoluteLayout.LayoutFlags="All">
+            
 
-        <!-- ScrollView para permitir desplazamiento -->
-        <ScrollView Grid.Row="1">
-            <StackLayout Padding="10">
+            <Grid Padding="0" RowDefinitions="Auto,Auto,*,Auto">
 
-                <!-- Lista de horarios -->
-                <CollectionView ItemsSource="{Binding WeeklySchedule}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <StackLayout Padding="10">
+                <!-- Mensaje -->
+                <Label Text="Horario" 
+                       FontSize="30" FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       Margin="0,30,0,30" 
+                       TextColor="#0C4251"
+                       Grid.Row="0"/>
 
-                                <!-- Día de la semana -->
-                                <Label Text="{Binding DayOfWeek}"
-                                       FontSize="20"
-                                       FontAttributes="Bold"
-                                       TextColor="Black"/>
+                <!-- Botones de días con scroll horizontal -->
+                <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Always" Grid.Row="1">
+                    <StackLayout Orientation="Horizontal" Spacing="5" Padding="20,0">
 
-                                <!-- Lista de cursos de ese día -->
-                                <CollectionView ItemsSource="{Binding Courses}"
-                                                VerticalOptions="FillAndExpand">
-                                    <!-- ✅ Solución aquí -->
-                                    <CollectionView.ItemTemplate>
-                                        <DataTemplate>
-                                            <Frame Padding="10" Margin="5" CornerRadius="10" BackgroundColor="LightGray">
-                                                <Label Text="{Binding Name}" FontSize="16" TextColor="Black"/>
-                                            </Frame>
-                                        </DataTemplate>
-                                    </CollectionView.ItemTemplate>
-                                </CollectionView>
-                            </StackLayout>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-                <!-- Botón de actualización -->
-                <Button Text="Actualizar" 
-                Command="{Binding RefreshCommand}" 
-                BackgroundColor="DodgerBlue" 
-                TextColor="White"
-                Grid.Row="0"/>
-            </StackLayout>
-        </ScrollView>
-        <!-- Barra de navegación inferior -->
-        <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+                        <Button Text="Lunes" Command="{Binding SelectDayCommand}" CommandParameter="1" BackgroundColor="White" TextColor="#0C4251" FontAttributes="None">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="1">
+                                    <Setter Property="FontAttributes" Value="Bold" />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
 
-            <StackLayout Grid.Column="0" HorizontalOptions="Center">
-                <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
-                <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
+                        <Button Text="Martes" Command="{Binding SelectDayCommand}" CommandParameter="2" BackgroundColor="White" TextColor="#0C4251" FontAttributes="None">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="2">
+                                    <Setter Property="FontAttributes" Value="Bold" />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
 
-            <StackLayout Grid.Column="1" HorizontalOptions="Center" IsVisible="{Binding IsStudent}">
-                <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding EvaluationCommand}" Clicked="AnimateButton" />
-                <Label Text="Evaluaciones" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
+                        <Button Text="Miércoles" Command="{Binding SelectDayCommand}" CommandParameter="3" BackgroundColor="White" TextColor="#0C4251" FontAttributes="None">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="3">
+                                    <Setter Property="FontAttributes" Value="Bold" />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
 
-            <StackLayout Grid.Column="2" HorizontalOptions="Center">
-                <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding FirstProfileCommand}" Clicked="AnimateButton" />
-                <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
+                        <Button Text="Jueves" Command="{Binding SelectDayCommand}" CommandParameter="4" BackgroundColor="White" TextColor="#0C4251" FontAttributes="None">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="4">
+                                    <Setter Property="FontAttributes" Value="Bold" />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
 
-            <StackLayout Grid.Column="3" HorizontalOptions="Center">
-                <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
-                <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
-        </Grid>
-    </Grid>
+                        <Button Text="Viernes" Command="{Binding SelectDayCommand}" CommandParameter="5" BackgroundColor="White" TextColor="#0C4251" FontAttributes="None">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="5">
+                                    <Setter Property="FontAttributes" Value="Bold" />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
 
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Lista filtrada y botón Actualizar -->
+                <ScrollView Grid.Row="2">
+                    <StackLayout Padding="20,0" Spacing="10" Margin="0,40,0,0">
+
+                        <CollectionView ItemsSource="{Binding FilteredCourses}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame Padding="15" Margin="0,0,0,10" CornerRadius="10" BackgroundColor="#0C4251" BorderColor="#0C4251">
+                                        <Label Text="{Binding Name}" FontSize="16" TextColor="#f1c864"/>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                       <!--<Button Text="Actualizar"
+                    Command="{Binding RefreshCommand}"
+                    BackgroundColor="DodgerBlue"
+                    TextColor="White"/>-->
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Barra inferior -->
+                <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                        <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
+                    TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
+                        <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
+
+                    <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                        <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
+                    TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
+                        <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
+
+                    <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                        <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
+                    TextColor="#0C4251" BackgroundColor="WhiteSmoke"
+                    Clicked="MenuButton_Clicked"/>
+                        <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
+                </Grid>
+            </Grid>
+        </ContentView>
+
+        <!--Menú lateral oculto-->
+        <ContentView x:Name="SideMenu"
+                     WidthRequest="260"
+                     BackgroundColor="#0C4251"
+                     IsVisible="False"
+                     TranslationX="-260"
+                     AbsoluteLayout.LayoutBounds="0,0,260,1"
+                     AbsoluteLayout.LayoutFlags="PositionProportional,HeightProportional">
+            <local:MenuPage />
+        </ContentView>
+    </AbsoluteLayout>
 </ContentPage>
-

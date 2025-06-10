@@ -1,122 +1,181 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
-             x:Class="SchoolProyectApp.Views.HomePage"
-             Title="Inicio">
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
+                 xmlns:local="clr-namespace:SchoolProyectApp.Views"
+                 x:Class="SchoolProyectApp.Views.HomePage"         
+                 xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                 xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
+                 droid:NavigationBar.Color="white"
+                 droid:NavigationBar.Style="LightContent">
 
-    <ContentPage.BindingContext>
-        <vm:HomePageViewModel />
-    </ContentPage.BindingContext>
+        <ContentPage.Behaviors>
+            <toolkit:StatusBarBehavior StatusBarColor="#0C4251"
+                                       StatusBarStyle="LightContent" />
+        </ContentPage.Behaviors>
 
-    <Grid Padding="0" RowDefinitions="Auto,*,Auto">
-        <!-- Bienvenida -->
-        <Label Text="{Binding WelcomeMessage}"
-               FontSize="24"
-               FontAttributes="Bold"
-               HorizontalOptions="Center"
-               Grid.Row="0"
-               Margin="0,50,0,130" />
+        <ContentPage.BindingContext>
+            <vm:HomePageViewModel />
+        </ContentPage.BindingContext>
 
-        <Grid Margin="0,100,0,0" Padding="20" IsVisible="{Binding IsHiddenForStudent }">
-            <!-- Sección de notificaciones -->
-            <StackLayout Grid.Row="1">
-                <Frame 
-                    CornerRadius="10" 
-                    BackgroundColor="LightGray"
-                    Padding="0"
-                    HasShadow="False"
-                    BorderColor="Gray"
-                    HorizontalOptions="Center">
-                    <Label 
-                        Text="Notificaciones recientes"
-                        FontSize="20"
-                        FontAttributes="Bold"
-                        Margin="0,5,0,5" 
-                        Padding="40,10,40,10"
-                        HorizontalOptions="Center"/>    
-                </Frame>
+        <AbsoluteLayout>
 
-                <!-- Mostrar mensaje si no hay notificaciones -->
-                <StackLayout HorizontalOptions="Center" VerticalOptions="Center" 
-                IsVisible="{Binding HasNotifications, Converter={StaticResource InverseBooleanConverter}}">
-                    <!-- Ícono FAFA (Campana con línea) -->
-                    <Label 
-                        Text="&#xf1f6;"
-                        FontFamily="FontAwesomeSolid"
-                        FontSize="100"
-                        TextColor="Gray"
-                        HorizontalOptions="Center"
-                        Margin="0,80,0,20"/>
+            <BoxView Color="#0C4251"
+                     AbsoluteLayout.LayoutBounds="0,0,1,70"
+                     AbsoluteLayout.LayoutFlags="WidthProportional" />
 
-                        <!-- Texto de No Notificaciones -->
-                        <Label Text="No hay notificaciones recientes"
-                            FontSize="20"
-                            HorizontalOptions="Center"
-                            Margin="0,10,0,50"
-                            TextColor="Gray"/>
-                </StackLayout>
+            <Image Source="Images/artboard.png"
+                   AbsoluteLayout.LayoutBounds="0.5,0,170,90"
+                   AbsoluteLayout.LayoutFlags="PositionProportional"
+                   Aspect="AspectFit"
+                   BackgroundColor="Transparent" />
 
-                <!-- Lista de notificaciones -->
+            <ContentView x:Name="MainContent"
+                 AbsoluteLayout.LayoutBounds="0,110,1,0.85"
+                 AbsoluteLayout.LayoutFlags="WidthProportional,HeightProportional">
 
-                <CollectionView ItemsSource="{Binding Notifications}"
-                IsVisible="{Binding HasNotifications}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Frame Padding="10" Margin="0,20,0,0" BackgroundColor="LightGray">
-                                <Grid ColumnDefinitions="Auto,*">
-                                    <Label Text="&#xf0f3;" FontSize="15" FontFamily="FontAwesomeSolid" VerticalOptions="Center" Grid.Column="0" Margin="0,0,10,0" />
+                <Grid Padding="0" RowDefinitions="Auto,*,Auto">
 
-                                    <StackLayout Grid.Column="1">
-                                        <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" />
-                                        <Label Text="{Binding Content}" FontSize="14" />
-                                        <Label Text="{Binding Date, StringFormat='{0:dd/MM/yyyy HH:mm}'}" FontSize="12" FontAttributes="Italic" />
-                                    </StackLayout>
-                                </Grid>
-                            </Frame>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                    <!-- Bienvenida -->
+                    <Label Text="{Binding WelcomeMessage}"
+                           FontSize="29"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Start"
+                           Grid.Row="0"
+                           Margin="0,5,0,5" 
+                           TextColor="#0C4251"/>
 
-                <StackLayout Orientation="Vertical" Padding="5">
-                    <Button Text="Ir a pagina de notificaciones" Command="{Binding  NotificationCommand}" Padding="0" Margin="30,10,30,0"/>
-                </StackLayout>
-            </StackLayout>
-        </Grid>
+                    <!-- Contenido dinámico -->
+                    <Grid Grid.Row="1">
+                        <!-- Admin -->
+                        <ContentView IsVisible="{Binding IsHiddenForStudent}">
+                            <StackLayout Margin="0,10,0,0" Padding="20">
+                            <Frame CornerRadius="10" BackgroundColor="#0C4251"
+                                       Padding="0" HasShadow="False" BorderColor="#0C4251" HorizontalOptions="Center">
+                                    <Label Text="Notificaciones recientes" FontSize="20" FontAttributes="Bold"
+                                           Margin="0,5,0,5" Padding="40,10,40,10" HorizontalOptions="Center" TextColor="#f1c864"/>
+                                </Frame>
 
-        <!-- Barra de navegación inferior -->
-        <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+                                <StackLayout HorizontalOptions="Center" VerticalOptions="Center"
+                                             IsVisible="{Binding HasNotifications, Converter={StaticResource InverseBooleanConverter}}">
+                                    <Label Text="&#xf1f6;" FontFamily="FontAwesomeSolid" FontSize="100"
+                                           TextColor="Gray" HorizontalOptions="Center" Margin="0,80,0,20"/>
+                                    <Label Text="No hay notificaciones recientes" FontSize="20"
+                                           HorizontalOptions="Center" Margin="0,10,0,50" TextColor="Gray"/>
+                                </StackLayout>
 
-            <StackLayout Grid.Column="0" HorizontalOptions="Center">
-                <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding HomeCommand}" Clicked="AnimateButton" />
-                <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
+                                <CollectionView ItemsSource="{Binding Notifications}" IsVisible="{Binding HasNotifications}">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                        <Frame Padding="10" Margin="0,20,0,0" BackgroundColor="#0C4251" BorderColor="#0C4251">
+                                                <Grid ColumnDefinitions="Auto,*">
+                                                    <Label Text="&#xf0f3;" FontSize="15" FontFamily="FontAwesomeSolid"
+                                                           VerticalOptions="Center" Grid.Column="0" Margin="0,0,10,0" TextColor="#f1c864"/>
+                                                    <StackLayout Grid.Column="1">
+                                                    <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" TextColor="#f1c864"/>
+                                                    <Label Text="{Binding Content}" FontSize="14" TextColor="#6bbdda"/>
+                                                    <Label Text="{Binding Date, StringFormat='{0:dd/MM/yyyy HH:mm}'}" FontSize="12" TextColor="White"/>
+                                                    </StackLayout>
+                                                </Grid>
+                                            </Frame>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
 
-            <StackLayout Grid.Column="1" HorizontalOptions="Center" IsVisible="{Binding IsStudent}">
-                <Button Text="&#xf044;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding EvaluationCommand}" Clicked="AnimateButton" />
-                <Label Text="Evaluaciones" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
+                                <Button Text="Ir a página de notificaciones" Command="{Binding NotificationCommand}"
+                                        Padding="0" Margin="30,10,30,0"/>
+                            </StackLayout>
+                        </ContentView>
 
-            <StackLayout Grid.Column="2" HorizontalOptions="Center">
-                <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding FirstProfileCommand}" Clicked="AnimateButton" />
-                <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
+                        <!-- Estudiante -->
+                        <ContentView IsVisible="{Binding IsStudent}">
+                            <VerticalStackLayout Padding="20" Spacing="10">
+                                <Label Text="{Binding Today}" FontSize="16" TextColor="DarkGray" />
 
-            <StackLayout Grid.Column="3" HorizontalOptions="Center">
-                <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="LightGray" BackgroundColor="Blue" Command="{Binding OpenMenuCommand}" Clicked="AnimateButton" />
-                <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
-        </Grid>
-    </Grid>
-    
-</ContentPage>
+                                <!-- Frame para Clases de hoy -->
+                                <Frame BorderColor="#0C4251" BackgroundColor="#0C4251" Padding="10" Margin="0,5" CornerRadius="0">
+                                    <VerticalStackLayout>
+                                        <Label Text="Clases de hoy" FontSize="18" FontAttributes="Bold" TextColor="#f1c864" Margin="0,5,0,10"/>
+                                        <CollectionView ItemsSource="{Binding TodaysClasses}">
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Frame BorderColor="WhiteSmoke" Padding="10" Margin="0,5,4,5" BackgroundColor="White" CornerRadius="0">
+                                                        <Label Text="{Binding Name}" FontSize="16" TextColor="Black" FontAttributes="Bold" />
+                                                    </Frame>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                    </VerticalStackLayout>
+                                </Frame>
 
+                                <!-- Frame para Evaluaciones -->
+                                <Frame BorderColor="#0C4251" BackgroundColor="#0C4251" Padding="10" Margin="0,5" CornerRadius="0">
+                                    <VerticalStackLayout>
+                                        <Label Text="Próxima Evaluación" FontSize="18" FontAttributes="Bold" TextColor="#f1c864"  Margin="0,5,0,10"/>
+                                        <CollectionView ItemsSource="{Binding UpcomingEvaluations}">
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Frame BorderColor="WhiteSmoke" Padding="10" Margin="0,5" CornerRadius="0">
+                                                        <VerticalStackLayout>
+                                                            <Label Text="{Binding Title}" FontSize="16" FontAttributes="Bold" />
+                                                            <Label Text="{Binding Description}" FontSize="14" />
+                                                            <Label Text="{Binding Date, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}"
+                                               FontSize="12" TextColor="Gray" />
+                                                        </VerticalStackLayout>
+                                                    </Frame>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                    </VerticalStackLayout>
+                                </Frame>
 
+                            </VerticalStackLayout>
+                        </ContentView>
 
+                    </Grid>
 
+               
+
+                    <!-- Barra inferior -->
+                    <Grid Grid.Row="2" BackgroundColor="WhiteSmoke" Padding="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                            <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                    TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
+                            <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+                        </StackLayout>
+
+                        <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                            <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                    TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
+                            <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+                        </StackLayout>
+
+                        <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                            <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                    TextColor="#0C4251" BackgroundColor="WhiteSmoke"
+                                    Clicked="MenuButton_Clicked" />
+                            <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+                        </StackLayout>
+                    </Grid>
+                </Grid>
+            </ContentView>
+
+            <ContentView x:Name="SideMenu"
+                         WidthRequest="260"
+                         BackgroundColor="#0C4251"
+                         IsVisible="False"
+                         TranslationX="-260"
+                         AbsoluteLayout.LayoutBounds="0,0,260,1"
+                         AbsoluteLayout.LayoutFlags="PositionProportional,HeightProportional">
+                <local:MenuPage />
+            </ContentView>
+
+        </AbsoluteLayout>
+    </ContentPage>

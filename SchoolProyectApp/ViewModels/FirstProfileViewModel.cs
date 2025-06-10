@@ -108,7 +108,7 @@ namespace SchoolProyectApp.ViewModels
                     UserName = user.UserName;
                     Email = user.Email;
                     Role = user.RoleID == 1 ? "Estudiante" : user.RoleID == 2 ? "Profesor" : user.RoleID == 3 ? "Padre" : "Desconocido";
-                    RoleID = user.RoleID; // 🔹 Aquí nos aseguramos de que se asigne correctamente
+                    RoleID = user.RoleID; // Aquí nos aseguramos de que se asigne correctamente
 
 
                     // 🔹 Forzar actualización en UI

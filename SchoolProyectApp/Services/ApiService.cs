@@ -208,7 +208,7 @@ namespace SchoolProyectApp.Services
 
 
         //  Obtener lista de usuarios
-        public async Task<List<User>?> GetUsersAsync()
+        /*public async Task<List<User>?> GetUsersAsync()
         {
             try
             {
@@ -223,7 +223,26 @@ namespace SchoolProyectApp.Services
                 Console.WriteLine($"❌ Error en GetUsersAsync: {ex.Message}");
                 return null;
             }
+        }*/
+        
+        //Con shoolid
+        public async Task<List<User>?> GetUsersAsync(int schoolId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/users?schoolId={schoolId}");
+                if (!response.IsSuccessStatusCode) return null;
+
+                var responseJson = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<List<User>>(responseJson);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error en GetUsersAsync: {ex.Message}");
+                return null;
+            }
         }
+
 
         // Obtener notificaciones
         public async Task<List<Notification>?> GetNotificationsAsync()
@@ -253,31 +272,30 @@ namespace SchoolProyectApp.Services
         }
 
 
-
         // Obtener cursos
-       /* public async Task<List<Course>?> GetCoursesAsync()
-        {
-            try
-            {
-                var response = await _httpClient.GetAsync("api/courses");
-                if (!response.IsSuccessStatusCode) return null;
+        /* public async Task<List<Course>?> GetCoursesAsync()
+         {
+             try
+             {
+                 var response = await _httpClient.GetAsync("api/courses");
+                 if (!response.IsSuccessStatusCode) return null;
 
-                var responseJson = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<List<Course>>(responseJson);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"❌ Error en GetCoursesAsync: {ex.Message}");
-                return null;
-            }
-        }*/
+                 var responseJson = await response.Content.ReadAsStringAsync();
+                 return JsonSerializer.Deserialize<List<Course>>(responseJson);
+             }
+             catch (Exception ex)
+             {
+                 Console.WriteLine($"❌ Error en GetCoursesAsync: {ex.Message}");
+                 return null;
+             }
+         }*/
 
         // Obtener calificaciones (grades)
-        public async Task<List<Grade>?> GetGradesAsync()
+        public async Task<List<Grade>?> GetGradesAsync(int schoolId)
         {
             try
             {
-                var response = await _httpClient.GetAsync("api/grades");
+                var response = await _httpClient.GetAsync($"api/grades?schoolId={schoolId}");
                 if (!response.IsSuccessStatusCode) return null;
 
                 var responseJson = await response.Content.ReadAsStringAsync();
@@ -291,14 +309,81 @@ namespace SchoolProyectApp.Services
         }
 
         //Incripciones
-        public async Task<List<Enrollment>?> GetEnrollmentsAsync(int userId)
+        /* public async Task<List<Enrollment>?> GetEnrollmentsAsync(int userId)
+         {
+             try
+             {
+                 Console.WriteLine($"📡 Buscando inscripciones para userID: {userId}");
+
+                 // 🔹 Obtener la lista de todos los estudiantes
+                 var studentsResponse = await _httpClient.GetAsync("api/students?schoolId={schoolId}");
+
+                 if (!studentsResponse.IsSuccessStatusCode)
+                 {
+                     Console.WriteLine("❌ Error al obtener la lista de estudiantes.");
+                     return null;
+                 }
+
+                 var studentsJson = await studentsResponse.Content.ReadAsStringAsync();
+                 var students = JsonSerializer.Deserialize<List<Student>>(studentsJson);
+
+                 if (students == null || !students.Any())
+                 {
+                     Console.WriteLine("⚠ No se encontraron estudiantes.");
+                     return null;
+                 }
+
+                 // 🔹 Buscar el StudentID que pertenece al userID del usuario autenticado
+               var student = students.FirstOrDefault(s => s.UserID == userId);
+
+                 if (student == null)
+                 {
+                     Console.WriteLine("❌ No se encontró un StudentID asociado a este usuario.");
+                     return null;
+                 }
+
+                 Console.WriteLine($"✅ StudentID encontrado: {student.UserID}");
+
+                 // 🔹 Obtener todas las inscripciones
+                 var enrollmentsResponse = await _httpClient.GetAsync("api/enrollments");
+
+                 if (!enrollmentsResponse.IsSuccessStatusCode)
+                 {
+                     Console.WriteLine("❌ Error al obtener inscripciones.");
+                     return null;
+                 }
+
+                 var enrollmentsJson = await enrollmentsResponse.Content.ReadAsStringAsync();
+                 var allEnrollments = JsonSerializer.Deserialize<List<Enrollment>>(enrollmentsJson);
+
+                 if (allEnrollments == null || !allEnrollments.Any())
+                 {
+                     Console.WriteLine("⚠ No se encontraron inscripciones.");
+                     return null;
+                 }
+
+
+
+                 // 🔹 Filtrar inscripciones del usuario autenticado
+                 var userEnrollments = allEnrollments.Where(e => e.UserID == student.UserID).ToList();
+
+                 Console.WriteLine($"✅ {userEnrollments.Count} inscripciones encontradas para el usuario {userId} con StudentID {student.UserID}");
+
+                 return userEnrollments;
+             }
+             catch (Exception ex)
+             {
+                 Console.WriteLine($"❌ Error en GetEnrollmentsAsync: {ex.Message}");
+                 return null;
+             }
+         }*/
+        public async Task<List<Enrollment>?> GetEnrollmentsAsync(int userId, int schoolId)
         {
             try
             {
                 Console.WriteLine($"📡 Buscando inscripciones para userID: {userId}");
 
-                // 🔹 Obtener la lista de todos los estudiantes
-                var studentsResponse = await _httpClient.GetAsync("api/students");
+                var studentsResponse = await _httpClient.GetAsync($"api/students?schoolId={schoolId}");
 
                 if (!studentsResponse.IsSuccessStatusCode)
                 {
@@ -315,8 +400,7 @@ namespace SchoolProyectApp.Services
                     return null;
                 }
 
-                // 🔹 Buscar el StudentID que pertenece al userID del usuario autenticado
-              var student = students.FirstOrDefault(s => s.UserID == userId);
+                var student = students.FirstOrDefault(s => s.UserID == userId);
 
                 if (student == null)
                 {
@@ -326,8 +410,7 @@ namespace SchoolProyectApp.Services
 
                 Console.WriteLine($"✅ StudentID encontrado: {student.UserID}");
 
-                // 🔹 Obtener todas las inscripciones
-                var enrollmentsResponse = await _httpClient.GetAsync("api/enrollments");
+                var enrollmentsResponse = await _httpClient.GetAsync($"api/enrollments?schoolId={schoolId}");
 
                 if (!enrollmentsResponse.IsSuccessStatusCode)
                 {
@@ -344,9 +427,6 @@ namespace SchoolProyectApp.Services
                     return null;
                 }
 
-
-
-                // 🔹 Filtrar inscripciones del usuario autenticado
                 var userEnrollments = allEnrollments.Where(e => e.UserID == student.UserID).ToList();
 
                 Console.WriteLine($"✅ {userEnrollments.Count} inscripciones encontradas para el usuario {userId} con StudentID {student.UserID}");
@@ -359,6 +439,7 @@ namespace SchoolProyectApp.Services
                 return null;
             }
         }
+
 
         // Obtener un curso por su ID
         public async Task<Course?> GetCourseByIdAsync(int courseId)
@@ -428,13 +509,14 @@ namespace SchoolProyectApp.Services
             PropertyNameCaseInsensitive = true
         };
 
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
 
         //Horario
-        public async Task<List<Course>> GetUserSchedule(int userId)
+        public async Task<List<Course>> GetUserSchedule(int userId, int schoolId)
         {
             try
             {
-                var url = $"https://SchoolProject123.somee.com/api/schedule/{userId}";
+                var url = $"https://SchoolProject123.somee.com/api/schedule/{userId}?schoolId={schoolId}";
                 var response = await _httpClient.GetAsync(url);
 
                 if (response.IsSuccessStatusCode)
@@ -486,11 +568,11 @@ namespace SchoolProyectApp.Services
             }
         }
 
-        public async Task<List<Enrollment>> GetUserWeeklySchedule(int userId)
+        public async Task<List<Enrollment>> GetUserWeeklySchedule(int userId, int schoolId)
         {
             try
             {
-                var response = await GetAsync<List<Enrollment>>($"api/enrollments/user/{userId}/schedule");
+                var response = await GetAsync<List<Enrollment>>($"api/enrollments/user/{userId}/schedule?schoolId={schoolId}");
 
                 if (response == null || response.Count == 0)
                 {
@@ -516,15 +598,16 @@ namespace SchoolProyectApp.Services
             return await GetAsync<List<Enrollment>>($"api/enrollments/user/{userId}/schedule");
         }*/
 
-        public async Task<List<Notification>> GetUserNotifications(int userId)
+        public async Task<List<Notification>> GetUserNotifications(int userId, int schoolId)
         {
-            return await _httpClient.GetFromJsonAsync<List<Notification>>($"api/notifications?userID={userId}");
+            return await _httpClient.GetFromJsonAsync<List<Notification>>($"api/notifications?userID={userId}&schoolId={schoolId}");
         }
 
-        public async Task<List<AttendanceNotification>> GetAttendanceNotifications(int userId)
+        public async Task<List<AttendanceNotification>> GetAttendanceNotifications(int userId, int schoolId)
         {
-            return await _httpClient.GetFromJsonAsync<List<AttendanceNotification>>($"api/attendance/parent/{userId}");
+            return await _httpClient.GetFromJsonAsync<List<AttendanceNotification>>($"api/attendance/parent/{userId}?schoolId={schoolId}");
         }
+
 
         //Busqueda de usuario
 
@@ -582,11 +665,11 @@ namespace SchoolProyectApp.Services
 
 
         //Metodos para las evaluaciones
-        public async Task<List<Evaluation>> GetEvaluationsAsync(int userId)
+        public async Task<List<Evaluation>> GetEvaluationsAsync(int userId, int schoolId)
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<Evaluation>>($"api/evaluations?userID={userId}") ?? new List<Evaluation>();
+                return await _httpClient.GetFromJsonAsync<List<Evaluation>>($"api/evaluations?userID={userId}&schoolId={schoolId}");
             }
             catch (Exception ex)
             {
@@ -661,11 +744,11 @@ namespace SchoolProyectApp.Services
         }
 
         //Cursos
-        public async Task<List<Course>> GetCoursesAsync()
+        public async Task<List<Course>> GetCoursesAsync(int schoolId)
         {
             try
             {
-                string url = $"api/courses";
+                string url = $"api/courses?schoolId={schoolId}";
                 Console.WriteLine($"🌍 GET: {url}");
 
                 var response = await _httpClient.GetAsync(url);

@@ -14,7 +14,7 @@ namespace SchoolProyectApp.Converter
             return value is bool b && b ? TrueOpacity : FalseOpacity;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

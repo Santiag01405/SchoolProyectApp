@@ -152,7 +152,7 @@ namespace SchoolProyectApp.ViewModels
             Debug.WriteLine($"📅 Día {SelectedDay}: {FilteredCourses.Count} cursos encontrados.");
         }
 
-        public async Task LoadWeeklySchedule()
+        /*public async Task LoadWeeklySchedule()
         {
             try
             {
@@ -221,7 +221,82 @@ namespace SchoolProyectApp.ViewModels
                 Debug.WriteLine($"❌ Error en LoadWeeklySchedule: {ex.Message}");
                 Message = "Error al cargar el horario.";
             }
+        }*/
+
+        public async Task LoadWeeklySchedule()
+        {
+            try
+            {
+                var userIdString = await SecureStorage.GetAsync("user_id");
+                var schoolIdString = await SecureStorage.GetAsync("school_id");
+
+                if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+                {
+                    Message = "Error: No se encontró el usuario.";
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(schoolIdString) || !int.TryParse(schoolIdString, out int schoolId))
+                {
+                    Message = "Error: No se encontró el colegio.";
+                    return;
+                }
+
+                Debug.WriteLine($"🔍 Buscando horario para el usuario ID: {userId}, Escuela ID: {schoolId}");
+
+                var scheduleData = await _apiService.GetUserWeeklySchedule(userId, schoolId);
+
+                if (scheduleData == null)
+                {
+                    Message = "Error al obtener datos del horario.";
+                    return;
+                }
+
+                if (scheduleData.Count == 0)
+                {
+                    Message = "No tienes clases programadas.";
+                    return;
+                }
+
+                AllCourses = new ObservableCollection<Course>(scheduleData.Select(c => new Course
+                {
+                    CourseID = c.CourseID,
+                    Name = c.CourseName,
+                    DayOfWeek = c.DayOfWeek
+                }));
+
+                OnPropertyChanged(nameof(AllCourses));
+                FilterCourses();
+
+                WeeklySchedule.Clear();
+                var groupedSchedule = scheduleData
+                    .GroupBy(c => c.DayOfWeek)
+                    .OrderBy(g => g.Key)
+                    .Select(g => new DaySchedule
+                    {
+                        DayOfWeek = GetDayName(g.Key),
+                        Courses = new ObservableCollection<Course>(g.Select(c => new Course
+                        {
+                            CourseID = c.CourseID,
+                            Name = c.CourseName
+                        }))
+                    });
+
+                foreach (var item in groupedSchedule)
+                {
+                    WeeklySchedule.Add(item);
+                }
+
+                Message = "";
+                Debug.WriteLine($"✅ {WeeklySchedule.Count} días con clases cargados.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"❌ Error en LoadWeeklySchedule: {ex.Message}");
+                Message = "Error al cargar el horario.";
+            }
         }
+
 
         private string GetDayName(int dayOfWeek)
         {

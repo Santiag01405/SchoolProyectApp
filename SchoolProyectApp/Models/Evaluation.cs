@@ -29,4 +29,5 @@ public class Evaluation
 
     [JsonIgnore]
     public User? User { get; set; }
+    public int SchoolID { get; set; }
 }

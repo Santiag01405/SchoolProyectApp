@@ -224,7 +224,7 @@ namespace SchoolProyectApp.Services
                 return null;
             }
         }*/
-        
+
         //Con shoolid
         public async Task<List<User>?> GetUsersAsync(int schoolId)
         {
@@ -669,7 +669,8 @@ namespace SchoolProyectApp.Services
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<Evaluation>>($"api/evaluations?userID={userId}&schoolId={schoolId}");
+                return await _httpClient.GetFromJsonAsync<List<Evaluation>>(
+                    $"api/evaluations?userID={userId}&schoolId={schoolId}") ?? new List<Evaluation>();
             }
             catch (Exception ex)
             {
@@ -677,6 +678,7 @@ namespace SchoolProyectApp.Services
                 return new List<Evaluation>();
             }
         }
+
 
         public async Task<bool> CreateEvaluationAsync(Evaluation evaluation)
         {
@@ -885,11 +887,69 @@ namespace SchoolProyectApp.Services
         }
 
 
+
+        public async Task<bool> AssignClassroomToCourseAsync(int courseId, int classroomId)
+        {
+            try
+            {
+                var url = $"api/courses/{courseId}/assign-classroom/{classroomId}";
+                var response = await _httpClient.PostAsync(url, null);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"✅ Salón {classroomId} asignado al curso {courseId}");
+                    return true;
+                }
+
+                var error = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"❌ Error asignando salón: {response.StatusCode} - {error}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Excepción en AssignClassroomToCourseAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<List<Course>?> GetCoursesByClassroomAsync(int classroomId, int schoolId)
+        {
+            try
+            {
+                var url = $"api/courses/by-classroom/{classroomId}?schoolId={schoolId}";
+                var response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"❌ Error al obtener cursos del salón: {response.StatusCode}");
+                    return new List<Course>();
+                }
+
+                return await response.Content.ReadFromJsonAsync<List<Course>>() ?? new List<Course>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Excepción en GetCoursesByClassroomAsync: {ex.Message}");
+                return new List<Course>();
+            }
+        }
+
+        public async Task<List<Evaluation>> GetEvaluationsAsync(int userId, int schoolId, int? classroomId = null)
+        {
+            try
+            {
+                string url = classroomId.HasValue
+                    ? $"api/evaluations?userID={userId}&schoolId={schoolId}&classroomId={classroomId.Value}"
+                    : $"api/evaluations?userID={userId}&schoolId={schoolId}";
+
+                return await _httpClient.GetFromJsonAsync<List<Evaluation>>(url) ?? new List<Evaluation>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error al obtener evaluaciones: {ex.Message}");
+                return new List<Evaluation>();
+            }
+        }
+
     }
 }
-          
-        
-
-
-
-

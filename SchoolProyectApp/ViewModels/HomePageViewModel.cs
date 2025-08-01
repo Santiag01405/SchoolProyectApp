@@ -27,7 +27,19 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+        private string _schoolName;
+        public string SchoolName
+        {
+            get => _schoolName;
+            set
+            {
+                _schoolName = value;
+                OnPropertyChanged();
+            }
+        }
+        public string WelcomeSchoolMessage => $"{SchoolName} - ¡Bienvenido, {UserName}!";
 
+        private int _schoolId;
         public string Today => $"📅 Hoy es {DateTime.Now:dddd dd 'de' MMMM}";
 
         private int _roleId;
@@ -112,6 +124,10 @@ namespace SchoolProyectApp.ViewModels
             //Task.Run(async () => await LoadAttendanceAsNotifications());
             Task.Run(async () => await LoadCombinedNotifications());
             Task.Run(async () => await LoadHomepageData());
+            Task.Run(async () =>
+            {
+                await LoadUserSchoolName();
+            });
 
 
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
@@ -137,6 +153,11 @@ namespace SchoolProyectApp.ViewModels
             _apiService = new ApiService();
             Task.Run(async () => await LoadUserData());
 
+        }
+        public async Task LoadUserSchoolName()
+        {
+            var name = await SecureStorage.GetAsync("school_name");
+            SchoolName = !string.IsNullOrEmpty(name) ? name : "Colegio no asignado";
         }
 
         private async Task LoadUserData()
@@ -173,31 +194,57 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+        /*  public async Task LoadUserDataFromApi()
+          {
+              try
+              {
+                  var storedUserId = await SecureStorage.GetAsync("user_id");
+
+                  if (string.IsNullOrEmpty(storedUserId) || !int.TryParse(storedUserId, out _userId))
+                  {
+                      Console.WriteLine("❌ Ninguna ID encontrada");
+                      UserName = "Usuario";
+                      return;
+                  }
+
+                  Console.WriteLine($"🌍 Fetching user data from API for ID: {_userId}");
+                  var user = await _apiService.GetUserDetailsAsync(_userId);
+
+                  if (user != null)
+                  {
+                      Console.WriteLine($"✔ Fetched username from API: {user.UserName}");
+                      UserName = user.UserName;
+                  }
+                  else
+                  {
+                      Console.WriteLine("❌ Failed to fetch user from API.");
+                      UserName = "Usuario";
+                  }
+              }
+              catch (Exception ex)
+              {
+                  Console.WriteLine($"❌ Error fetching user: {ex.Message}");
+                  UserName = "Usuario";
+              }
+          }*/
+
         public async Task LoadUserDataFromApi()
         {
             try
             {
                 var storedUserId = await SecureStorage.GetAsync("user_id");
-
                 if (string.IsNullOrEmpty(storedUserId) || !int.TryParse(storedUserId, out _userId))
                 {
-                    Console.WriteLine("❌ Ninguna ID encontrada");
                     UserName = "Usuario";
                     return;
                 }
 
-                Console.WriteLine($"🌍 Fetching user data from API for ID: {_userId}");
                 var user = await _apiService.GetUserDetailsAsync(_userId);
-
                 if (user != null)
                 {
-                    Console.WriteLine($"✔ Fetched username from API: {user.UserName}");
                     UserName = user.UserName;
-                }
-                else
-                {
-                    Console.WriteLine("❌ Failed to fetch user from API.");
-                    UserName = "Usuario";
+                    _schoolId = user.SchoolID;   // 🔹 Guardamos el schoolId
+                    SchoolName = user.School?.Name ?? "Mi Colegio";
                 }
             }
             catch (Exception ex)
@@ -207,71 +254,42 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
-        /* private async Task LoadNotifications()
+        /* private async Task LoadCombinedNotifications()
          {
              try
              {
-                 var userId = await SecureStorage.GetAsync("user_id");
-                 if (string.IsNullOrEmpty(userId)) return;
+                 var userIdStr = await SecureStorage.GetAsync("user_id");
+                 if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out int userId)) return;
 
-                 var notificationsFromApi = await _apiService.GetUserNotifications(int.Parse(userId));
+                 var regularNotifications = await _apiService.GetUserNotifications(userId) ?? new List<Notification>();
 
-                 Console.WriteLine($"📥 Notificaciones recibidas: {notificationsFromApi?.Count ?? 0}");
+                 var attendanceRecords = await _apiService.GetAttendanceNotifications(userId) ?? new List<AttendanceNotification>();
+
+                 var attendanceNotifications = attendanceRecords.Select(a => new Notification
+                 {
+                     Title = "Asistencia de su representado",
+                     Content = $"Su representado estuvo {a.Status} en el curso {a.CourseName}",
+                     Date = a.Date
+                 }).ToList();
+
+                 var allNotifications = regularNotifications
+                     .Concat(attendanceNotifications)
+                     .OrderByDescending(n => n.Date)
+                     .Take(3)
+                     .ToList();
 
                  Notifications.Clear();
-
-                 if (notificationsFromApi != null && notificationsFromApi.Any())
+                 foreach (var notification in allNotifications)
                  {
-                     var recentNotifications = notificationsFromApi
-                         .OrderByDescending(n => n.Date) // Ordenar por fecha descendente
-                         .Take(3) // Solo las 3 más recientes
-                         .ToList();
-
-                     foreach (var notification in recentNotifications)
-                     {
-                         Console.WriteLine($"📢 Agregando notificación: {notification.Title} - {notification.Date}");
-                         Notifications.Add(notification);
-                     }
-
-                     HasNotifications = Notifications.Count > 0;
-                     Console.WriteLine($"🔄 HasNotifications actualizado a: {HasNotifications}");
+                     Notifications.Add(notification);
                  }
-                 else
-                 {
-                     Console.WriteLine("❌ No hay notificaciones en la API.");
-                 }
+
+                 HasNotifications = Notifications.Count > 0;
+                 Console.WriteLine($"✅ Cargadas {Notifications.Count} notificaciones recientes.");
              }
              catch (Exception ex)
              {
-                 Console.WriteLine($"❌ Error en LoadNotifications: {ex.Message}");
-             }
-         }
-
-         //Notidicaciones de asistencias a padres
-         private async Task LoadAttendanceAsNotifications()
-         {
-
-             var userId = await SecureStorage.GetAsync("user_id");
-             if (string.IsNullOrEmpty(userId)) return;
-
-             var attendanceRecords = await _apiService.GetAttendanceNotifications(int.Parse(userId));
-
-             if (attendanceRecords == null || attendanceRecords.Count == 0) return;
-
-             Console.WriteLine($"Se recibieron {attendanceRecords.Count} registros de asistencia");
-
-             var rawId = await SecureStorage.GetAsync("user_id");
-             Console.WriteLine($"ID de usuario actual: {rawId}");
-
-
-             foreach (var a in attendanceRecords)
-             {
-                 Notifications.Add(new Notification
-                 {
-                     Title = $"Asistencia de su representado",
-                     Content = $"Su representado estuvo {a.Status} en el curso {a.CourseName}",
-                     Date = a.Date
-                 });
+                 Console.WriteLine($"❌ Error en LoadCombinedNotifications: {ex.Message}");
              }
          }*/
 
@@ -282,9 +300,8 @@ namespace SchoolProyectApp.ViewModels
                 var userIdStr = await SecureStorage.GetAsync("user_id");
                 if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out int userId)) return;
 
-                var regularNotifications = await _apiService.GetUserNotifications(userId) ?? new List<Notification>();
-
-                var attendanceRecords = await _apiService.GetAttendanceNotifications(userId) ?? new List<AttendanceNotification>();
+                var regularNotifications = await _apiService.GetUserNotifications(userId, _schoolId) ?? new List<Notification>();
+                var attendanceRecords = await _apiService.GetAttendanceNotifications(userId, _schoolId) ?? new List<AttendanceNotification>();
 
                 var attendanceNotifications = attendanceRecords.Select(a => new Notification
                 {
@@ -301,12 +318,9 @@ namespace SchoolProyectApp.ViewModels
 
                 Notifications.Clear();
                 foreach (var notification in allNotifications)
-                {
                     Notifications.Add(notification);
-                }
 
                 HasNotifications = Notifications.Count > 0;
-                Console.WriteLine($"✅ Cargadas {Notifications.Count} notificaciones recientes.");
             }
             catch (Exception ex)
             {
@@ -314,13 +328,63 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+        /* public async Task LoadHomepageData()
+         {
+             var userIdStr = await SecureStorage.GetAsync("user_id");
+             if (!int.TryParse(userIdStr, out var userId)) return;
+
+             // 🔹 Evaluaciones
+             var allEvaluations = await _apiService.GetEvaluationsAsync(userId);
+             var nextEvaluations = allEvaluations?
+                 .Where(e => e.Date > DateTime.Now)
+                 .OrderBy(e => e.Date)
+                 .Take(1)
+                 .ToList();
+
+             MainThread.BeginInvokeOnMainThread(() =>
+             {
+                 UpcomingEvaluations.Clear();
+                 if (nextEvaluations != null)
+                 {
+                     foreach (var eval in nextEvaluations)
+                         UpcomingEvaluations.Add(eval);
+                 }
+             });
+
+             // 🔹 Clases de hoy
+             var allSchedule = await _apiService.GetUserWeeklySchedule(userId);
+
+             var today = (int)DateTime.Now.DayOfWeek;
+
+             var todayCourses = allSchedule?
+                 .Where(c => c.DayOfWeek == today)
+                 .OrderBy(c => c.CourseName)
+                 .Select(c => new Course
+                 {
+                     CourseID = c.CourseID,
+                     Name = c.CourseName
+                 })
+                 .ToList();
+
+             MainThread.BeginInvokeOnMainThread(() =>
+             {
+                 TodaysClasses.Clear();
+                 if (todayCourses != null)
+                 {
+                     foreach (var course in todayCourses)
+                         TodaysClasses.Add(course);
+                 }
+
+                 Console.WriteLine($"📚 Clases de hoy ({today}): {TodaysClasses.Count}");
+             });
+         }*/
+
         public async Task LoadHomepageData()
         {
             var userIdStr = await SecureStorage.GetAsync("user_id");
             if (!int.TryParse(userIdStr, out var userId)) return;
 
-            // 🔹 Evaluaciones
-            var allEvaluations = await _apiService.GetEvaluationsAsync(userId);
+            var allEvaluations = await _apiService.GetEvaluationsAsync(userId, _schoolId);
             var nextEvaluations = allEvaluations?
                 .Where(e => e.Date > DateTime.Now)
                 .OrderBy(e => e.Date)
@@ -337,9 +401,7 @@ namespace SchoolProyectApp.ViewModels
                 }
             });
 
-            // 🔹 Clases de hoy
-            var allSchedule = await _apiService.GetUserWeeklySchedule(userId);
-
+            var allSchedule = await _apiService.GetUserWeeklySchedule(userId, _schoolId);
             var today = (int)DateTime.Now.DayOfWeek;
 
             var todayCourses = allSchedule?
@@ -360,8 +422,6 @@ namespace SchoolProyectApp.ViewModels
                     foreach (var course in todayCourses)
                         TodaysClasses.Add(course);
                 }
-
-                Console.WriteLine($"📚 Clases de hoy ({today}): {TodaysClasses.Count}");
             });
         }
 

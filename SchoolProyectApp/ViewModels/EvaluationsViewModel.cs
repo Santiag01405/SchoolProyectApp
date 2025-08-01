@@ -14,6 +14,9 @@ namespace SchoolProyectApp.ViewModels
 
         private int _roleId;
 
+        private int _schoolId;
+
+
         public int RoleID
         {
             get => _roleId;
@@ -264,7 +267,7 @@ namespace SchoolProyectApp.ViewModels
             Task.Run(async () => await LoadUserData());
         }
 
-        private async Task LoadUserData()
+        /*private async Task LoadUserData()
         {
             try
             {
@@ -296,8 +299,48 @@ namespace SchoolProyectApp.ViewModels
             {
                 await Application.Current.MainPage.DisplayAlert("Error", "No se pudo cargar el usuario: " + ex.Message, "OK");
             }
+        }*/
+        private async Task LoadUserData()
+        {
+            try
+            {
+                var storedUserId = await SecureStorage.GetAsync("user_id");
+                var storedSchoolId = await SecureStorage.GetAsync("school_id");
+
+                if (!string.IsNullOrEmpty(storedUserId) && int.TryParse(storedUserId, out int userId))
+                {
+                    _userId = userId;
+                }
+
+                if (!string.IsNullOrEmpty(storedSchoolId) && int.TryParse(storedSchoolId, out int schoolId))
+                {
+                    _schoolId = schoolId;
+                }
+
+                if (_userId > 0)
+                {
+                    var user = await _apiService.GetUserDetailsAsync(_userId);
+                    if (user != null)
+                    {
+                        RoleID = user.RoleID;
+                        OnPropertyChanged(nameof(RoleID));
+                        OnPropertyChanged(nameof(IsProfessor));
+                        OnPropertyChanged(nameof(IsStudent));
+                        OnPropertyChanged(nameof(IsParent));
+                    }
+                }
+                else
+                {
+                    RoleID = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "No se pudo cargar el usuario: " + ex.Message, "OK");
+            }
         }
-        public async Task LoadEvaluations()
+
+        /*public async Task LoadEvaluations()
         {
             _userId = int.Parse(await SecureStorage.GetAsync("user_id") ?? "0");
             if (_userId == 0) return;
@@ -311,7 +354,46 @@ namespace SchoolProyectApp.ViewModels
                     Evaluations.Add(eval);
                 }
             });
+        }*/
+
+        public async Task LoadEvaluations()
+        {
+            _userId = int.Parse(await SecureStorage.GetAsync("user_id") ?? "0");
+            var schoolIdStr = await SecureStorage.GetAsync("school_id");
+
+            if (_userId == 0 || string.IsNullOrEmpty(schoolIdStr) || !int.TryParse(schoolIdStr, out int schoolId))
+            {
+                Console.WriteLine("⚠ No se encontró school_id, no se cargaron evaluaciones.");
+                return;
+            }
+
+            Console.WriteLine($"🔍 Cargando evaluaciones para UserID={_userId}, SchoolID={schoolId}");
+
+            var evaluations = await _apiService.GetEvaluationsAsync(_userId, schoolId);
+
+            if (evaluations == null)
+            {
+                Console.WriteLine("⚠ La API devolvió null.");
+                return;
+            }
+
+            var filtered = evaluations
+                .Where(e => e.Date.Date >= DateTime.Today)
+                .OrderBy(e => e.Date)
+                .ToList();
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Evaluations.Clear();
+                foreach (var eval in filtered)
+                {
+                    Console.WriteLine($"📌 Evaluación: {eval.Title} ({eval.Date})");
+                    Evaluations.Add(eval);
+                }
+            });
         }
+
+
 
         private void ResetPage()
         {
@@ -344,7 +426,10 @@ namespace SchoolProyectApp.ViewModels
 
         private async Task LoadCourses()
         {
-            var courses = await _apiService.GetCoursesAsync();
+            int schoolId = int.Parse(await SecureStorage.GetAsync("school_id") ?? "0");
+            if (schoolId == 0) return;
+
+            var courses = await _apiService.GetCoursesAsync(schoolId);
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 Courses.Clear();
@@ -354,6 +439,7 @@ namespace SchoolProyectApp.ViewModels
                 }
             });
         }
+
 
         private async Task SearchUsers()
         {
@@ -369,7 +455,7 @@ namespace SchoolProyectApp.ViewModels
             //IsSearchPopupVisible = true;
         }
 
-        private async Task CreateEvaluation()
+        /*private async Task CreateEvaluation()
         {
             Console.WriteLine("📌 Intentando crear evaluación...");
 
@@ -405,9 +491,45 @@ namespace SchoolProyectApp.ViewModels
                 Console.WriteLine("❌ No se pudo asignar una evaluación.");
                 await Shell.Current.DisplayAlert("Error", "No se pudo crear la evaluación. Intenta de nuevo.", "OK");
             }
+        }*/
+
+        private async Task CreateEvaluation()
+        {
+            Console.WriteLine("📌 Intentando crear evaluación...");
+
+            if (NewEvaluation.Date < DateTime.Now)
+            {
+                await Shell.Current.DisplayAlert("Fecha inválida", "No puedes asignar evaluaciones con fecha pasada.", "OK");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(EvaluationTitle))
+            {
+                await Shell.Current.DisplayAlert("Falta título", "El título de la evaluación es obligatorio.", "OK");
+                return;
+            }
+
+            // ✅ Asignar valores
+            NewEvaluation.Title = EvaluationTitle;
+            NewEvaluation.UserID = SelectedUser?.UserID ?? 0;
+            NewEvaluation.CourseID = SelectedCourse?.CourseID ?? 0;
+            NewEvaluation.SchoolID = _schoolId; // <-- Se agrega aquí
+
+            bool success = await _apiService.CreateEvaluationAsync(NewEvaluation);
+            if (success)
+            {
+                await Shell.Current.DisplayAlert("Éxito", "Evaluación creada correctamente.", "OK");
+                await LoadEvaluations();
+                ResetPage();
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Error", "No se pudo crear la evaluación. Intenta de nuevo.", "OK");
+            }
         }
-        }
+
     }
+}
 
 
 

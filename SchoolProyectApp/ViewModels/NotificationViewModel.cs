@@ -17,6 +17,7 @@ namespace SchoolProyectApp.ViewModels
         public ObservableCollection<AttendanceNotification> AttendanceNotifications { get; set; } = new();
         public ObservableCollection<object> ActiveNotifications { get; set; } = new();
 
+
         private string _selectedTab = "Normales";
         public string SelectedTab
         {
@@ -192,14 +193,56 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+        /*  private async Task LoadNotifications(CancellationToken token)
+          {
+              if (token.IsCancellationRequested) return;
+
+              var userId = await SecureStorage.GetAsync("user_id");
+              if (string.IsNullOrEmpty(userId)) return;
+
+              var notifications = await _apiService.GetUserNotifications(int.Parse(userId));
+              if (token.IsCancellationRequested) return;
+
+              MainThread.BeginInvokeOnMainThread(() =>
+              {
+                  RegularNotifications.Clear();
+                  foreach (var notification in notifications)
+                      RegularNotifications.Add(notification);
+
+                  UpdateActiveNotifications();
+              });
+          }
+
+         private async Task LoadAttendanceAsNotifications(CancellationToken token)
+          {
+              if (token.IsCancellationRequested) return;
+
+              var userId = await SecureStorage.GetAsync("user_id");
+              if (string.IsNullOrEmpty(userId)) return;
+
+              var attendanceRecords = await _apiService.GetAttendanceNotifications(int.Parse(userId));
+              if (token.IsCancellationRequested || attendanceRecords == null || attendanceRecords.Count == 0) return;
+
+              MainThread.BeginInvokeOnMainThread(() =>
+              {
+                  AttendanceNotifications.Clear();
+                  foreach (var a in attendanceRecords)
+                  {
+                      AttendanceNotifications.Add(a); 
+                  }
+              });
+
+          }*/
+
         private async Task LoadNotifications(CancellationToken token)
         {
             if (token.IsCancellationRequested) return;
 
             var userId = await SecureStorage.GetAsync("user_id");
-            if (string.IsNullOrEmpty(userId)) return;
+            var schoolId = await SecureStorage.GetAsync("school_id");
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(schoolId)) return;
 
-            var notifications = await _apiService.GetUserNotifications(int.Parse(userId));
+            var notifications = await _apiService.GetUserNotifications(int.Parse(userId), int.Parse(schoolId));
             if (token.IsCancellationRequested) return;
 
             MainThread.BeginInvokeOnMainThread(() =>
@@ -212,14 +255,15 @@ namespace SchoolProyectApp.ViewModels
             });
         }
 
-       private async Task LoadAttendanceAsNotifications(CancellationToken token)
+        private async Task LoadAttendanceAsNotifications(CancellationToken token)
         {
             if (token.IsCancellationRequested) return;
 
             var userId = await SecureStorage.GetAsync("user_id");
-            if (string.IsNullOrEmpty(userId)) return;
+            var schoolId = await SecureStorage.GetAsync("school_id");
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(schoolId)) return;
 
-            var attendanceRecords = await _apiService.GetAttendanceNotifications(int.Parse(userId));
+            var attendanceRecords = await _apiService.GetAttendanceNotifications(int.Parse(userId), int.Parse(schoolId));
             if (token.IsCancellationRequested || attendanceRecords == null || attendanceRecords.Count == 0) return;
 
             MainThread.BeginInvokeOnMainThread(() =>
@@ -227,11 +271,11 @@ namespace SchoolProyectApp.ViewModels
                 AttendanceNotifications.Clear();
                 foreach (var a in attendanceRecords)
                 {
-                    AttendanceNotifications.Add(a); 
+                    AttendanceNotifications.Add(a);
                 }
             });
-
         }
+
 
         private void UpdateActiveNotifications()
         {

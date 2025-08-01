@@ -65,7 +65,7 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
-        public EvaluationsListViewModel()
+        /*public EvaluationsListViewModel()
         {
             _apiService = new ApiService();
 
@@ -84,9 +84,43 @@ namespace SchoolProyectApp.ViewModels
                 await LoadEvaluations();
                 await LoadCourses();
             });
+        }*/
+        public EvaluationsListViewModel()
+        {
+            _apiService = new ApiService();
+
+            DeleteEvaluationCommand = new Command<Evaluation>(async (evaluation) => await DeleteEvaluation(evaluation));
+
+            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
+            ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
+            CourseCommand = new Command(async () => await Shell.Current.GoToAsync("///courses"));
+            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+            FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
+            EvaluationCommand = new Command(async () => await Shell.Current.GoToAsync("///evaluation"));
+
+            Task.Run(async () =>
+            {
+                await LoadUserData();
+
+                // 🔹 Esperar a que school_id esté disponible
+                int retries = 0;
+                int schoolId = 0;
+                while (schoolId == 0 && retries < 5)
+                {
+                    var schoolStr = await SecureStorage.GetAsync("school_id");
+                    int.TryParse(schoolStr, out schoolId);
+                    if (schoolId == 0)
+                        await Task.Delay(300);
+                    retries++;
+                }
+
+                await LoadEvaluations();  // ✅ ahora con IDs válidos
+                await LoadCourses();
+            });
         }
 
-        public async Task LoadEvaluations()
+
+        /*public async Task LoadEvaluations()
         {
             _userId = int.Parse(await SecureStorage.GetAsync("user_id") ?? "0");
             int schoolId = int.Parse(await SecureStorage.GetAsync("school_id") ?? "0");
@@ -114,8 +148,27 @@ namespace SchoolProyectApp.ViewModels
                 if (coursesDict.TryGetValue(eval.CourseID, out var course))
                     eval.Course = course;
             }
-        }
+        }*/
+        public async Task LoadEvaluations()
+        {
+            var userStr = await SecureStorage.GetAsync("user_id");
+            var schoolStr = await SecureStorage.GetAsync("school_id");
 
+            Console.WriteLine($"🔎 LoadEvaluations() -> user_id: {userStr}, school_id: {schoolStr}");
+
+            _userId = int.Parse(userStr ?? "0");
+            int schoolId = int.Parse(schoolStr ?? "0");
+
+            if (_userId == 0 || schoolId == 0)
+            {
+                Console.WriteLine("⚠ No se cargaron evaluaciones porque userID o schoolID son 0.");
+                return;
+            }
+
+            Console.WriteLine($"🌍 GET: api/evaluations?userID={_userId}&schoolId={schoolId}");
+            var evaluations = await _apiService.GetEvaluationsAsync(_userId, schoolId);
+
+        }
         private async Task LoadUserData()
         {
             try

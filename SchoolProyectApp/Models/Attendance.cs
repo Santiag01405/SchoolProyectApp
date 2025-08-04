@@ -26,6 +26,8 @@ namespace SchoolProyectApp.Models
         [Required]
         [StringLength(10)]
         public string Status { get; set; } // 'Presente' o 'Ausente'
+        public int SchoolID { get; set; }
+        public School School { get; set; }
     }
 }
 

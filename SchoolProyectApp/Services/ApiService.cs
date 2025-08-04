@@ -611,7 +611,46 @@ namespace SchoolProyectApp.Services
 
         //Busqueda de usuario
 
-        public async Task<List<User>> SearchUsersAsync(string query)
+        /*  public async Task<List<User>> SearchUsersAsync(string query)
+          {
+              if (string.IsNullOrWhiteSpace(query))
+              {
+                  Console.WriteLine("⚠ No se puede buscar un usuario sin nombre.");
+                  return new List<User>();
+              }
+
+              try
+              {
+                  string encodedQuery = Uri.EscapeDataString(query); // 🔹 Escapa caracteres especiales
+                  string url = $"api/users/search?query={encodedQuery}";
+
+                  Console.WriteLine($"🌍 GET: {url}");
+
+                  var response = await _httpClient.GetAsync(url);
+
+                  if (!response.IsSuccessStatusCode)
+                  {
+                      Console.WriteLine($"❌ Error en la API: {response.StatusCode}");
+                      string errorContent = await response.Content.ReadAsStringAsync();
+                      Console.WriteLine($"🔍 Detalle del error: {errorContent}");
+                      return new List<User>();
+                  }
+
+                  return await response.Content.ReadFromJsonAsync<List<User>>() ?? new List<User>();
+              }
+              catch (HttpRequestException ex)
+              {
+                  Console.WriteLine($"❌ Error HTTP: {ex.Message}");
+                  return new List<User>();
+              }
+              catch (Exception ex)
+              {
+                  Console.WriteLine($"❌ Error desconocido: {ex.Message}");
+                  return new List<User>();
+              }
+          }*/
+
+        public async Task<List<User>> SearchUsersAsync(string query, int schoolId)
         {
             if (string.IsNullOrWhiteSpace(query))
             {
@@ -621,8 +660,8 @@ namespace SchoolProyectApp.Services
 
             try
             {
-                string encodedQuery = Uri.EscapeDataString(query); // 🔹 Escapa caracteres especiales
-                string url = $"api/users/search?query={encodedQuery}";
+                string encodedQuery = Uri.EscapeDataString(query);
+                string url = $"api/users/search?query={encodedQuery}&schoolId={schoolId}";
 
                 Console.WriteLine($"🌍 GET: {url}");
 
@@ -650,6 +689,7 @@ namespace SchoolProyectApp.Services
             }
         }
 
+
         /*public async Task<List<User>> SearchUsersAsync(string query)
         {
             return await _httpClient.GetFromJsonAsync<List<User>>($"api/users/search?name={query}");
@@ -657,11 +697,35 @@ namespace SchoolProyectApp.Services
 
 
         //Envio de notificacion a usuario
+        /*  public async Task<bool> SendNotificationAsync(Notification notification)
+          {
+              var response = await _httpClient.PostAsJsonAsync("api/notifications", notification);
+              return response.IsSuccessStatusCode;
+          }*/
+
         public async Task<bool> SendNotificationAsync(Notification notification)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/notifications", notification);
-            return response.IsSuccessStatusCode;
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/notifications/batch", new List<Notification> { notification });
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"❌ Error en la API: {response.StatusCode}");
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"🔍 Detalle del error: {errorContent}");
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error al enviar la notificación: {ex.Message}");
+                return false;
+            }
         }
+
 
 
         //Metodos para las evaluaciones

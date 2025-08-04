@@ -8,5 +8,7 @@
         public DateTime Date { get; set; }
         public int UserID { get; set; }
         public bool IsRead { get; set; }
+        public int SchoolID { get; set; }
+        public School School { get; set; }
     }
 }

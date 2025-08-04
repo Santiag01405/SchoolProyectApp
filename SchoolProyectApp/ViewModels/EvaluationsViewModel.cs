@@ -425,15 +425,31 @@ namespace SchoolProyectApp.ViewModels
         {
             if (string.IsNullOrEmpty(SearchQuery)) return;
 
-            var users = await _apiService.SearchUsersAsync(SearchQuery);
-            SearchResults.Clear();
-            foreach (var user in users)
+            var schoolIdStr = await SecureStorage.GetAsync("school_id");
+            if (!int.TryParse(schoolIdStr, out int schoolId) || schoolId == 0)
             {
-                SearchResults.Add(user);
+                Console.WriteLine("⚠ No se pudo obtener schoolId.");
+                return;
             }
 
-            //IsSearchPopupVisible = true;
+            Console.WriteLine($"🔎 Buscando usuarios con query='{SearchQuery}' y schoolId={schoolId}");
+
+            var users = await _apiService.SearchUsersAsync(SearchQuery, schoolId);
+            SearchResults.Clear();
+
+            if (users != null && users.Count > 0)
+            {
+                foreach (var user in users)
+                {
+                    SearchResults.Add(user);
+                }
+            }
+            else
+            {
+                Console.WriteLine("⚠ No se encontraron usuarios en la API.");
+            }
         }
+
 
         /*private async Task CreateEvaluation()
         {

@@ -178,7 +178,7 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
-        private async Task SearchUsers()
+        /*private async Task SearchUsers()
         {
             if (string.IsNullOrEmpty(SearchQuery)) return;
 
@@ -189,18 +189,65 @@ namespace SchoolProyectApp.ViewModels
                 SearchResults.Add(user);
                 OnPropertyChanged(nameof(HasSearchResults));
             }
+        }*/
+        private async Task SearchUsers()
+        {
+            if (string.IsNullOrEmpty(SearchQuery))
+                return;
+
+            // Obtener schoolId de SecureStorage
+            var schoolIdStr = await SecureStorage.GetAsync("school_id");
+            if (!int.TryParse(schoolIdStr, out int schoolId) || schoolId == 0)
+            {
+                Console.WriteLine("⚠ No se pudo obtener schoolId para búsqueda.");
+                return;
+            }
+
+            Console.WriteLine($"🔎 Buscando usuarios con query='{SearchQuery}' y schoolId={schoolId}");
+
+            // Llamar a la versión corregida del ApiService
+            var users = await _apiService.SearchUsersAsync(SearchQuery, schoolId);
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                SearchResults.Clear();
+
+                if (users != null && users.Count > 0)
+                {
+                    foreach (var user in users)
+                    {
+                        SearchResults.Add(user);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("⚠ No se encontraron usuarios en la API.");
+                }
+
+                OnPropertyChanged(nameof(HasSearchResults));
+            });
         }
+
 
         private async Task SendNotification()
         {
             if (!CanSendNotification) return;
+
+            // Obtener el school_id desde SecureStorage
+            var schoolIdStr = await SecureStorage.GetAsync("school_id");
+            if (!int.TryParse(schoolIdStr, out int schoolId) || schoolId == 0)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "No se encontró el SchoolID. Intenta de nuevo.", "OK");
+                return;
+            }
 
             var notification = new Notification
             {
                 Title = Title,
                 Content = Content,
                 Date = DateTime.Now,
-                UserID = SelectedUser.UserID
+                UserID = SelectedUser.UserID,
+                SchoolID = schoolId   // ✅ Se envía el SchoolID requerido
             };
 
             var success = await _apiService.SendNotificationAsync(notification);
@@ -214,6 +261,7 @@ namespace SchoolProyectApp.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", "Hubo un problema al enviar la notificación.", "OK");
             }
         }
+
     }
 }
 

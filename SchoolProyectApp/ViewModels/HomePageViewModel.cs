@@ -114,46 +114,84 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+        /*   public HomePageViewModel()
+           {
+               _apiService = new ApiService();
+
+               // 🔹 Load user from API instead of SecureStorage
+               Task.Run(async () => await LoadUserDataFromApi());
+               //Task.Run(async () => await LoadNotifications());
+               //Task.Run(async () => await LoadAttendanceAsNotifications());
+               Task.Run(async () => await LoadCombinedNotifications());
+               Task.Run(async () => await LoadHomepageData());
+               Task.Run(async () =>
+               {
+                   await LoadUserSchoolName();
+               });
+
+
+               HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
+               ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
+               CourseCommand = new Command(async () => await Shell.Current.GoToAsync("///courses"));
+               OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+               LogoutCommand = new Command(async () => await Logout());
+               RefreshCommand = new Command(async () => await LoadUserDataFromApi());
+               FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
+               CreateEvaluationCommand = new Command(async () => await Shell.Current.GoToAsync("///createEvaluation"));
+               EvaluationCommand = new Command(async () => await Shell.Current.GoToAsync("///evaluation"));
+
+               //Notificaciones
+               NotificationCommand = new Command(async () => await Shell.Current.GoToAsync("///notification"));
+
+               // 🔹 Automatically update username when modified in ProfilePage
+               MessagingCenter.Subscribe<ProfileViewModel, string>(this, "UserUpdated", async (sender, newUserName) =>
+               {
+                   Console.WriteLine($"🔄 Received new username from Profile: {newUserName}");
+                   UserName = newUserName;
+               });
+
+               _apiService = new ApiService();
+               Task.Run(async () => await LoadUserData());
+
+           }*/
+
         public HomePageViewModel()
         {
             _apiService = new ApiService();
 
-            // 🔹 Load user from API instead of SecureStorage
-            Task.Run(async () => await LoadUserDataFromApi());
-            //Task.Run(async () => await LoadNotifications());
-            //Task.Run(async () => await LoadAttendanceAsNotifications());
-            Task.Run(async () => await LoadCombinedNotifications());
-            Task.Run(async () => await LoadHomepageData());
             Task.Run(async () =>
             {
+                await LoadUserDataFromApi();   // ✅ Primero obtenemos el schoolId
+                await LoadCombinedNotifications();  // ✅ Luego cargamos todas las notificaciones
+                await LoadHomepageData();
                 await LoadUserSchoolName();
             });
-
 
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
             ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
             CourseCommand = new Command(async () => await Shell.Current.GoToAsync("///courses"));
             OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
             LogoutCommand = new Command(async () => await Logout());
-            RefreshCommand = new Command(async () => await LoadUserDataFromApi());
+            RefreshCommand = new Command(async () => await RefreshData());
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
             CreateEvaluationCommand = new Command(async () => await Shell.Current.GoToAsync("///createEvaluation"));
             EvaluationCommand = new Command(async () => await Shell.Current.GoToAsync("///evaluation"));
 
-            //Notificaciones
             NotificationCommand = new Command(async () => await Shell.Current.GoToAsync("///notification"));
 
-            // 🔹 Automatically update username when modified in ProfilePage
             MessagingCenter.Subscribe<ProfileViewModel, string>(this, "UserUpdated", async (sender, newUserName) =>
             {
-                Console.WriteLine($"🔄 Received new username from Profile: {newUserName}");
                 UserName = newUserName;
             });
-
-            _apiService = new ApiService();
-            Task.Run(async () => await LoadUserData());
-
         }
+
+        private async Task RefreshData()
+        {
+            await LoadUserDataFromApi();
+            await LoadCombinedNotifications();
+            await LoadHomepageData();
+        }
+
         public async Task LoadUserSchoolName()
         {
             var name = await SecureStorage.GetAsync("school_name");

@@ -241,35 +241,9 @@ namespace SchoolProyectApp.ViewModels
 
         public ICommand CloseSearchPopupCommand { get; }
 
-        /*  public EvaluationsViewModel()
-          {
-              _apiService = new ApiService();
-              SearchUsersCommand = new Command(async () => await SearchUsers());
-              CreateEvaluationCommand = new Command(async () => await CreateEvaluation());
-              LoadCoursesCommand = new Command(async () => await LoadCourses());
-
-              HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
-              ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
-              OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
-              FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
-
-              ResetCommand = new Command(ResetPage);
-
-              CloseSearchPopupCommand = new Command(() => IsSearchPopupVisible = false);
-
-              Task.Run(async () =>
-              {
-                  await LoadEvaluations();
-                  await LoadCourses();
-              });
-
-              _apiService = new ApiService();
-              Task.Run(async () => await LoadUserData());
-          }*/
         public EvaluationsViewModel()
         {
             _apiService = new ApiService();
-
             SearchUsersCommand = new Command(async () => await SearchUsers());
             CreateEvaluationCommand = new Command(async () => await CreateEvaluation());
             LoadCoursesCommand = new Command(async () => await LoadCourses());
@@ -278,18 +252,20 @@ namespace SchoolProyectApp.ViewModels
             ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
             OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
+
             ResetCommand = new Command(ResetPage);
+
             CloseSearchPopupCommand = new Command(() => IsSearchPopupVisible = false);
 
-            // ✅ Cargar datos en orden
             Task.Run(async () =>
             {
-                await LoadUserData();       // 🔹 Primero obtenemos user_id y school_id
-                await LoadEvaluations();    // 🔹 Luego cargamos evaluaciones
-                await LoadCourses();        // 🔹 Luego cursos
+                await LoadEvaluations();
+                await LoadCourses();
             });
-        }
 
+            _apiService = new ApiService();
+            Task.Run(async () => await LoadUserData());
+        }
 
         /*private async Task LoadUserData()
         {
@@ -382,46 +358,21 @@ namespace SchoolProyectApp.ViewModels
 
         public async Task LoadEvaluations()
         {
-            var userIdStr = await SecureStorage.GetAsync("user_id");
-            var schoolIdStr = await SecureStorage.GetAsync("school_id");
+            _userId = int.Parse(await SecureStorage.GetAsync("user_id") ?? "0");
+            _schoolId = int.Parse(await SecureStorage.GetAsync("school_id") ?? "0");
 
-            if (!int.TryParse(userIdStr, out _userId) || !int.TryParse(schoolIdStr, out int schoolId))
-            {
-                Console.WriteLine("⚠ Error: No se encontró user_id o school_id en SecureStorage.");
-                return;
-            }
+            if (_userId == 0 || _schoolId == 0) return;
 
-            Console.WriteLine($"🔍 Cargando evaluaciones: userID={_userId}, schoolID={schoolId}");
-
-            var evaluations = await _apiService.GetEvaluationsAsync(_userId, schoolId);
-
-            if (evaluations == null)
-            {
-                Console.WriteLine("⚠ La API devolvió NULL.");
-                return;
-            }
-
-            if (evaluations.Count == 0)
-            {
-                Console.WriteLine("⚠ La API devolvió lista vacía.");
-            }
-
-            var filtered = evaluations
-                .Where(e => e.Date.Date >= DateTime.Today)
-                .OrderBy(e => e.Date)
-                .ToList();
-
+            var evaluations = await _apiService.GetEvaluationsAsync(_userId, _schoolId);
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 Evaluations.Clear();
-                foreach (var eval in filtered)
+                foreach (var eval in evaluations)
                 {
-                    Console.WriteLine($"📌 Evaluación agregada: {eval.Title} ({eval.Date})");
                     Evaluations.Add(eval);
                 }
             });
         }
-
 
 
         private void ResetPage()

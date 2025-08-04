@@ -5,29 +5,20 @@ using SchoolProyectApp.Models;
 
 public class Evaluation
 {
-    [Key]
+    // Propiedades obligatorias (no pueden ser null)
     public int EvaluationID { get; set; }
-
-    [Required]
-    [MaxLength(255)]
-    public string? Title { get; set; }
-
-    public string? Description { get; set; }
-
-    [Required]
+    public string Title { get; set; }
+    public string? Description { get; set; } // Ojo, Description también puede ser null en tu JSON
     public DateTime Date { get; set; }
-
-    [Required]
-    public int CourseID { get; set; } 
-
-    [Required]
-    public int UserID { get; set; }    
-
-    
-    [JsonIgnore]
-    public Course? Course { get; set; }
-
-    [JsonIgnore]
-    public User? User { get; set; }
+    public int CourseID { get; set; }
+    public int UserID { get; set; }
     public int SchoolID { get; set; }
+
+    // Propiedades que pueden ser null, usa el operador '?'
+    public School? School { get; set; } // <-- Hacemos esta propiedad nullable
+    public int? ClassroomID { get; set; } // <-- Hacemos esta propiedad nullable
+    public Classroom? Classroom { get; set; } // <-- Hacemos esta propiedad nullable
+
+    // Puedes agregar una propiedad de navegación para el curso
+    public Course? Course { get; set; }
 }

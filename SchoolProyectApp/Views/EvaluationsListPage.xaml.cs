@@ -17,7 +17,10 @@ namespace SchoolProyectApp.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+
+            // ✅ Forzar la carga de evaluaciones y cursos cuando la página es visible
             await _viewModel.LoadEvaluations();
+            await _viewModel.LoadCourses();
         }
 
         private async void AnimateButton(object sender, EventArgs e)
@@ -46,7 +49,5 @@ namespace SchoolProyectApp.Views
                 _isMenuVisible = true;
             }
         }
-
     }
 }
-

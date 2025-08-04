@@ -15,9 +15,6 @@
                                StatusBarStyle="LightContent" />
     </ContentPage.Behaviors>
     
-    <ContentPage.BindingContext>
-		<vm:EvaluationsListViewModel/>
-	</ContentPage.BindingContext>
 
 	<AbsoluteLayout>
 
@@ -26,36 +23,31 @@
 		<ContentView x:Name="MainContent"
                      AbsoluteLayout.LayoutBounds="0,0,1,1"
                      AbsoluteLayout.LayoutFlags="All">
+            <Grid Padding="0" RowDefinitions="Auto,*,Auto">
+                <Label Grid.Row="0" Text="Evaluaciones"
+           FontSize="30"
+           FontAttributes="Bold"
+           HorizontalOptions="Center"
+           Margin="0,10,0,40"
+           TextColor="#0C4251"/>
 
-			<Grid Padding="0" RowDefinitions="Auto,*,Auto">
-				<ScrollView Grid.Row="1">
-					<StackLayout Padding="10">
-						<Label Text="Evaluaciones"
-                               FontSize="30"
-                               FontAttributes="Bold"
-                               HorizontalOptions="Center"
-                               Margin="0,10,0,40"
-                               TextColor="#0C4251"/>
-
-						<CollectionView ItemsSource="{Binding Evaluations}">
-							<CollectionView.ItemTemplate>
-								<DataTemplate>
-                                    <Frame Padding="10" Margin="5" CornerRadius="10" BackgroundColor="#0C4251" BorderColor="#0C4251">
-										<StackLayout>
-                                            <Label Text="{Binding Course.Name}" FontSize="Medium" TextColor="#6bbdda" />
-                                            <Label Text="{Binding Title}" FontSize="Medium" FontAttributes="Bold" TextColor="#f1c864"/>
-                                            <Label Text="{Binding Description}" FontSize="Small" TextColor="#6bbdda"/>
-											<Label Text="{Binding Date, StringFormat='Fecha de entrega: {0:dd/MM/yyyy}'}" FontSize="Small" TextColor="White" />
-										</StackLayout>
-									</Frame>
-								</DataTemplate>
-							</CollectionView.ItemTemplate>
-						</CollectionView>
-					</StackLayout>
-				</ScrollView>
-
-				<!-- Barra inferior -->
-                <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
+                <CollectionView Grid.Row="1" ItemsSource="{Binding Evaluations}" Margin="10">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Padding="10" Margin="5" CornerRadius="10" BackgroundColor="#0C4251" BorderColor="#0C4251">
+                                <StackLayout>
+                                    <Label Text="{Binding Course.Name, TargetNullValue='Sin curso asignado'}" FontSize="Medium" TextColor="#6bbdda" />
+                                    <Label Text="{Binding Title}" FontSize="Medium" FontAttributes="Bold" TextColor="#f1c864"/>
+                                    <Label Text="{Binding Description}" FontSize="Small" TextColor="#6bbdda"/>
+                                    <Label Text="{Binding Date, StringFormat='Fecha de entrega: {0:dd/MM/yyyy}'}" FontSize="Small" TextColor="White" />
+                                </StackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                
+                <!-- Barra inferior -->
+                <Grid Grid.Row="2" BackgroundColor="WhiteSmoke" Padding="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />

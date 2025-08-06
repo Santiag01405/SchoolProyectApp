@@ -55,10 +55,26 @@
                 </StackLayout>
                 <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsProfessor}" />
 
-                <!-- Plan de evaluación -->
+
+                <!-- Asignar calificacion -->
+                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsProfessor}">
+                    <Label Text="&#xf328;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Asignar calificacion" Command="{Binding AssingGradeCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
+                </StackLayout>
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsProfessor}" />
+
+
+                <!-- Ver evaluaciones -->
                 <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsStudent}">
                     <Label Text="&#xf15c;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
                     <Button Text="Evaluaciones" Command="{Binding EvaluationCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
+                </StackLayout>
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsStudent}" />
+
+                <!-- Ver Calificaciones -->
+                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsStudent}">
+                    <Label Text="&#xf15c;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Ver calificaciones" Command="{Binding SeeGradesCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
                 </StackLayout>
                 <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsStudent}" />
 

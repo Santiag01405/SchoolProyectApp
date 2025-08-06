@@ -51,6 +51,8 @@ namespace SchoolProyectApp.ViewModels
         public ICommand ScheduleCommand { get;  }
         public ICommand AttendanceCommand { get; }
         public ICommand NotificationCommand { get; }
+        public ICommand AssingGradeCommand { get; }
+        public ICommand SeeGradesCommand { get; }
 
 
         public MenuViewModel()
@@ -72,6 +74,8 @@ namespace SchoolProyectApp.ViewModels
             ScheduleCommand = new Command(async () => await Shell.Current.GoToAsync("///schedule"));
             AttendanceCommand = new Command(async () => await Shell.Current.GoToAsync("///attendance"));
             NotificationCommand = new Command(async () => await Shell.Current.GoToAsync("///notification"));
+            AssingGradeCommand = new Command(async () => await Shell.Current.GoToAsync("///assingGrade"));
+            SeeGradesCommand = new Command(async () => await Shell.Current.GoToAsync("///seeGrades")); 
         }
         private async Task LoadUserData()
         {

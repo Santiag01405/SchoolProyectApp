@@ -3,25 +3,35 @@ using SchoolProyectApp.ViewModels;
 
 namespace SchoolProyectApp.Views
 {
-    public partial class HomePage : ContentPage
+    public partial class GradesPage : ContentPage
     {
+        private readonly GradesViewModel _viewModel;
         private bool _isMenuVisible = false;
 
-        public HomePage()
+        public GradesPage()
         {
             InitializeComponent();
-            BindingContext = new HomePageViewModel();
+            _viewModel = BindingContext as GradesViewModel;
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if (_viewModel != null && (_viewModel.GradesByCourse == null || _viewModel.GradesByCourse.Count == 0))
+            {
+                await _viewModel.LoadGradesAsync(); 
+            }
         }
 
         private async void AnimateButton(object sender, EventArgs e)
         {
-            if (sender is Button button)
+            if (sender is ImageButton button)
             {
                 await button.ScaleTo(0.8, 100, Easing.CubicIn);
                 await button.ScaleTo(1, 100, Easing.CubicOut);
             }
         }
-
 
         private async void MenuButton_Clicked(object sender, EventArgs e)
         {
@@ -39,18 +49,5 @@ namespace SchoolProyectApp.Views
             }
         }
 
-
-        protected override async void OnAppearing()
-        {
-            base.OnAppearing();
-
-            if (BindingContext is HomePageViewModel viewModel)
-            {
-                Console.WriteLine("🔄 HomePage está apareciendo, recargando datos del usuario...");
-                await viewModel.LoadUserDataFromApi(); // Await de forma segura
-                // También es una buena práctica llamar al método de inicialización completo
-                // await viewModel.InitializeAsync();
-            }
-        }
     }
 }

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
+             xmlns:local="clr-namespace:SchoolProyectApp.Views"
+             x:Class="SchoolProyectApp.Views.GradesPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
+             droid:NavigationBar.Color="white"
+             droid:NavigationBar.Style="LightContent"
+             Title="Mis Calificaciones">
+
+	<ContentPage.Behaviors>
+		<toolkit:StatusBarBehavior StatusBarColor="#0C4251"
+                                   StatusBarStyle="LightContent" />
+	</ContentPage.Behaviors>
+
+	<ContentPage.BindingContext>
+		<vm:GradesViewModel />
+	</ContentPage.BindingContext>
+
+	<AbsoluteLayout>
+		<BoxView Color="#0C4251"
+                 AbsoluteLayout.LayoutBounds="0,0,1,70"
+                 AbsoluteLayout.LayoutFlags="WidthProportional" />
+
+		<Image Source="Images/artboard.png"
+               AbsoluteLayout.LayoutBounds="0.5,0,170,90"
+               AbsoluteLayout.LayoutFlags="PositionProportional"
+               Aspect="AspectFit"
+               BackgroundColor="Transparent" />
+
+		<ContentView x:Name="MainContent"
+                     AbsoluteLayout.LayoutBounds="0,110,1,0.85"
+                     AbsoluteLayout.LayoutFlags="WidthProportional,HeightProportional">
+			<ScrollView>
+				<StackLayout Padding="20" Spacing="15">
+					<Label Text="Calificaciones" FontAttributes="Bold" FontSize="20" />
+
+					<CollectionView ItemsSource="{Binding GradesByCourse}">
+						<CollectionView.ItemTemplate>
+							<DataTemplate>
+								<StackLayout Padding="10" Margin="5" BackgroundColor="#f0f0f0">
+									<Label Text="{Binding Curso}" FontSize="18" FontAttributes="Bold" TextColor="#0C4251"/>
+									<CollectionView ItemsSource="{Binding Calificaciones}">
+										<CollectionView.ItemTemplate>
+											<DataTemplate>
+												<StackLayout Padding="5" Margin="5" BackgroundColor="White" Orientation="Vertical">
+													<Label Text="{Binding Evaluacion}" FontSize="16" TextColor="Black"/>
+													<Label Text="{Binding GradeValue, StringFormat='Nota: {0:F2}'}" TextColor="DarkGreen"/>
+													<Label Text="{Binding Comments}" FontSize="12" TextColor="Gray"/>
+												</StackLayout>
+											</DataTemplate>
+										</CollectionView.ItemTemplate>
+									</CollectionView>
+								</StackLayout>
+							</DataTemplate>
+						</CollectionView.ItemTemplate>
+					</CollectionView>
+				</StackLayout>
+			</ScrollView>
+		</ContentView>
+
+		<ContentView x:Name="SideMenu"
+                     WidthRequest="260"
+                     BackgroundColor="#0C4251"
+                     IsVisible="False"
+                     TranslationX="-260"
+                     AbsoluteLayout.LayoutBounds="0,0,260,1"
+                     AbsoluteLayout.LayoutFlags="PositionProportional,HeightProportional">
+			<local:MenuPage />
+		</ContentView>
+
+		<Grid BackgroundColor="WhiteSmoke" Padding="10"
+              AbsoluteLayout.LayoutBounds="0,1,1,50"
+              AbsoluteLayout.LayoutFlags="WidthProportional,PositionProportional">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+
+			<StackLayout Grid.Column="0" HorizontalOptions="Center">
+				<Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
+                        TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
+				<Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+			</StackLayout>
+
+			<StackLayout Grid.Column="1" HorizontalOptions="Center">
+				<Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
+                        TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
+				<Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+			</StackLayout>
+
+			<StackLayout Grid.Column="2" HorizontalOptions="Center">
+				<Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
+                        TextColor="#0C4251" BackgroundColor="WhiteSmoke"
+                        Clicked="MenuButton_Clicked" />
+				<Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+			</StackLayout>
+		</Grid>
+	</AbsoluteLayout>
+</ContentPage>
+
+
+<!--<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
+             x:Class="SchoolProyectApp.Views.GradesPage"
+             Title="Mis Calificaciones">
+
+    <ContentPage.BindingContext>
+        <vm:GradesViewModel />
+    </ContentPage.BindingContext>
+
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="15">
+
+            <Label Text="Mis Cursos" FontAttributes="Bold" FontSize="20" />
+
+            <CollectionView ItemsSource="{Binding GradesByCourse}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout Padding="10" Margin="5" BackgroundColor="#f0f0f0">
+                             Nombre del Curso -
+                            <Label Text="{Binding Curso}"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="#0C4251"/>
+
+                             Lista de calificaciones de este curso 
+                            <CollectionView ItemsSource="{Binding Calificaciones}">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackLayout Padding="5" Margin="5" BackgroundColor="White" Orientation="Vertical">
+                                            <Label Text="{Binding Evaluacion}" FontSize="16" TextColor="Black"/>
+                                            <Label Text="{Binding GradeValue, StringFormat='Nota: {0:F2}'}" TextColor="DarkGreen"/>
+                                            <Label Text="{Binding Comments}" FontSize="12" TextColor="Gray"/>
+                                        </StackLayout>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </StackLayout>
+    </ScrollView>
+</ContentPage>-->

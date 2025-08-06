@@ -5,6 +5,247 @@ using Microsoft.Maui.Controls;
 using SchoolProyectApp.Models;
 using SchoolProyectApp.Services;
 using System.Linq;
+using System.Collections.Generic;
+
+namespace SchoolProyectApp.ViewModels
+{
+    // Permitimos que la vista reciba un parámetro de navegación llamado "SelectedChild".
+    [QueryProperty(nameof(SelectedChild), "SelectedChild")]
+    public class EvaluationsListViewModel : BaseViewModel
+    {
+        private readonly ApiService _apiService;
+        private int _userId;
+        private int _roleId;
+        private string _pageTitle = "Mis Evaluaciones";
+
+        // Propiedad para el estado de carga
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set => SetProperty(ref _isBusy, value);
+        }
+
+        // Propiedad para el objeto del hijo seleccionado
+        private Child _selectedChild;
+        public Child SelectedChild
+        {
+            get => _selectedChild;
+            set
+            {
+                // Cuando se establece el hijo, guardamos el valor y actualizamos la vista
+                SetProperty(ref _selectedChild, value);
+                // Usamos _ = para evitar un warning, ya que no necesitamos esperar el resultado aquí
+                _ = InitializeAsync();
+            }
+        }
+
+        // Título de la página
+        public string PageTitle
+        {
+            get => _pageTitle;
+            set => SetProperty(ref _pageTitle, value);
+        }
+
+        // Propiedad para el rol del usuario
+        public int RoleID
+        {
+            get => _roleId;
+            set
+            {
+                if (SetProperty(ref _roleId, value))
+                {
+                    OnPropertyChanged(nameof(IsProfessor));
+                    OnPropertyChanged(nameof(IsStudent));
+                    OnPropertyChanged(nameof(IsParent));
+                    OnPropertyChanged(nameof(IsHiddenForProfessor));
+                    OnPropertyChanged(nameof(IsHiddenForStudent));
+                }
+            }
+        }
+
+        // Propiedades booleanas para Bindings en la UI (visibilidad de elementos)
+        public bool IsProfessor => RoleID == 2;
+        public bool IsStudent => RoleID == 1;
+        public bool IsParent => RoleID == 3;
+        public bool IsHiddenForProfessor => !IsProfessor;
+        public bool IsHiddenForStudent => !IsStudent;
+
+        // Colecciones para los datos
+        public ObservableCollection<Evaluation> Evaluations { get; set; } = new();
+        public ObservableCollection<Course> Courses { get; set; } = new();
+
+        // Comandos de la vista
+        public ICommand DeleteEvaluationCommand { get; }
+        public ICommand HomeCommand { get; }
+        public ICommand ProfileCommand { get; }
+        public ICommand CourseCommand { get; }
+        public ICommand OpenMenuCommand { get; }
+        public ICommand FirstProfileCommand { get; }
+        public ICommand EvaluationCommand { get; }
+        public ICommand GoBackCommand { get; }
+
+        public EvaluationsListViewModel()
+        {
+            _apiService = new ApiService();
+
+            DeleteEvaluationCommand = new Command<Evaluation>(async (evaluation) => await DeleteEvaluation(evaluation));
+
+            // Comandos antiguos que tu compañero eliminó
+            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
+            ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
+            CourseCommand = new Command(async () => await Shell.Current.GoToAsync("///courses"));
+            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+            FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
+            EvaluationCommand = new Command(async () => await Shell.Current.GoToAsync("///evaluation"));
+            GoBackCommand = new Command(async () => await GoBackAsync());
+
+            // La inicialización ahora se hace en InitializeAsync()
+        }
+
+        public async Task GoBackAsync()
+        {
+            await Shell.Current.GoToAsync("..");
+        }
+
+        public async Task InitializeAsync()
+        {
+            // Evitamos cargas múltiples si ya estamos ocupados
+            if (IsBusy) return;
+            IsBusy = true;
+            try
+            {
+                await LoadUserData();
+                await LoadCourses(); // Volvemos a cargar los cursos
+                await LoadEvaluations();
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        public async Task LoadEvaluations()
+        {
+            var schoolIdStr = await SecureStorage.GetAsync("school_id");
+            if (!int.TryParse(schoolIdStr, out int schoolId))
+            {
+                // Manejar error si no se puede obtener el schoolId
+                return;
+            }
+
+            int targetUserId;
+            // Si hay un hijo seleccionado, usamos su ID; si no, usamos el del usuario actual
+            if (SelectedChild != null)
+            {
+                targetUserId = SelectedChild.UserID;
+                PageTitle = $"Evaluaciones de {SelectedChild.StudentName}";
+            }
+            else
+            {
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (!int.TryParse(userIdStr, out targetUserId))
+                {
+                    // Manejar error si no se puede obtener el userId
+                    return;
+                }
+                PageTitle = "Mis Evaluaciones";
+            }
+
+            // Guardamos el ID correcto para usarlo al borrar una evaluación
+            _userId = targetUserId;
+
+            var evaluations = await _apiService.GetEvaluationsAsync(_userId, schoolId);
+            if (evaluations == null) return;
+
+            // Vincular cada evaluación con su curso (lógica antigua)
+            var coursesDict = Courses.ToDictionary(c => c.CourseID, c => c);
+            foreach (var eval in evaluations)
+            {
+                if (coursesDict.TryGetValue(eval.CourseID, out var course))
+                    eval.Course = course;
+                else
+                    eval.Course = new Course { Name = "(Curso no asignado)" };
+            }
+
+            var filtered = evaluations
+                .Where(e => e.Date.Date >= System.DateTime.Today)
+                .OrderBy(e => e.Date)
+                .ToList();
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Evaluations.Clear();
+                foreach (var eval in filtered)
+                {
+                    Evaluations.Add(eval);
+                }
+            });
+        }
+
+        public async Task LoadUserData()
+        {
+            try
+            {
+                var storedUserId = await SecureStorage.GetAsync("user_id");
+                if (!string.IsNullOrEmpty(storedUserId) && int.TryParse(storedUserId, out int userId))
+                {
+                    var user = await _apiService.GetUserDetailsAsync(userId);
+                    if (user != null)
+                    {
+                        RoleID = user.RoleID;
+                        // Ya no se necesitan OnPropertyChanged repetidos porque SetProperty ya lo hace
+                    }
+                }
+                else
+                {
+                    RoleID = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                // En un ViewModel, es mejor no mostrar alertas directamente, sino manejar la excepción
+                // o notificar a la vista de alguna otra manera, pero para este caso lo mantendremos
+                // para que no haya un error grave.
+                Console.WriteLine($"Error al cargar datos de usuario: {ex.Message}");
+            }
+        }
+
+        public async Task LoadCourses()
+        {
+            int schoolId = int.Parse(await SecureStorage.GetAsync("school_id") ?? "0");
+            var courses = await _apiService.GetCoursesAsync(schoolId);
+
+            if (courses == null || courses.Count == 0) return;
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Courses.Clear();
+                foreach (var course in courses)
+                {
+                    Courses.Add(course);
+                }
+            });
+        }
+
+        private async Task DeleteEvaluation(Evaluation evaluation)
+        {
+            bool success = await _apiService.DeleteEvaluationAsync(evaluation.EvaluationID, _userId);
+            if (success)
+            {
+                await LoadEvaluations();
+            }
+        }
+    }
+}
+
+/*using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Microsoft.Maui.Controls;
+using SchoolProyectApp.Models;
+using SchoolProyectApp.Services;
+using System.Linq;
 
 namespace SchoolProyectApp.ViewModels
 {
@@ -79,28 +320,9 @@ namespace SchoolProyectApp.ViewModels
 
             Task.Run(async () => await LoadEvaluations());
         }
-           /* Task.Run(async () =>
-            {
-                await LoadUserData();
+          
 
-                // Esperar a que school_id esté disponible
-                int retries = 0;
-                int schoolId = 0;
-                while (schoolId == 0 && retries < 5)
-                {
-                    var schoolStr = await SecureStorage.GetAsync("school_id");
-                    int.TryParse(schoolStr, out schoolId);
-                    if (schoolId == 0)
-                        await Task.Delay(300);
-                    retries++;
-                }
-
-                await LoadEvaluations();
-                await LoadCourses();
-            });
-        }*/
-
-        public async Task InitializeAsync()
+public async Task InitializeAsync()
         {
             // Carga los datos de forma secuencial y en el orden correcto
             await LoadUserData();
@@ -238,221 +460,6 @@ namespace SchoolProyectApp.ViewModels
             }
         }
     }
-}
-
-
-
-/*using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Microsoft.Maui.Controls;
-using SchoolProyectApp.Models;
-using SchoolProyectApp.Services;
-using SchoolProyectApp.ViewModels;
-using System.Threading.Tasks;
-using Microsoft.Maui.Controls;
-
-
-namespace SchoolProyectApp.ViewModels
-{
-    public class EvaluationsListViewModel : BaseViewModel
-    {
-        private readonly ApiService _apiService;
-        private int _userId;
-
-        private int _roleId;
-
-        public int RoleID
-        {
-            get => _roleId;
-            set
-            {
-                if (_roleId != value)
-                {
-                    _roleId = value;
-                    OnPropertyChanged();
-                    OnPropertyChanged(nameof(IsProfessor));
-                    OnPropertyChanged(nameof(IsStudent));
-                    OnPropertyChanged(nameof(IsParent));
-                    OnPropertyChanged(nameof(IsHiddenForProfessor));
-                    OnPropertyChanged(nameof(IsHiddenForStudent));
-                }
-            }
-        }
-
-
-        // Propiedades booleanas para Binding en XAML
-        public bool IsProfessor => RoleID == 2;
-        public bool IsStudent => RoleID == 1;
-        public bool IsParent => RoleID == 3;
-
-        public bool IsHiddenForProfessor => !IsProfessor;
-        public bool IsHiddenForStudent => !IsStudent;
-
-
-        public ObservableCollection<Evaluation> Evaluations { get; set; } = new();
-        public ObservableCollection<Course> Courses { get; set; } = new();
-
-        public Evaluation NewEvaluation { get; set; } = new();
-        private int _selectedCourseID;
-
-        private Course _selectedCourse;
-        public Course SelectedCourse
-        {
-            get => _selectedCourse;
-            set
-            {
-                _selectedCourse = value;
-                OnPropertyChanged();
-            }
-        }
-
-
-        public ICommand SearchUsersCommand { get; }
-        public ICommand CreateEvaluationCommand { get; }
-        public ICommand DeleteEvaluationCommand { get; }
-        public ICommand HomeCommand { get; }
-        public ICommand ProfileCommand { get; }
-        public ICommand CourseCommand { get; }
-        public ICommand OpenMenuCommand { get; }
-        public ICommand FirstProfileCommand { get; }
-        public ICommand EvaluationCommand { get; }
-
-
-        private string _searchQuery;
-        public string SearchQuery
-        {
-            get => _searchQuery;
-            set
-            {
-                _searchQuery = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public EvaluationsListViewModel()
-        {
-            _apiService = new ApiService();
-            DeleteEvaluationCommand = new Command<Evaluation>(async (evaluation) => await DeleteEvaluation(evaluation));
-
-            Task.Run(async () => await LoadEvaluations());
-            Task.Run(async () => await LoadCourses());
-
-            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
-            ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
-            CourseCommand = new Command(async () => await Shell.Current.GoToAsync("///courses"));
-            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
-            FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
-            CreateEvaluationCommand = new Command(async () => await Shell.Current.GoToAsync("///createEvaluation"));
-            EvaluationCommand = new Command(async () => await Shell.Current.GoToAsync("///evaluation"));
-
-            _apiService = new ApiService();
-            Task.Run(async () => await LoadUserData());
-
-        }
-
-        public async Task LoadEvaluations()
-        {
-            _userId = int.Parse(await SecureStorage.GetAsync("user_id") ?? "0");
-            if (_userId == 0) return;
-
-            var evaluations = await _apiService.GetEvaluationsAsync(_userId);
-
-            // Filtrar solo las evaluaciones con fecha mayor o igual a hoy
-            var filtered = evaluations
-                .Where(e => e.Date.Date >= DateTime.Today)
-                .OrderBy(e => e.Date) // opcional: ordenamos por fecha ascendente
-                .ToList();
-
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Evaluations.Clear();
-                foreach (var eval in filtered)
-                {
-                    Evaluations.Add(eval);
-                }
-            });
-            /* foreach (var eval in evaluations)
-             {
-                 Console.WriteLine($"✅ Eval: {eval.Title}, Curso: {eval.Course?.Name}");
-             }
-var coursesDict = Courses.ToDictionary(c => c.CourseID);
-            foreach (var eval in evaluations)
-            {
-                if (coursesDict.TryGetValue(eval.CourseID, out var course))
-                    eval.Course = course;
-            }
-
-        }
-
-        private async Task LoadUserData()
-        {
-            try
-            {
-                var storedUserId = await SecureStorage.GetAsync("user_id");
-
-                if (!string.IsNullOrEmpty(storedUserId) && int.TryParse(storedUserId, out int userId))
-                {
-                    var user = await _apiService.GetUserDetailsAsync(userId);
-
-                    if (user != null)
-                    {
-
-                        RoleID = user.RoleID; // 🔹 Aquí nos aseguramos de que se asigne correctamente
-
-
-                        // 🔹 Forzar actualización en UI
-                        OnPropertyChanged(nameof(RoleID));
-                        OnPropertyChanged(nameof(IsProfessor));
-                        OnPropertyChanged(nameof(IsStudent));
-                        OnPropertyChanged(nameof(IsParent));
-                    }
-                }
-                else
-                {
-                    RoleID = 0; // Asignar un valor por defecto si no se encuentra el usuario
-                }
-            }
-            catch (Exception ex)
-            {
-                await Application.Current.MainPage.DisplayAlert("Error", "No se pudo cargar el usuario: " + ex.Message, "OK");
-            }
-        }
-        private async Task LoadCourses()
-        {
-            Console.WriteLine("🔄 Cargando cursos desde la API...");
-
-            var courses = await _apiService.GetCoursesAsync();
-
-            if (courses == null || courses.Count == 0)
-            {
-                Console.WriteLine("⚠ No se encontraron cursos en la API.");
-                return;
-            }
-
-            Console.WriteLine($"✅ Cursos recibidos: {courses.Count}");
-
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Courses.Clear();
-                foreach (var course in courses)
-                {
-                    Console.WriteLine($"📚 Curso: {course.Name} (ID: {course.CourseID})");
-                    Courses.Add(course);
-                }
-            });
-        }
-
-        
-        private async Task DeleteEvaluation(Evaluation evaluation)
-        {
-            bool success = await _apiService.DeleteEvaluationAsync(evaluation.EvaluationID, _userId);
-            if (success)
-            {
-                Console.WriteLine("✔ Evaluación eliminada.");
-                await LoadEvaluations();
-            }
-        }
-    }
 }*/
+
 

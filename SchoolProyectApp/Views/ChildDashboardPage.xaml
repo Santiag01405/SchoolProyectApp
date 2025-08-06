@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
+             x:Class="SchoolProyectApp.Views.ChildDashboardPage"
+             Shell.NavBarIsVisible="False"
+             x:Name="ThisChildDashboardPage">
+
+	<ContentPage.BindingContext>
+		<vm:ChildDashboardViewModel />
+	</ContentPage.BindingContext>
+
+	<Grid RowDefinitions="Auto, *">
+		<Grid Grid.Row="0" ColumnDefinitions="Auto, *" BackgroundColor="#0C4251" Padding="10">
+			<Button Grid.Column="0"
+					Text="&#xf060;"
+					FontFamily="FontAwesomeSolid" FontSize="24"
+					TextColor="White"
+					BackgroundColor="Transparent"
+					BorderWidth="0"
+					Command="{Binding Path=BindingContext.GoBackCommand, Source={x:Reference ThisChildDashboardPage}}" 
+			VerticalOptions="Center"/>
+
+			<Label Grid.Column="1"
+				   Text="{Binding ChildName, StringFormat='Dashboard de {0}'}" TextColor="White" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+		</Grid>
+
+		<ScrollView Grid.Row="1">
+			<VerticalStackLayout Spacing="15" Padding="20" x:DataType="vm:ChildDashboardViewModel">
+				<Frame Padding="20" CornerRadius="10" HasShadow="True">
+					<VerticalStackLayout Spacing="10">
+						<Label Text="&#xf073;" FontFamily="FontAwesomeSolid" FontSize="40" HorizontalOptions="Center" TextColor="#0C4251"/>
+						<Label Text="Horario" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center"/>
+						<Button Text="Ver Horario" Command="{Binding GoToScheduleCommand}" />
+					</VerticalStackLayout>
+				</Frame>
+
+				<Frame Padding="20" CornerRadius="10" HasShadow="True">
+					<VerticalStackLayout Spacing="10">
+						<Label Text="&#xf0f6;" FontFamily="FontAwesomeSolid" FontSize="40" HorizontalOptions="Center" TextColor="#0C4251"/>
+						<Label Text="Evaluaciones" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center"/>
+						<Button Text="Ver Evaluaciones" Command="{Binding GoToEvaluationsCommand}" />
+					</VerticalStackLayout>
+				</Frame>
+
+				<Frame Padding="20" CornerRadius="10" HasShadow="True">
+					<VerticalStackLayout Spacing="10">
+						<Label Text="&#xf19d;" FontFamily="FontAwesomeSolid" FontSize="40" HorizontalOptions="Center" TextColor="#0C4251"/>
+						<Label Text="Calificaciones" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center"/>
+						<Button Text="Ver Calificaciones (Próximamente)" IsEnabled="False" />
+					</VerticalStackLayout>
+				</Frame>
+			</VerticalStackLayout>
+		</ScrollView>
+	</Grid>
+</ContentPage>

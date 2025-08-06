@@ -1015,5 +1015,75 @@ namespace SchoolProyectApp.Services
             }
         }
 
+        // ✅ Asignar calificación
+        public async Task<bool> AssignGradeAsync(Grade grade)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/grades/assign", grade);
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"📤 Respuesta API AssignGrade: {response.StatusCode} - {content}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error en AssignGradeAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<List<object>> GetUserGradesAsync(int userId, int schoolId)
+        {
+            try
+            {
+                string url = $"api/grades/user/{userId}/grades?schoolId={schoolId}";
+                var response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"⚠️ Error al obtener calificaciones: {response.StatusCode}");
+                    return new List<object>();
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<List<object>>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }) ?? new List<object>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error en GetUserGradesAsync: {ex.Message}");
+                return new List<object>();
+            }
+        }
+
+        //Obtener hijos de padre
+        public async Task<List<Child>?> GetHijosAsync(int userId, int schoolId)
+        {
+            try
+            {
+                var url = $"api/relationships/user/{userId}/children?schoolId={schoolId}";
+                Console.WriteLine($"🌍 Buscando hijos con la URL: {url}");
+
+                var response = await _httpClient.GetAsync(url);
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"❌ Error al obtener los hijos: {response.StatusCode}");
+                    return new List<Child>();
+                }
+
+                var responseJson = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"✅ Hijos obtenidos desde la app móvil: {responseJson}");
+
+                return JsonSerializer.Deserialize<List<Child>>(responseJson, _jsonOptions);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Excepción en GetHijosAsync: {ex.Message}");
+                return new List<Child>();
+            }
+        }
+
     }
 }

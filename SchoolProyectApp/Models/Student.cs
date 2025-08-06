@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace SchoolProyectApp.Models
 {
     public class Student
     {
+        [JsonPropertyName("userID")]
         public int UserID { get; set; }
-        public string StudentName { get; set; }
-    }
 
+        [JsonPropertyName("userName")]
+        public string StudentName { get; set; }  
+
+        [JsonPropertyName("roleID")]
+        public int RoleID { get; set; }
+    }
 }

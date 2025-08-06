@@ -1,27 +1,26 @@
-﻿using Microsoft.Maui.Controls;
-using SchoolProyectApp.ViewModels;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SchoolProyectApp.Views
 {
-    public partial class HomePage : ContentPage
+    public partial class AssignGradesPage : ContentPage
     {
         private bool _isMenuVisible = false;
-
-        public HomePage()
+        public AssignGradesPage()
         {
             InitializeComponent();
-            BindingContext = new HomePageViewModel();
         }
-
         private async void AnimateButton(object sender, EventArgs e)
         {
-            if (sender is Button button)
+            if (sender is ImageButton button)
             {
                 await button.ScaleTo(0.8, 100, Easing.CubicIn);
                 await button.ScaleTo(1, 100, Easing.CubicOut);
             }
         }
-
 
         private async void MenuButton_Clicked(object sender, EventArgs e)
         {
@@ -39,18 +38,6 @@ namespace SchoolProyectApp.Views
             }
         }
 
-
-        protected override async void OnAppearing()
-        {
-            base.OnAppearing();
-
-            if (BindingContext is HomePageViewModel viewModel)
-            {
-                Console.WriteLine("🔄 HomePage está apareciendo, recargando datos del usuario...");
-                await viewModel.LoadUserDataFromApi(); // Await de forma segura
-                // También es una buena práctica llamar al método de inicialización completo
-                // await viewModel.InitializeAsync();
-            }
-        }
     }
 }
+

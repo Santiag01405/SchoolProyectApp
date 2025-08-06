@@ -13,6 +13,7 @@ namespace SchoolProyectApp
             Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
             Routing.RegisterRoute(nameof(HomePage), typeof(HomePage));
             Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
+            Routing.RegisterRoute(nameof(ChildDashboardPage), typeof(ChildDashboardPage));
         }
         public async Task Logout()
         {

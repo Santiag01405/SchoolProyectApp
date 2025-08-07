@@ -193,47 +193,6 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
-        /*  private async Task LoadNotifications(CancellationToken token)
-          {
-              if (token.IsCancellationRequested) return;
-
-              var userId = await SecureStorage.GetAsync("user_id");
-              if (string.IsNullOrEmpty(userId)) return;
-
-              var notifications = await _apiService.GetUserNotifications(int.Parse(userId));
-              if (token.IsCancellationRequested) return;
-
-              MainThread.BeginInvokeOnMainThread(() =>
-              {
-                  RegularNotifications.Clear();
-                  foreach (var notification in notifications)
-                      RegularNotifications.Add(notification);
-
-                  UpdateActiveNotifications();
-              });
-          }
-
-         private async Task LoadAttendanceAsNotifications(CancellationToken token)
-          {
-              if (token.IsCancellationRequested) return;
-
-              var userId = await SecureStorage.GetAsync("user_id");
-              if (string.IsNullOrEmpty(userId)) return;
-
-              var attendanceRecords = await _apiService.GetAttendanceNotifications(int.Parse(userId));
-              if (token.IsCancellationRequested || attendanceRecords == null || attendanceRecords.Count == 0) return;
-
-              MainThread.BeginInvokeOnMainThread(() =>
-              {
-                  AttendanceNotifications.Clear();
-                  foreach (var a in attendanceRecords)
-                  {
-                      AttendanceNotifications.Add(a); 
-                  }
-              });
-
-          }*/
-
         private async Task LoadNotifications(CancellationToken token)
         {
             if (token.IsCancellationRequested) return;

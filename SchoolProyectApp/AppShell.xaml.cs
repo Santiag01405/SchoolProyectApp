@@ -13,7 +13,12 @@ namespace SchoolProyectApp
             Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
             Routing.RegisterRoute(nameof(HomePage), typeof(HomePage));
             Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
-            Routing.RegisterRoute(nameof(ChildDashboardPage), typeof(ChildDashboardPage));
+            Routing.RegisterRoute("childDashboard", typeof(ChildDashboardPage));
+
+            // ----- RUTAS AÑADIDAS -----
+            Routing.RegisterRoute("schedule", typeof(SchedulePage));
+            Routing.RegisterRoute("evaluation", typeof(EvaluationsListPage));
+            Routing.RegisterRoute("seeGrades", typeof(GradesPage));
         }
         public async Task Logout()
         {
@@ -51,7 +56,7 @@ namespace SchoolProyectApp
             }
         }
 
-}
+    }
 }
 
 /*namespace SchoolProyectApp

@@ -5,6 +5,7 @@ using SchoolProyectApp.Models;
 using SchoolProyectApp.Services;
 using System.Linq;
 
+
 namespace SchoolProyectApp.ViewModels
 {
     // Habilitar la recepción de un objeto Student desde la navegación
@@ -22,11 +23,20 @@ namespace SchoolProyectApp.ViewModels
         public ICommand RefreshCommand { get; }
         public ICommand GoBackCommand { get; }
 
+        public ICommand HomeCommand { get; }
+        public ICommand ProfileCommand { get; }
+        public ICommand OpenMenuCommand { get; }
+
         public ScheduleViewModel()
         {
             _apiService = new ApiService();
             RefreshCommand = new Command(async () => await LoadWeeklySchedule());
             GoBackCommand = new Command(async () => await GoBackAsync());
+
+            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
+            ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
+            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+
 
             // Establece el día actual al cargar, por defecto a lunes si es domingo
             SelectedDay = (int)DateTime.Now.DayOfWeek;

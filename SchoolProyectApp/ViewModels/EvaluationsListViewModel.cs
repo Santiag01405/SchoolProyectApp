@@ -11,6 +11,7 @@ namespace SchoolProyectApp.ViewModels
 {
     // Permitimos que la vista reciba un parámetro de navegación llamado "SelectedChild".
     [QueryProperty(nameof(SelectedChild), "SelectedChild")]
+    [QueryProperty(nameof(IsParentView), "IsParentView")]
     public class EvaluationsListViewModel : BaseViewModel
     {
         private readonly ApiService _apiService;
@@ -98,7 +99,7 @@ namespace SchoolProyectApp.ViewModels
             OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
             EvaluationCommand = new Command(async () => await Shell.Current.GoToAsync("///evaluation"));
-            GoBackCommand = new Command(async () => await GoBackAsync());
+            GoBackCommand = new Command(async () => await Shell.Current.GoToAsync(".."));
 
             // La inicialización ahora se hace en InitializeAsync()
         }
@@ -236,6 +237,20 @@ namespace SchoolProyectApp.ViewModels
                 await LoadEvaluations();
             }
         }
+
+        private bool _isParentView;
+        public bool IsParentView
+        {
+            get => _isParentView;
+            set
+            {
+                SetProperty(ref _isParentView, value);
+                OnPropertyChanged(nameof(ShowParentHeader));
+            }
+        }
+
+        public bool ShowParentHeader => IsParentView;
+
     }
 }
 

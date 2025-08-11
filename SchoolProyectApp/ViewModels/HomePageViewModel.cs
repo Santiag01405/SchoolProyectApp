@@ -317,16 +317,18 @@ namespace SchoolProyectApp.ViewModels
             try
             {
                 var navigationParameter = new Dictionary<string, object>
-                {
-                    { "SelectedChild", child }
-                };
+        {
+            { "SelectedChild", child }
+        };
 
-                await Shell.Current.GoToAsync("//childDashboard", navigationParameter);
+                // ----- LA CORRECCIÓN ESTÁ AQUÍ -----
+                // Quita las barras "//" para que sea una navegación relativa
+                await Shell.Current.GoToAsync("childDashboard", navigationParameter);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"❌ Error al navegar al dashboard del hijo: {ex.Message}");
-                await Application.Current.MainPage.DisplayAlert("Error", "No se pudo abrir el dashboard del hijo.", "OK");
+                // ...
             }
         }
 

@@ -37,21 +37,38 @@ namespace SchoolProyectApp.ViewModels
 
         public ICommand GoToScheduleCommand { get; }
         public ICommand GoToEvaluationsCommand { get; }
+        public ICommand GoToGradesCommand { get; }
         public ICommand GoBackCommand { get; }
 
         public ChildDashboardViewModel()
         {
-            Debug.WriteLine("DEBUG: ChildDashboardViewModel constructor llamado."); // Nueva línea de depuración
+            Debug.WriteLine("DEBUG: ChildDashboardViewModel constructor llamado.");
+
             GoToScheduleCommand = new Command(async () => {
-                Debug.WriteLine("DEBUG: GoToScheduleCommand ejecutado."); // Nueva línea de depuración
+                Debug.WriteLine("DEBUG: GoToScheduleCommand ejecutado.");
                 await NavigateToChildPage("schedule");
             });
+
             GoToEvaluationsCommand = new Command(async () => {
-                Debug.WriteLine("DEBUG: GoToEvaluationsCommand ejecutado."); // Nueva línea de depuración
+                Debug.WriteLine("DEBUG: GoToEvaluationsCommand ejecutado.");
                 await NavigateToChildPage("evaluation");
             });
-            GoBackCommand = new Command(async () => await Shell.Current.GoToAsync(".."));
+
+            // ----- AQUÍ VA LA LÍNEA DE DEBUG -----
+            GoBackCommand = new Command(async () =>
+            {
+                // Esta es la línea que necesitamos ver en la consola.
+                Debug.WriteLine("DEBUG: GoBackCommand fue PRESIONADO.");
+                await Shell.Current.GoToAsync("..");
+            });
+
+            // --> AÑADE ESTE BLOQUE NUEVO <--
+            GoToGradesCommand = new Command(async () => {
+                Debug.WriteLine("DEBUG: GoToGradesCommand ejecutado.");
+                await NavigateToChildPage("seeGrades");
+            });
         }
+
 
         private async Task NavigateToChildPage(string route)
         {
@@ -59,21 +76,27 @@ namespace SchoolProyectApp.ViewModels
 
             if (SelectedChild == null)
             {
-                Debug.WriteLine($"DEBUG: SelectedChild es nulo en NavigateToChildPage para la ruta: {route}. No se puede navegar.");
-                await Application.Current.MainPage!.DisplayAlert("Error", "No se ha seleccionado un hijo para ver esta sección.", "OK");
+                Debug.WriteLine($"DEBUG: SelectedChild es nulo, no se puede navegar.");
+                await Application.Current.MainPage!.DisplayAlert("Error", "No se ha seleccionado un hijo.", "OK");
                 return;
             }
 
             try
             {
                 var navigationParameter = new Dictionary<string, object>
-                {
-                    { "SelectedChild", SelectedChild }
-                };
+        {
+            { "SelectedChild", SelectedChild }
+        };
 
-                Debug.WriteLine($"DEBUG: Intentando navegar a la ruta: //{route} con SelectedChild (ID: {SelectedChild.UserID}, Nombre: {SelectedChild.StudentName})");
-                await Shell.Current.GoToAsync($"//{route}", navigationParameter);
-                Debug.WriteLine($"DEBUG: Navegación a //{route} iniciada.");
+                // ----- LA CORRECCIÓN FINAL ESTÁ AQUÍ -----
+                // Como la ruta ahora solo está registrada en el código, la llamamos de forma relativa (sin barras).
+                string navigationRoute = $"{route}?IsParentView=true";
+
+                Debug.WriteLine($"DEBUG: Intentando navegar a la ruta relativa: {navigationRoute}");
+
+                await Shell.Current.GoToAsync(navigationRoute, navigationParameter);
+
+                Debug.WriteLine($"DEBUG: Navegación a {navigationRoute} iniciada.");
             }
             catch (Exception ex)
             {

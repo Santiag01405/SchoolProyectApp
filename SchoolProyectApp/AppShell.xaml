@@ -80,6 +80,21 @@
           ContentTemplate="{DataTemplate views: EvaluationsListPage}" 
                   Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>-->
 
+    <!--Creacion actividad extracurricular-->
+    <ShellContent Title="Crear actividad extracurricular" Route="createExtra" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:CreateActivityPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+
+    <!--Ver actividades extracurriculares-->
+    <ShellContent Title="Ver actividades extra del estudiante" Route="seeExtra" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:StudentActivitiesPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+
+    <!--Marcar asistencia actividad extracurricular-->
+    <ShellContent Title="Marcar asistencia extra" Route="extraAttendance" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:MarkAttendancePage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+
+    <!--Inscribir estudiante a actividad extracurricular-->
+    <ShellContent Title="Inscribir estudiante a actividad extracurricular" Route="enrollExtra" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:EnrollStudentPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+
+    <!--Visita a enfermeria-->
+    <ShellContent Title="Enfermeria" Route="nurseVisit" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:PostNurseVisitPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+
 </Shell>
 
 

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:SchoolProyectApp.ViewModels"
+             xmlns:views="clr-namespace:SchoolProyectApp.Views"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
+             x:Class="SchoolProyectApp.Views.PostNurseVisitPage"
+             Title="Registrar Visita a Enfermería"
+             droid:NavigationBar.Color="white"
+             droid:NavigationBar.Style="LightContent">
+
+    <ContentPage.BindingContext>
+        <local:PostNurseVisitViewModel />
+    </ContentPage.BindingContext>
+    
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="#0C4251"
+                                   StatusBarStyle="LightContent" />
+    </ContentPage.Behaviors>
+
+    <AbsoluteLayout>
+        
+        <BoxView Color="#0C4251"
+                 AbsoluteLayout.LayoutBounds="0,0,1,70"
+                 AbsoluteLayout.LayoutFlags="WidthProportional" />
+
+        <Image Source="Images/artboard.png"
+               AbsoluteLayout.LayoutBounds="0.5,0,170,90"
+               AbsoluteLayout.LayoutFlags="PositionProportional"
+               Aspect="AspectFit"
+               BackgroundColor="Transparent" />
+
+        <ContentView x:Name="MainContent"
+                     AbsoluteLayout.LayoutBounds="0,110,1,0.85"
+                     AbsoluteLayout.LayoutFlags="WidthProportional,HeightProportional">
+
+            <Grid Padding="0" RowDefinitions="*,Auto">
+
+                <ScrollView Grid.Row="0">
+                    <StackLayout Padding="20" Spacing="20">
+                        <Label Text="Registrar Visita a Enfermería" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />
+
+                        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" Color="Blue" />
+
+                        <Label Text="Buscar Estudiante" FontSize="18" FontAttributes="Bold" />
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Entry Grid.Column="0"
+                                   Placeholder="Nombre del estudiante..."
+                                   Text="{Binding SearchQuery}"
+                                   Completed="SearchEntry_Completed" />
+                            <Button Grid.Column="1" Text="Buscar" Command="{Binding SearchCommand}" />
+                        </Grid>
+
+                        <CollectionView ItemsSource="{Binding SearchResults}"
+                                        SelectionMode="Single"
+                                        SelectedItem="{Binding SelectedStudent}"
+                                        IsVisible="{Binding HasSearchResults}"
+                                        HeightRequest="200"
+                                        BackgroundColor="White">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Padding="10" BackgroundColor="#F0F0F0">
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroupList>
+                                                <VisualStateGroup x:Name="CommonStates">
+                                                    <VisualState x:Name="Normal" />
+                                                    <VisualState x:Name="Selected">
+                                                        <VisualState.Setters>
+                                                            <Setter Property="BackgroundColor" Value="#d2e3fc" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateGroupList>
+                                        </VisualStateManager.VisualStateGroups>
+                                        <Label Text="{Binding UserName}" FontSize="16" />
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <Label Text="Datos de la Visita" FontSize="18" FontAttributes="Bold" Margin="0,20,0,0"/>
+
+                        <Entry Placeholder="Razón de la visita..." Text="{Binding Reason}" />
+
+                        <Entry Placeholder="Tratamiento aplicado (opcional)..." Text="{Binding Treatment}" />
+
+                        <Button Text="Registrar Visita"
+                                Command="{Binding PostVisitCommand}"
+                                IsEnabled="{Binding CanPostVisit}"
+                                BackgroundColor="#007bff"
+                                TextColor="White"
+                                FontAttributes="Bold" />
+
+                        <Button Text="Limpiar Formulario"
+                                Command="{Binding ResetCommand}"
+                                BackgroundColor="Gray"
+                                TextColor="White"
+                                FontAttributes="Bold" />
+                    </StackLayout>
+                </ScrollView>
+                
+                <Grid Grid.Row="1" BackgroundColor="WhiteSmoke" Padding="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                        <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
+                        <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
+
+                    <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                        <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
+                        <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
+
+                    <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                        <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="#0C4251" BackgroundColor="WhiteSmoke"
+                                Clicked="MenuButton_Clicked" />
+                        <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
+                </Grid>
+            </Grid>
+        </ContentView>
+
+        <ContentView x:Name="SideMenu"
+                     WidthRequest="260"
+                     BackgroundColor="#0C4251"
+                     IsVisible="False"
+                     TranslationX="-260"
+                     AbsoluteLayout.LayoutBounds="0,0,260,1"
+                     AbsoluteLayout.LayoutFlags="PositionProportional,HeightProportional">
+            <views:MenuPage />
+        </ContentView>
+
+    </AbsoluteLayout>
+</ContentPage>

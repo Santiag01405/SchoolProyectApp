@@ -63,6 +63,26 @@
                 </StackLayout>
                 <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsProfessor}" />
 
+                <!-- Crear actividad extracurricular -->
+                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsProfessor}">
+                    <Label Text="&#xf328;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Crear actividad extracurricular" Command="{Binding CreateExtraCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
+                </StackLayout>
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsProfessor}" />
+
+                <!-- Inscribir a actividad extracurricular -->
+                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsProfessor}">
+                    <Label Text="&#xf328;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Inscribir a actividad extracurricular" Command="{Binding EnrollExtraCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
+                </StackLayout>
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsProfessor}" />
+
+                <!-- Marcar asistencia actividad extracurricular -->
+                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsProfessor}">
+                    <Label Text="&#xf328;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Asistencia actividad extracurricular" Command="{Binding MarkExtraAttendanceCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
+                </StackLayout>
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsProfessor}" />
 
                 <!-- Ver evaluaciones -->
                 <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsStudent}">
@@ -78,12 +98,26 @@
                 </StackLayout>
                 <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsStudent}" />
 
+                <!-- Ver actividades extracurriculares -->
+                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsStudent}">
+                    <Label Text="&#xf15c;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Ver actividades extracurriculares" Command="{Binding SeeExtraCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
+                </StackLayout>
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsStudent}" />
+
                 <!-- Perfil -->
                 <StackLayout Orientation="Horizontal" Padding="5">
                     <Label Text="&#xf007;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
                     <Button Text="Perfil" Command="{Binding FirstProfileCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
                 </StackLayout>
                 <BoxView HeightRequest="1" BackgroundColor="#6bbdda" />
+
+                <!-- Visita a enfermeria -->
+                <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsNurse}">
+                    <Label Text="&#xf15c;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="#f1c864" Margin="0,0,18,0" />
+                    <Button Text="Visita a la enfermeria" Command="{Binding NurseVisitCommand}" TextColor="White" BackgroundColor="Transparent" Padding="0" />
+                </StackLayout>
+                <BoxView HeightRequest="1" BackgroundColor="#6bbdda" IsVisible="{Binding IsNurse}" />
 
             </StackLayout>
         </ScrollView>

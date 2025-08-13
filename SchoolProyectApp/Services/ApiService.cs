@@ -1085,5 +1085,102 @@ namespace SchoolProyectApp.Services
             }
         }
 
+
+        //ACTIVIDADES EXTRACURRICULARES
+
+        // Extracurriculars
+        public async Task<bool> CreateExtracurricularActivityAsync(ExtracurricularActivity activity)
+        {
+            return await PostAsync("api/extracurriculars/create", activity);
+        }
+
+        public async Task<List<ExtracurricularActivity>?> GetExtracurricularActivitiesAsync(int schoolId)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<ExtracurricularActivity>>($"api/extracurriculars?schoolId={schoolId}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error al obtener actividades extracurriculares: {ex.Message}");
+                return null;
+            }
+        }
+
+        // Enrollments
+        // SchoolProyectApp/Services/ApiService.cs
+
+        public async Task<bool> EnrollStudentInActivityAsync(ExtracurricularEnrollmentDto enrollmentDto)
+        {
+            var client = new HttpClient();
+            var json = JsonSerializer.Serialize(enrollmentDto);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            // La URL no necesita el schoolId como parámetro de consulta, ya que se envía en el cuerpo del DTO.
+            var response = await client.PostAsync("https://SchoolProject123.somee.com/api/extracurriculars/enrollments/enroll", content);
+
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<List<ExtracurricularActivity>?> GetStudentActivitiesAsync(int userId)
+        {
+            try
+            {
+                var url = $"api/extracurriculars/enrollments/student/{userId}";
+                var response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine($"Error en la API: {response.StatusCode}");
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"Detalle del error: {errorContent}");
+                    return null;
+                }
+
+                var responseJson = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<List<ExtracurricularActivity>>(responseJson, _jsonOptions);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error desconocido en GetStudentActivitiesAsync: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task<List<User>?> GetStudentsEnrolledInActivityAsync(int activityId, int schoolId)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<User>>($"api/extracurriculars/enrollments/activity/{activityId}/students?schoolId={schoolId}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error al obtener estudiantes inscritos: {ex.Message}");
+                return null;
+            }
+        }
+
+        // Attendance
+        public async Task<bool> MarkAttendanceAsync(ExtracurricularAttendanceMarkDto attendance)
+        {
+            return await PostAsync("api/extracurriculars/attendance/mark", attendance);
+        }
+
+
+        //ENFERMERIA++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        public async Task<bool> PostNurseVisitAsync(int nurseUserId, int schoolId, NurseVisitCreateDto visitDto)
+        {
+            var client = new HttpClient();
+            var json = JsonSerializer.Serialize(visitDto);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync($"https://SchoolProject123.somee.com/api/Nurse/visit?nurseUserID={nurseUserId}&schoolID={schoolId}", content);
+
+            return response.IsSuccessStatusCode;
+        }
+
+
+
     }
 }

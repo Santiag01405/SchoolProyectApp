@@ -22,7 +22,6 @@
 
     <AbsoluteLayout>
 
-        <!-- Contenido Principal -->
         <ContentView x:Name="MainContent"
                      AbsoluteLayout.LayoutBounds="0,0,1,1"
                      AbsoluteLayout.LayoutFlags="All">
@@ -39,99 +38,51 @@
                                HorizontalOptions="Center"
                                Margin="0,20,0,20"/>
 
-                        <!-- Buscar Usuario -->
-                        <Label Text="Buscar Usuario" FontSize="18" FontAttributes="Bold" TextColor="#0C4251"/>
-                        <Entry Placeholder="Buscar usuario..." Text="{Binding SearchQuery, Mode=TwoWay}"/>
-                        <BoxView HeightRequest="1" BackgroundColor="Black" Margin="0,0,6,0" />
-                        
-                        <!-- Resultados de búsqueda -->
-                        <!-- Selector de usuario -->
-                       <!-- <StackLayout IsVisible="{Binding IsCourseVisible}">
-                            <Label Text="Seleccionar Usuario" FontSize="18" FontAttributes="Bold"/>
-                            <Picker ItemsSource="{Binding SearchResults}" 
-                                ItemDisplayBinding="{Binding UserName}" 
-                            SelectedItem="{Binding SelectedUser}" />
-                        </StackLayout>-->
-
-                        <StackLayout IsVisible="{Binding IsCourseVisible}">
-                            <Label Text="Resultados:" FontSize="15" FontAttributes="Bold" TextColor="#0C4251"/>
-                            <ScrollView HeightRequest="200">
-                                <StackLayout>
-                                    <ListView ItemsSource="{Binding SearchResults}" 
-                                  SelectionMode="Single" 
-                                  SelectedItem="{Binding SelectedUser}" 
-                                  HasUnevenRows="True"
-                                  SeparatorVisibility="Default"
-                                  Margin="0"
-                                  HeightRequest="200">
-                                        <ListView.ItemTemplate>
-                                            <DataTemplate>
-                                                <ViewCell>
-                                                    <StackLayout Padding="10">
-                                                        <Label Text="{Binding UserName}" FontSize="16" FontAttributes="Bold"/>
-                                                        <Label Text="{Binding Role}" FontSize="14" TextColor="Gray"/>
-                                                    </StackLayout>
-                                                </ViewCell>
-                                            </DataTemplate>
-                                        </ListView.ItemTemplate>
-                                    </ListView>
-                                </StackLayout>
-                            </ScrollView>
-                        </StackLayout>
-
-                        <Button Text="Buscar"  Command="{Binding SearchUsersCommand}" 
-                                BackgroundColor="#f1c864" TextColor="#0C4251" FontAttributes="Bold"
-                                Margin="40,10,40,20"/>
-
-                        <!-- Selección de Curso -->
-                        <StackLayout IsVisible="{Binding IsCourseVisible}" Margin="0,20,0,20">
+                        <StackLayout>
                             <Label Text="Seleccionar Curso" FontSize="18" FontAttributes="Bold" TextColor="#0C4251"/>
-                            <Picker ItemsSource="{Binding Courses}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedCourse}"/>
+                            <Picker ItemsSource="{Binding Courses}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedCourse}"
+                                    Title="Selecciona un curso..."/>
+                            <BoxView HeightRequest="1" BackgroundColor="Black" Margin="0,0,6,0" />
                         </StackLayout>
 
-                        <!-- Evaluación -->
-                        <StackLayout IsVisible="{Binding IsTitleVisible}" Margin="0,20,0,20">
+                        <StackLayout IsVisible="{Binding IsTitleVisible}" Margin="0,20,0,0">
                             <Label Text="Título de la Evaluación" FontSize="18" FontAttributes="Bold" TextColor="#0C4251"/>
                             <Entry Placeholder="Título de la evaluación" Text="{Binding EvaluationTitle}" />
                             <BoxView HeightRequest="1" BackgroundColor="Black" Margin="0,0,6,0" />
                         </StackLayout>
 
-
-                        <StackLayout IsVisible="{Binding IsTitleVisible}" Margin="0,20,0,20">
+                        <StackLayout IsVisible="{Binding IsDescriptionVisible}" Margin="0,20,0,0">
                             <Label Text="Descripción (Opcional)" FontSize="18" FontAttributes="Bold" TextColor="#0C4251"/>
                             <Editor Placeholder="Ingrese la descripción..." Text="{Binding Description}" HeightRequest="100"/>
                         </StackLayout>
 
-                        <StackLayout IsVisible="{Binding IsDateVisible}" Margin="0,20,0,20">
+                        <StackLayout IsVisible="{Binding IsDateVisible}" Margin="0,20,0,0">
                             <Label Text="Fecha de la Evaluación" FontSize="18" FontAttributes="Bold" TextColor="#0C4251"/>
-                            <DatePicker Date="{Binding NewEvaluation.Date}" MinimumDate="{x:Static sys:DateTime.Now}" />
+                            <DatePicker Date="{Binding SelectedDate}" MinimumDate="{x:Static sys:DateTime.Now}" />
                         </StackLayout>
 
-                        <!-- Botón Asignar -->
                         <Button Text="Asignar Evaluación"
-                                IsVisible="{Binding IsDateVisible}"
+                                IsVisible="{Binding IsCreateButtonVisible}"
                                 Command="{Binding CreateEvaluationCommand}"
                                 BackgroundColor="#f1c864" 
                                 TextColor="#0C4251" 
                                 FontAttributes="Bold"
-                                Margin="40,10,40,0"/>
+                                Margin="40,20,40,0"/>
 
                         <Button Text="Reiniciar"
-                            Command="{Binding ResetCommand}"
-                            BackgroundColor="LightGray"
-                            TextColor="Black"
-                            FontAttributes="Bold"
-                            Margin="40,0,40,0"/>    
+                                Command="{Binding ResetCommand}"
+                                BackgroundColor="LightGray"
+                                TextColor="Black"
+                                FontAttributes="Bold"
+                                Margin="40,10,40,0"/>
                     </StackLayout>
                 </ScrollView>
 
-                <!-- Barra inferior -->
                 <Grid Grid.Row="1" BackgroundColor="WhiteSmoke" Padding="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
-
                     </Grid.ColumnDefinitions>
 
                     <StackLayout Grid.Column="0" HorizontalOptions="Center">
@@ -139,7 +90,6 @@
                                 BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
                         <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
                     </StackLayout>
-
 
                     <StackLayout Grid.Column="1" HorizontalOptions="Center">
                         <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="#0C4251"
@@ -157,7 +107,6 @@
             </Grid>
         </ContentView>
 
-        <!-- Menú lateral oculto -->
         <ContentView x:Name="SideMenu"
                      WidthRequest="260"
                      BackgroundColor="#0C4251"

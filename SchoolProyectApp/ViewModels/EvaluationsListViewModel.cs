@@ -9,7 +9,6 @@ using System.Collections.Generic;
 
 namespace SchoolProyectApp.ViewModels
 {
-    // Permitimos que la vista reciba un parámetro de navegación llamado "SelectedChild".
     [QueryProperty(nameof(SelectedChild), "SelectedChild")]
     [QueryProperty(nameof(IsParentView), "IsParentView")]
     public class EvaluationsListViewModel : BaseViewModel
@@ -19,7 +18,6 @@ namespace SchoolProyectApp.ViewModels
         private int _roleId;
         private string _pageTitle = "Mis Evaluaciones";
 
-        // Propiedad para el estado de carga
         private bool _isBusy;
         public bool IsBusy
         {
@@ -27,28 +25,34 @@ namespace SchoolProyectApp.ViewModels
             set => SetProperty(ref _isBusy, value);
         }
 
-        // Propiedad para el objeto del hijo seleccionado
         private Child _selectedChild;
         public Child SelectedChild
         {
             get => _selectedChild;
             set
             {
-                // Cuando se establece el hijo, guardamos el valor y actualizamos la vista
                 SetProperty(ref _selectedChild, value);
-                // Usamos _ = para evitar un warning, ya que no necesitamos esperar el resultado aquí
                 _ = InitializeAsync();
             }
         }
 
-        // Título de la página
         public string PageTitle
         {
             get => _pageTitle;
             set => SetProperty(ref _pageTitle, value);
         }
 
-        // Propiedad para el rol del usuario
+        private string _selectedFilter = "Venideras"; // Filtro predeterminado
+        public string SelectedFilter
+        {
+            get => _selectedFilter;
+            set
+            {
+                SetProperty(ref _selectedFilter, value);
+                _ = LoadEvaluations();
+            }
+        }
+
         public int RoleID
         {
             get => _roleId;
@@ -65,18 +69,15 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
-        // Propiedades booleanas para Bindings en la UI (visibilidad de elementos)
         public bool IsProfessor => RoleID == 2;
         public bool IsStudent => RoleID == 1;
         public bool IsParent => RoleID == 3;
         public bool IsHiddenForProfessor => !IsProfessor;
         public bool IsHiddenForStudent => !IsStudent;
 
-        // Colecciones para los datos
         public ObservableCollection<Evaluation> Evaluations { get; set; } = new();
         public ObservableCollection<Course> Courses { get; set; } = new();
 
-        // Comandos de la vista
         public ICommand DeleteEvaluationCommand { get; }
         public ICommand HomeCommand { get; }
         public ICommand ProfileCommand { get; }
@@ -89,10 +90,8 @@ namespace SchoolProyectApp.ViewModels
         public EvaluationsListViewModel()
         {
             _apiService = new ApiService();
-
             DeleteEvaluationCommand = new Command<Evaluation>(async (evaluation) => await DeleteEvaluation(evaluation));
 
-            // Comandos antiguos que tu compañero eliminó
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
             ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
             CourseCommand = new Command(async () => await Shell.Current.GoToAsync("///courses"));
@@ -102,6 +101,9 @@ namespace SchoolProyectApp.ViewModels
             GoBackCommand = new Command(async () => await Shell.Current.GoToAsync(".."));
 
             // La inicialización ahora se hace en InitializeAsync()
+
+            GoBackCommand = new Command(async () => await GoBackAsync());
+
         }
 
         public async Task GoBackAsync()
@@ -111,13 +113,12 @@ namespace SchoolProyectApp.ViewModels
 
         public async Task InitializeAsync()
         {
-            // Evitamos cargas múltiples si ya estamos ocupados
             if (IsBusy) return;
             IsBusy = true;
             try
             {
                 await LoadUserData();
-                await LoadCourses(); // Volvemos a cargar los cursos
+                await LoadCourses();
                 await LoadEvaluations();
             }
             finally
@@ -131,12 +132,10 @@ namespace SchoolProyectApp.ViewModels
             var schoolIdStr = await SecureStorage.GetAsync("school_id");
             if (!int.TryParse(schoolIdStr, out int schoolId))
             {
-                // Manejar error si no se puede obtener el schoolId
                 return;
             }
 
             int targetUserId;
-            // Si hay un hijo seleccionado, usamos su ID; si no, usamos el del usuario actual
             if (SelectedChild != null)
             {
                 targetUserId = SelectedChild.UserID;
@@ -147,19 +146,16 @@ namespace SchoolProyectApp.ViewModels
                 var userIdStr = await SecureStorage.GetAsync("user_id");
                 if (!int.TryParse(userIdStr, out targetUserId))
                 {
-                    // Manejar error si no se puede obtener el userId
                     return;
                 }
                 PageTitle = "Mis Evaluaciones";
             }
 
-            // Guardamos el ID correcto para usarlo al borrar una evaluación
             _userId = targetUserId;
 
             var evaluations = await _apiService.GetEvaluationsAsync(_userId, schoolId);
             if (evaluations == null) return;
 
-            // Vincular cada evaluación con su curso (lógica antigua)
             var coursesDict = Courses.ToDictionary(c => c.CourseID, c => c);
             foreach (var eval in evaluations)
             {
@@ -169,15 +165,28 @@ namespace SchoolProyectApp.ViewModels
                     eval.Course = new Course { Name = "(Curso no asignado)" };
             }
 
-            var filtered = evaluations
-                .Where(e => e.Date.Date >= System.DateTime.Today)
-                .OrderBy(e => e.Date)
-                .ToList();
+            IEnumerable<Evaluation> filteredEvaluations;
+            if (SelectedFilter == "Venideras")
+            {
+                filteredEvaluations = evaluations
+                    .Where(e => e.Date.Date >= System.DateTime.Today)
+                    .OrderBy(e => e.Date);
+            }
+            else if (SelectedFilter == "Pasadas")
+            {
+                filteredEvaluations = evaluations
+                    .Where(e => e.Date.Date < System.DateTime.Today)
+                    .OrderByDescending(e => e.Date);
+            }
+            else // "Todas"
+            {
+                filteredEvaluations = evaluations.OrderByDescending(e => e.Date);
+            }
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 Evaluations.Clear();
-                foreach (var eval in filtered)
+                foreach (var eval in filteredEvaluations)
                 {
                     Evaluations.Add(eval);
                 }
@@ -195,7 +204,6 @@ namespace SchoolProyectApp.ViewModels
                     if (user != null)
                     {
                         RoleID = user.RoleID;
-                        // Ya no se necesitan OnPropertyChanged repetidos porque SetProperty ya lo hace
                     }
                 }
                 else
@@ -205,9 +213,6 @@ namespace SchoolProyectApp.ViewModels
             }
             catch (Exception ex)
             {
-                // En un ViewModel, es mejor no mostrar alertas directamente, sino manejar la excepción
-                // o notificar a la vista de alguna otra manera, pero para este caso lo mantendremos
-                // para que no haya un error grave.
                 Console.WriteLine($"Error al cargar datos de usuario: {ex.Message}");
             }
         }
@@ -253,7 +258,6 @@ namespace SchoolProyectApp.ViewModels
 
     }
 }
-
 /*using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;

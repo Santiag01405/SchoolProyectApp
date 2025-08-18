@@ -4,34 +4,59 @@
              xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
              xmlns:local="clr-namespace:SchoolProyectApp.Views"
              x:Class="SchoolProyectApp.Views.EvaluationsListPage"
-             Title="Evaluaciones"         
+             Title="Evaluaciones"       
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-			 xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
-			 droid:NavigationBar.Color="white"
-			 droid:NavigationBar.Style="LightContent">
+             xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
+             droid:NavigationBar.Color="white"
+             droid:NavigationBar.Style="LightContent">
 
     <ContentPage.Behaviors>
         <toolkit:StatusBarBehavior StatusBarColor="White"
-                               StatusBarStyle="LightContent" />
+                                   StatusBarStyle="LightContent" />
     </ContentPage.Behaviors>
-    
 
-	<AbsoluteLayout>
+    <ContentPage.BindingContext>
+        <vm:EvaluationsListViewModel />
+    </ContentPage.BindingContext>
 
+    <AbsoluteLayout>
 
-		<!-- Contenido principal -->
-		<ContentView x:Name="MainContent"
+        <ContentView x:Name="MainContent"
                      AbsoluteLayout.LayoutBounds="0,0,1,1"
                      AbsoluteLayout.LayoutFlags="All">
-            <Grid Padding="0" RowDefinitions="Auto,*,Auto">
-                <Label Grid.Row="0" Text="Evaluaciones"
-           FontSize="30"
-           FontAttributes="Bold"
-           HorizontalOptions="Center"
-           Margin="0,10,0,40"
-           TextColor="#0C4251"/>
+            <Grid Padding="0" RowDefinitions="Auto,Auto,*,Auto">
+                <Label Grid.Row="0" Text="{Binding PageTitle}"
+                       FontSize="30"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       Margin="0,10,0,10"
+                       TextColor="#0C4251"/>
 
-                <CollectionView Grid.Row="1" ItemsSource="{Binding Evaluations}" Margin="10">
+                <StackLayout Grid.Row="1" Orientation="Horizontal" HorizontalOptions="Center" Spacing="10" Margin="0,0,0,20">
+                    <Button Text="Venideras"
+                            FontSize="12"
+                            TextColor="{Binding SelectedFilter, Converter={StaticResource StringToColorConverter}, ConverterParameter='Venideras'}"
+                            BackgroundColor="{Binding SelectedFilter, Converter={StaticResource StringToColorToBackgroundColorConverter}, ConverterParameter='Venideras'}"
+                            CornerRadius="20"
+                            Command="{Binding FilterCommand}"
+                            CommandParameter="Venideras" />
+                    <Button Text="Pasadas"
+                            FontSize="12"
+                            TextColor="{Binding SelectedFilter, Converter={StaticResource StringToColorConverter}, ConverterParameter='Pasadas'}"
+                            BackgroundColor="{Binding SelectedFilter, Converter={StaticResource StringToColorToBackgroundColorConverter}, ConverterParameter='Pasadas'}"
+                            CornerRadius="20"
+                            Command="{Binding FilterCommand}"
+                            CommandParameter="Pasadas" />
+                    <Button Text="Todas"
+                            FontSize="12"
+                            TextColor="{Binding SelectedFilter, Converter={StaticResource StringToColorConverter}, ConverterParameter='Todas'}"
+                            BackgroundColor="{Binding SelectedFilter, Converter={StaticResource StringToColorToBackgroundColorConverter}, ConverterParameter='Todas'}"
+                            CornerRadius="20"
+                            Command="{Binding FilterCommand}"
+                            CommandParameter="Todas" />
+                </StackLayout>
+
+                <CollectionView Grid.Row="2" ItemsSource="{Binding Evaluations}" Margin="10">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Frame Padding="10" Margin="5" CornerRadius="10" BackgroundColor="#0C4251" BorderColor="#0C4251">
@@ -45,9 +70,8 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-                
-                <!-- Barra inferior -->
-                <Grid Grid.Row="2" BackgroundColor="WhiteSmoke" Padding="10">
+
+                <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -56,35 +80,34 @@
 
                     <StackLayout Grid.Column="0" HorizontalOptions="Center">
                         <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
-                 TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
+                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
                         <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
                     </StackLayout>
 
                     <StackLayout Grid.Column="1" HorizontalOptions="Center">
                         <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
-                 TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
+                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
                         <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
                     </StackLayout>
 
                     <StackLayout Grid.Column="2" HorizontalOptions="Center">
                         <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
-                 TextColor="#0C4251" BackgroundColor="WhiteSmoke"
-                 Clicked="MenuButton_Clicked" />
+                                TextColor="#0C4251" BackgroundColor="WhiteSmoke"
+                                Clicked="MenuButton_Clicked" />
                         <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
                     </StackLayout>
                 </Grid>
             </Grid>
-		</ContentView>
+        </ContentView>
 
-		<!-- Menú lateral -->
-		<ContentView x:Name="SideMenu"
+        <ContentView x:Name="SideMenu"
                      WidthRequest="260"
                      BackgroundColor="#0C4251"
                      IsVisible="False"
                      TranslationX="-260"
                      AbsoluteLayout.LayoutBounds="0,0,260,1"
                      AbsoluteLayout.LayoutFlags="PositionProportional,HeightProportional">
-			<local:MenuPage />
-		</ContentView>
-	</AbsoluteLayout>
+            <local:MenuPage />
+        </ContentView>
+    </AbsoluteLayout>
 </ContentPage>

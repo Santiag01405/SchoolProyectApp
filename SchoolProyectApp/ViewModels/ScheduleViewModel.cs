@@ -24,7 +24,7 @@ namespace SchoolProyectApp.ViewModels
         public ICommand GoBackCommand { get; }
 
         public ICommand HomeCommand { get; }
-        public ICommand ProfileCommand { get; }
+        public ICommand FirstProfileCommand { get; }
         public ICommand OpenMenuCommand { get; }
 
         public ScheduleViewModel()
@@ -34,8 +34,8 @@ namespace SchoolProyectApp.ViewModels
             GoBackCommand = new Command(async () => await GoBackAsync());
 
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
-            ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
             OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+            FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
 
 
             // Establece el día actual al cargar, por defecto a lunes si es domingo

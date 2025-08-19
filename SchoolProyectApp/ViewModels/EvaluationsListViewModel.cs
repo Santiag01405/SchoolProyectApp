@@ -101,9 +101,6 @@ namespace SchoolProyectApp.ViewModels
             GoBackCommand = new Command(async () => await Shell.Current.GoToAsync(".."));
 
             // La inicialización ahora se hace en InitializeAsync()
-
-            GoBackCommand = new Command(async () => await GoBackAsync());
-
         }
 
         public async Task GoBackAsync()

@@ -1,44 +1,113 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
+﻿// SchoolProyectApp/ViewModels/GradesViewModel.cs
+// ... (usings existentes)
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows.Input;
-using Microsoft.Maui.Controls;
 using SchoolProyectApp.Models;
 using SchoolProyectApp.Services;
 
 namespace SchoolProyectApp.ViewModels
 {
+    [QueryProperty(nameof(StudentId), "studentId")]
     public class GradesViewModel : BaseViewModel
+
     {
+        private int studentId;
+        public int StudentId
+        {
+            get => studentId;
+            set
+            {
+                if (studentId != value)
+                {
+                    studentId = value;
+                    // Cuando el ID del estudiante llega, recargamos sus datos.
+                    _ = LoadDataAsync();
+                }
+            }
+        }
+
         private readonly ApiService _apiService;
+
+        // Nuevas propiedades
+        private string _studentOverallAverage;
+        public string StudentOverallAverage
+        {
+            get => _studentOverallAverage;
+            set => SetProperty(ref _studentOverallAverage, value);
+        }
+
+        private string _courseAverage;
+        public string CourseAverage
+        {
+            get => _courseAverage;
+            set => SetProperty(ref _courseAverage, value);
+        }
 
         public ObservableCollection<GradesByCourseGroup> GradesByCourse { get; set; } = new();
 
         public ICommand LoadGradesCommand { get; }
+        public ICommand HomeCommand { get; }
+        public ICommand ProfileCommand { get; }
+        public ICommand CourseCommand { get; }
+        public ICommand OpenMenuCommand { get; }
+        public ICommand FirstProfileCommand { get; }
 
         public GradesViewModel()
         {
             _apiService = new ApiService();
             LoadGradesCommand = new Command(async () => await LoadGradesAsync());
+            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
+            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+            CourseCommand = new Command(async () => await Shell.Current.GoToAsync("///courses"));
+            FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
+
+            // Carga las calificaciones y los promedios al inicio
+            _ = LoadDataAsync();
         }
 
-        public async Task LoadGradesAsync()
+        private async Task LoadDataAsync()
         {
-            var userId = await SecureStorage.GetAsync("user_id");
+            await LoadGradesAsync();
+            await LoadStudentOverallAverageAsync();
+        }
+
+        // Nuevo método para cargar el promedio general del estudiante
+        public async Task LoadStudentOverallAverageAsync()
+        {
+            var userIdToLoad = StudentId > 0 ? StudentId.ToString() : await SecureStorage.GetAsync("user_id");
             var schoolId = await SecureStorage.GetAsync("school_id");
 
-            if (!int.TryParse(userId, out int uId) || !int.TryParse(schoolId, out int schId))
+            if (!int.TryParse(userIdToLoad, out int uId) || !int.TryParse(schoolId, out int schId)) return;
+
+            var averageResult = await _apiService.GetStudentOverallAverageAsync(uId, schId);
+            if (averageResult != null)
+            {
+                StudentOverallAverage = averageResult.OverallAverage.ToString("F2", CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                StudentOverallAverage = "N/A";
+            }
+        }
+
+        // Actualiza tu método LoadGradesAsync para que también cargue el promedio del curso
+        public async Task LoadGradesAsync()
+        {
+            var userIdToLoad = StudentId > 0 ? StudentId.ToString() : await SecureStorage.GetAsync("user_id");
+            var schoolId = await SecureStorage.GetAsync("school_id");
+
+            if (!int.TryParse(userIdToLoad, out int uId) || !int.TryParse(schoolId, out int schId))
                 return;
 
             var url = $"api/grades/user/{uId}/grades?schoolId={schId}";
             var response = await _apiService.GetAsync<List<GradeResult>>(url);
 
-            Device.BeginInvokeOnMainThread(() =>
+            Device.BeginInvokeOnMainThread(async () =>
             {
                 GradesByCourse.Clear();
                 if (response != null)
                 {
-                    // ✅ Agrupar por Curso
                     var grouped = response
                         .GroupBy(g => g.Curso)
                         .Select(gr => new GradesByCourseGroup
@@ -48,85 +117,14 @@ namespace SchoolProyectApp.ViewModels
                         }).ToList();
 
                     foreach (var group in grouped)
-                        GradesByCourse.Add(group);
-                }
-            });
-        }
-    }
-}
-
-
-/*using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Microsoft.Maui.Controls;
-using SchoolProyectApp.Services;
-using SchoolProyectApp.Models;
-
-namespace SchoolProyectApp.ViewModels
-{
-    public class GradesViewModel : BaseViewModel
-    {
-        private readonly ApiService _apiService;
-        public ObservableCollection<CourseGradesDisplay> GradesByCourse { get; set; } = new();
-
-        public GradesViewModel()
-        {
-            _apiService = new ApiService();
-            Task.Run(async () => await LoadGradesAsync());
-        }
-
-        public async Task LoadGradesAsync()
-        {
-            var userId = await SecureStorage.GetAsync("user_id");
-            var schoolId = await SecureStorage.GetAsync("school_id");
-
-            if (!int.TryParse(userId, out int uId) || !int.TryParse(schoolId, out int sId))
-                return;
-
-            var url = $"api/grades/user/{uId}/grades?schoolId={sId}";
-            var grades = await _apiService.GetAsync<List<GradeResult>>(url);
-
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                GradesByCourse.Clear();
-
-                if (grades != null)
-                {
-                    var grouped = grades.GroupBy(g => (string)g.Curso);
-
-                    foreach (var group in grouped)
                     {
-                        var courseItem = new CourseGradesDisplay
-                        {
-                            CourseName = group.Key,
-                            Evaluations = group.Select(e => new EvaluationGradeDisplay
-                            {
-                                Title = (string)e.Evaluacion,
-                                GradeValue = e.GradeValue != null ? (decimal?)e.GradeValue : null
-                            }).ToList()
-                        };
-
-                        GradesByCourse.Add(courseItem);
+                        GradesByCourse.Add(group);
+                        // ✅ Carga el promedio del curso y lo asigna a la propiedad
+                        var courseAverage = await _apiService.GetCourseAverageAsync(group.Calificaciones.FirstOrDefault()?.CourseID ?? 0, schId);
+                        CourseAverage = courseAverage.ToString("F2", CultureInfo.InvariantCulture);
                     }
                 }
             });
         }
     }
-
-    public class CourseGradesDisplay
-    {
-        public string CourseName { get; set; }
-        public List<EvaluationGradeDisplay> Evaluations { get; set; }
-    }
-
-    public class EvaluationGradeDisplay
-    {
-        public string Title { get; set; }
-        public decimal? GradeValue { get; set; }
-
-        public string DisplayGrade => GradeValue.HasValue ? GradeValue.Value.ToString("0.00") : "Sin corregido";
-        public Color GradeColor => GradeValue.HasValue ? Colors.Green : Colors.Red;
-    }
-}*/
+}

@@ -82,6 +82,9 @@ namespace SchoolProyectApp.ViewModels
         public ICommand LoadEvaluationsCommand { get; }
         public ICommand LoadStudentsCommand { get; }
         public ICommand AssignGradeCommand { get; }
+        public ICommand HomeCommand { get; }
+        public ICommand FirstProfileCommand { get; }
+        public ICommand OpenMenuCommand { get; }
 
         public AssignGradesViewModel()
         {
@@ -90,6 +93,9 @@ namespace SchoolProyectApp.ViewModels
             LoadEvaluationsCommand = new Command(async () => await LoadEvaluationsAsync());
             LoadStudentsCommand = new Command(async () => await LoadStudentsAsync());
             AssignGradeCommand = new Command(async () => await AssignGradeAsync());
+            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
+            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+            FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
 
             Task.Run(async () => await LoadCoursesAsync());
         }

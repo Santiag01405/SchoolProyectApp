@@ -48,6 +48,9 @@ namespace SchoolProyectApp.ViewModels
 
         public ICommand LoadActivitiesCommand { get; }
         public ICommand SaveAttendanceCommand { get; }
+        public ICommand HomeCommand { get; }
+        public ICommand FirstProfileCommand { get; }
+        public ICommand OpenMenuCommand { get; }
 
         public MarkAttendanceViewModel()
         {
@@ -55,6 +58,9 @@ namespace SchoolProyectApp.ViewModels
             LoadActivitiesCommand = new Command(async () => await LoadActivitiesAsync());
             SaveAttendanceCommand = new Command(async () => await SaveAttendanceAsync());
             _ = LoadUserDataAndActivitiesAsync();
+            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
+            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+            FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
         }
 
         private async Task LoadUserDataAndActivitiesAsync()
@@ -114,7 +120,7 @@ namespace SchoolProyectApp.ViewModels
                 if (studentsInActivity != null)
                 {
                     Students = new ObservableCollection<StudentAttendanceModel>(
-                        studentsInActivity.Select(s => new StudentAttendanceModel { UserID = s.UserID, UserName = s.UserName, IsPresent = false })
+                        studentsInActivity.Select(s => new StudentAttendanceModel { UserID = s.UserID, StudentName = s.StudentName, IsPresent = false })
                     );
                 }
                 else

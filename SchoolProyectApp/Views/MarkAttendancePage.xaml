@@ -41,7 +41,7 @@
 							<DataTemplate>
 								<Frame CornerRadius="10" Margin="0,5" Padding="15" BorderColor="LightGray" HasShadow="True">
 									<Grid ColumnDefinitions="*, Auto">
-										<Label Grid.Column="0" Text="{Binding UserName}" FontSize="16" VerticalOptions="Center"/>
+										<Label Grid.Column="0" Text="{Binding StudentName}" FontSize="16" VerticalOptions="Center"/>
 										<Switch Grid.Column="1" IsToggled="{Binding IsPresent}" VerticalOptions="Center"/>
 									</Grid>
 								</Frame>

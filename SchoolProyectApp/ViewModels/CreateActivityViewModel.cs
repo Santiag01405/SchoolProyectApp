@@ -40,12 +40,18 @@ namespace SchoolProyectApp.ViewModels
         public List<string> DaysOfWeek => new List<string> { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes" };
 
         public ICommand CreateActivityCommand { get; }
+        public ICommand HomeCommand { get; }
+        public ICommand FirstProfileCommand { get; }
+        public ICommand OpenMenuCommand { get; }
 
         public CreateActivityViewModel()
         {
             _apiService = new ApiService();
             CreateActivityCommand = new Command(async () => await CreateActivityAsync());
             _ = LoadUserDataAsync();
+            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
+            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+            FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
         }
 
         private async Task LoadUserDataAsync()

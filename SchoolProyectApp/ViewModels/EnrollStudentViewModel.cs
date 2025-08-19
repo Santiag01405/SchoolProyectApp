@@ -55,6 +55,9 @@ namespace SchoolProyectApp.ViewModels
 
         public ICommand EnrollStudentCommand { get; }
         public ICommand SearchStudentsCommand { get; }
+        public ICommand HomeCommand { get; }
+        public ICommand FirstProfileCommand { get; }
+        public ICommand OpenMenuCommand { get; }
 
         public EnrollStudentViewModel()
         {
@@ -62,6 +65,9 @@ namespace SchoolProyectApp.ViewModels
             EnrollStudentCommand = new Command(async () => await EnrollStudentAsync());
             SearchStudentsCommand = new Command(async () => await SearchStudentsAsync());
             _ = LoadDataAsync();
+            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
+            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+            FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
         }
 
         private async Task LoadDataAsync()

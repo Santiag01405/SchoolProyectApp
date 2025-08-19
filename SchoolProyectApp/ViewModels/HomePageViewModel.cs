@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
@@ -53,6 +54,12 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+        private string _studentOverallAverage;
+        public string StudentOverallAverage
+        {
+            get => _studentOverallAverage;
+            set => SetProperty(ref _studentOverallAverage, value);
+        }
         public string WelcomeMessage => $"¡Bienvenido, {UserName}!";
 
         private string _schoolName;
@@ -86,6 +93,7 @@ namespace SchoolProyectApp.ViewModels
                     OnPropertyChanged(nameof(IsProfessor));
                     OnPropertyChanged(nameof(IsStudent));
                     OnPropertyChanged(nameof(IsParent));
+                    OnPropertyChanged(nameof(IsNurseAndProfessor));
                 }
             }
         }
@@ -93,6 +101,7 @@ namespace SchoolProyectApp.ViewModels
         public bool IsProfessor => RoleID == 2;
         public bool IsStudent => RoleID == 1;
         public bool IsParent => RoleID == 3;
+        public bool IsNurseAndProfessor => !IsStudent & !IsParent;
 
         private bool _hasNotifications;
         public bool HasNotifications
@@ -148,13 +157,17 @@ namespace SchoolProyectApp.ViewModels
                 await LoadCombinedNotifications();
                 await LoadHomepageData();
                 await LoadUserSchoolName();
+                if (IsStudent) // Opcional, pero recomendable para no cargar datos innecesarios
+                {
+                    await LoadStudentOverallAverageAsync();
+                }
             }
             finally
             {
                 IsBusy = false;
             }
-        }
 
+        }
         private async Task RefreshData()
         {
             await InitializeAsync();
@@ -286,6 +299,23 @@ namespace SchoolProyectApp.ViewModels
             });
         }
 
+        public async Task LoadStudentOverallAverageAsync()
+        {
+            var userId = await SecureStorage.GetAsync("user_id");
+            var schoolId = await SecureStorage.GetAsync("school_id");
+            if (!int.TryParse(userId, out int uId) || !int.TryParse(schoolId, out int schId)) return;
+
+            var averageResult = await _apiService.GetStudentOverallAverageAsync(uId, schId);
+            if (averageResult != null)
+            {
+                StudentOverallAverage = averageResult.OverallAverage.ToString("F2", CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                StudentOverallAverage = "N/A";
+            }
+        }
+
         private async Task LoadHijosAsync()
         {
             try
@@ -316,19 +346,13 @@ namespace SchoolProyectApp.ViewModels
 
             try
             {
-                var navigationParameter = new Dictionary<string, object>
-        {
-            { "SelectedChild", child }
-        };
-
-                // ----- LA CORRECCIÓN ESTÁ AQUÍ -----
-                // Quita las barras "//" para que sea una navegación relativa
-                await Shell.Current.GoToAsync("childDashboard", navigationParameter);
+                // Navegamos al dashboard del hijo, pasando su UserID en la URL.
+                // Esta es la forma recomendada y más robusta.
+                await Shell.Current.GoToAsync($"childDashboard?studentId={child.UserID}");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"❌ Error al navegar al dashboard del hijo: {ex.Message}");
-                // ...
             }
         }
 

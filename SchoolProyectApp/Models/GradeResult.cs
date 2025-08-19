@@ -12,6 +12,7 @@ namespace SchoolProyectApp.Models
         public int UserID { get; set; }
         public string Estudiante { get; set; }
         public string Curso { get; set; }
+        public int CourseID { get; set; }
         public string Evaluacion { get; set; }
         public decimal? GradeValue { get; set; }
         public string Comments { get; set; }

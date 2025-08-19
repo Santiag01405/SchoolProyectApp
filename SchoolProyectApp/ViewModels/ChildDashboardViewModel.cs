@@ -6,26 +6,14 @@ using System.Diagnostics; // Añadir para Debug.WriteLine
 
 namespace SchoolProyectApp.ViewModels
 {
-    [QueryProperty(nameof(SelectedChild), "SelectedChild")]
+    [QueryProperty(nameof(StudentId), "studentId")]
     public class ChildDashboardViewModel : BaseViewModel
     {
-        private Child? _selectedChild; // Hacerlo anulable para seguridad
-        public Child? SelectedChild
+        private int _studentId;
+        public int StudentId
         {
-            get => _selectedChild;
-            set
-            {
-                SetProperty(ref _selectedChild, value);
-                if (value != null)
-                {
-                    ChildName = value.StudentName;
-                    Debug.WriteLine($"DEBUG: ChildDashboardViewModel - SelectedChild establecido: {value.StudentName} (ID: {value.UserID})");
-                }
-                else
-                {
-                    Debug.WriteLine("DEBUG: ChildDashboardViewModel - SelectedChild establecido como NULL.");
-                }
-            }
+            get => _studentId;
+            set => SetProperty(ref _studentId, value);
         }
 
         private string _childName = string.Empty; // Inicializar para evitar advertencia de nulidad
@@ -74,29 +62,21 @@ namespace SchoolProyectApp.ViewModels
         {
             Debug.WriteLine($"DEBUG: NavigateToChildPage llamado para la ruta: {route}");
 
-            if (SelectedChild == null)
+            // Ahora validamos usando el StudentId que recibimos
+            if (StudentId == 0)
             {
-                Debug.WriteLine($"DEBUG: SelectedChild es nulo, no se puede navegar.");
+                Debug.WriteLine($"DEBUG: StudentId es cero, no se puede navegar.");
                 await Application.Current.MainPage!.DisplayAlert("Error", "No se ha seleccionado un hijo.", "OK");
                 return;
             }
 
             try
             {
-                var navigationParameter = new Dictionary<string, object>
-        {
-            { "SelectedChild", SelectedChild }
-        };
+                // Construimos la ruta y le pasamos el ID del hijo.
+                // Usamos la ruta "seeGrades" que ya tienes registrada en AppShell.
+                await Shell.Current.GoToAsync($"{route}?studentId={StudentId}");
 
-                // ----- LA CORRECCIÓN FINAL ESTÁ AQUÍ -----
-                // Como la ruta ahora solo está registrada en el código, la llamamos de forma relativa (sin barras).
-                string navigationRoute = $"{route}?IsParentView=true";
-
-                Debug.WriteLine($"DEBUG: Intentando navegar a la ruta relativa: {navigationRoute}");
-
-                await Shell.Current.GoToAsync(navigationRoute, navigationParameter);
-
-                Debug.WriteLine($"DEBUG: Navegación a {navigationRoute} iniciada.");
+                Debug.WriteLine($"DEBUG: Navegación a {route}?studentId={StudentId} iniciada.");
             }
             catch (Exception ex)
             {

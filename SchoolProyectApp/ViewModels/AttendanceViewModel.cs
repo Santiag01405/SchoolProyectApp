@@ -13,7 +13,7 @@ namespace SchoolProyectApp.ViewModels
         private readonly ApiService _apiService;
 
         public ObservableCollection<Course> Courses { get; set; } = new();
-        public ObservableCollection<Student> Students { get; set; } = new();
+        public ObservableCollection<StudentViewModel> Students { get; set; } = new();
 
         private Course _selectedCourse;
         public Course SelectedCourse
@@ -31,8 +31,8 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
-        private Student _selectedStudent;
-        public Student SelectedStudent
+        private StudentViewModel _selectedStudent;
+        public StudentViewModel SelectedStudent
         {
             get => _selectedStudent;
             set
@@ -60,8 +60,8 @@ namespace SchoolProyectApp.ViewModels
 
             LoadCoursesCommand = new Command(async () => await LoadCoursesAsync());
             LoadStudentsCommand = new Command(async () => await LoadStudentsAsync());
-            MarkPresentCommand = new Command<Student>(async (student) => await MarkAttendanceAsync(student, true));
-            MarkAbsentCommand = new Command<Student>(async (student) => await MarkAttendanceAsync(student, false));
+            MarkPresentCommand = new Command<StudentViewModel>(async (student) => await MarkAttendanceAsync(student, true));
+            MarkAbsentCommand = new Command<StudentViewModel>(async (student) => await MarkAttendanceAsync(student, false));
 
             //Barra de navegacion inferior
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
@@ -98,7 +98,7 @@ namespace SchoolProyectApp.ViewModels
         private async Task LoadStudentsAsync()
         {
             if (SelectedCourse == null) return;
-            var students = await _apiService.GetAsync<List<Student>>($"api/enrollments/course/{SelectedCourse.CourseID}/students");
+            var students = await _apiService.GetAsync<List<StudentViewModel>>($"api/enrollments/course/{SelectedCourse.CourseID}/students");
             Students.Clear();
             if (students != null)
                 foreach (var s in students)
@@ -106,7 +106,7 @@ namespace SchoolProyectApp.ViewModels
         }
 
 
-        private async Task MarkAttendanceAsync(Student student, bool isPresent)
+        private async Task MarkAttendanceAsync(StudentViewModel student, bool isPresent)
         {
             if (student == null || SelectedCourse == null)
                 return;

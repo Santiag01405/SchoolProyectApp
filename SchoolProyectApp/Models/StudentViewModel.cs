@@ -2,7 +2,7 @@
 
 namespace SchoolProyectApp.Models
 {
-    public class Student2
+    public class StudentViewModel
     {
         [JsonPropertyName("userID")]
         public int UserID { get; set; }

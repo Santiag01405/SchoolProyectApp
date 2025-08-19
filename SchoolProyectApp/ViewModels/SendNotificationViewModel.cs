@@ -98,14 +98,18 @@ namespace SchoolProyectApp.ViewModels
         public ICommand HomeCommand { get; }
         public ICommand NotificationCommand { get; }
         public ICommand ResetCommand { get; }
+        public ICommand FirstProfileCommand { get; }
+        public ICommand OpenMenuCommand { get; }
 
         public SendNotificationViewModel()
         {
             _apiService = new ApiService();
             SearchCommand = new Command(async () => await SearchUsers());
             SendCommand = new Command(async () => await SendNotification(), () => CanSendNotification);
-            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
             NotificationCommand = new Command(async () => await Shell.Current.GoToAsync("///notification"));
+            HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
+            OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
+            FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
 
             ResetCommand = new Command(ResetPage);
 

@@ -40,7 +40,7 @@
 
                 <Label Grid.Row="0"
                        Text="{Binding SchoolName}"
-                       FontSize="18"
+                       FontSize="20"
                        FontAttributes="Bold"
                        HorizontalOptions="Center"
                        TextColor="#6bbdda"
@@ -48,84 +48,116 @@
 
                 <Grid Grid.Row="1">
 
-                    <ContentView IsVisible="{Binding IsProfessor}">
-                        <StackLayout Margin="0,10,0,0" Padding="20">
-                            <Frame CornerRadius="10" BackgroundColor="#0C4251"
-                                   Padding="0" HasShadow="False" BorderColor="#0C4251" HorizontalOptions="Center">
-                                <Label Text="Notificaciones recientes" FontSize="20" FontAttributes="Bold"
-                                       Margin="0,5,0,5" Padding="40,10,40,10" HorizontalOptions="Center" TextColor="#f1c864"/>
-                            </Frame>
+                    <ContentView IsVisible="{Binding IsNurseAndProfessor}">
+                        <StackLayout Padding="20" Spacing="15">
+                            <Label Text="Notificaciones Recientes"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="#0C4251"/>
 
-                            <StackLayout HorizontalOptions="Center" VerticalOptions="Center"
-                                         IsVisible="{Binding HasNotifications, Converter={StaticResource InverseBooleanConverter}}">
+                            <StackLayout HorizontalOptions="Center" VerticalOptions="CenterAndExpand"
+                         IsVisible="{Binding HasNotifications, Converter={StaticResource InverseBooleanConverter}}">
                                 <Label Text="&#xf1f6;" FontFamily="FontAwesomeSolid" FontSize="100"
-                                       TextColor="Gray" HorizontalOptions="Center" Margin="0,80,0,20"/>
-                                <Label Text="No hay notificaciones recientes" FontSize="20"
-                                       HorizontalOptions="Center" Margin="0,10,0,50" TextColor="Gray"/>
+                       TextColor="LightGray" HorizontalOptions="Center" Margin="0,40,0,20"/>
+                                <Label Text="No hay notificaciones recientes" FontSize="18"
+                       HorizontalOptions="Center" TextColor="Gray"/>
                             </StackLayout>
 
                             <CollectionView ItemsSource="{Binding Notifications}" IsVisible="{Binding HasNotifications}">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <Frame Padding="10" Margin="0,20,0,0" BackgroundColor="#0C4251" BorderColor="#0C4251">
-                                            <Grid ColumnDefinitions="Auto,*">
-                                                <Label Text="&#xf0f3;" FontSize="15" FontFamily="FontAwesomeSolid"
-                                                       VerticalOptions="Center" Grid.Column="0" Margin="0,0,10,0" TextColor="#f1c864"/>
-                                                <StackLayout Grid.Column="1">
-                                                    <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" TextColor="#f1c864"/>
-                                                    <Label Text="{Binding Content}" FontSize="14" TextColor="#6bbdda"/>
-                                                    <Label Text="{Binding Date, StringFormat='{0:dd/MM/yyyy HH:mm}'}" FontSize="12" TextColor="White"/>
-                                                </StackLayout>
+                                        <Border Stroke="#E0E0E0" StrokeThickness="1" Padding="15" Margin="0,0,0,10" BackgroundColor="White">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="10"/>
+                                            </Border.StrokeShape>
+                                            <Border.Shadow>
+                                                <Shadow Brush="#000" Opacity="0.1" Radius="10" Offset="5,5"/>
+                                            </Border.Shadow>
+
+                                            <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="5">
+                                                <Label Grid.Row="0" Text="{Binding Title}" FontSize="16" FontAttributes="Bold" TextColor="#0C4251"/>
+                                                <Label Grid.Row="1" Text="{Binding Content}" FontSize="14" TextColor="#333333"/>
+                                                <Label Grid.Row="2" Text="{Binding Date, StringFormat='{0:dd/MM/yyyy HH:mm}'}" FontSize="12" TextColor="Gray" HorizontalOptions="End"/>
                                             </Grid>
-                                        </Frame>
+                                        </Border>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
                             </CollectionView>
 
-                            <Button Text="Ir a página de notificaciones" Command="{Binding NotificationCommand}"
-                                    Padding="0" Margin="30,10,30,0"/>
+                            <Button Text="Ver todas las notificaciones" Command="{Binding NotificationCommand}" Margin="20,10"/>
                         </StackLayout>
                     </ContentView>
 
                     <ContentView IsVisible="{Binding IsStudent}">
                         <ScrollView>
-                            <VerticalStackLayout Padding="20" Spacing="10">
-                                <Label Text="{Binding Today}" FontSize="16" TextColor="DarkGray" />
+                            <VerticalStackLayout Padding="20" Spacing="15">
+                                <Label Text="{Binding Today}" FontSize="16" TextColor="DarkGray" HorizontalOptions="Center"/>
 
-                                <Frame BorderColor="#0C4251" BackgroundColor="#0C4251" Padding="10" Margin="0,5" CornerRadius="0">
-                                    <VerticalStackLayout>
-                                        <Label Text="Clases de hoy" FontSize="18" FontAttributes="Bold" TextColor="#f1c864" Margin="0,5,0,10"/>
-                                        <CollectionView ItemsSource="{Binding TodaysClasses}">
-                                            <CollectionView.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Frame BorderColor="WhiteSmoke" Padding="10" Margin="0,5,4,5" BackgroundColor="White" CornerRadius="0">
-                                                        <Label Text="{Binding Name}" FontSize="16" TextColor="Black" FontAttributes="Bold" />
-                                                    </Frame>
-                                                </DataTemplate>
-                                            </CollectionView.ItemTemplate>
-                                        </CollectionView>
-                                    </VerticalStackLayout>
-                                </Frame>
+                                <Border Stroke="#E0E0E0" StrokeThickness="1" Padding="15">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10"/>
+                                    </Border.StrokeShape>
+                                    <Border.Shadow>
+                                        <Shadow Brush="#000" Opacity="0.1" Radius="10" Offset="5,5"/>
+                                    </Border.Shadow>
+                                    <StackLayout>
+                                        <Label Text="Promedio General" 
+                                           FontSize="18" 
+                                           FontAttributes="Bold" 
+                                           TextColor="#0C4251" 
+                                           HorizontalOptions="Center"/>
+                                        <Label Text="{Binding StudentOverallAverage}" 
+                                           FontSize="32" 
+                                           FontAttributes="Bold" 
+                                           TextColor="Green" 
+                                           HorizontalOptions="Center" 
+                                           Margin="0,10"/>
+                                    </StackLayout>
+                                </Border>
 
-                                <Frame BorderColor="#0C4251" BackgroundColor="#0C4251" Padding="10" Margin="0,5" CornerRadius="0">
-                                    <VerticalStackLayout>
-                                        <Label Text="Próxima Evaluación" FontSize="18" FontAttributes="Bold" TextColor="#f1c864"  Margin="0,5,0,10"/>
-                                        <CollectionView ItemsSource="{Binding UpcomingEvaluations}">
-                                            <CollectionView.ItemTemplate>
+                                <Border Stroke="#E0E0E0" StrokeThickness="1" Padding="15">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10"/>
+                                    </Border.StrokeShape>
+                                    <Border.Shadow>
+                                        <Shadow Brush="#000" Opacity="0.1" Radius="10" Offset="5,5"/>
+                                    </Border.Shadow>
+                                    <StackLayout>
+                                        <Label Text="Clases de hoy" FontSize="18" FontAttributes="Bold" TextColor="#0C4251"/>
+                                        <StackLayout BindableLayout.ItemsSource="{Binding TodaysClasses}" Margin="0,10,0,0">
+                                            <BindableLayout.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Frame BorderColor="WhiteSmoke" Padding="10" Margin="0,5" CornerRadius="0">
-                                                        <VerticalStackLayout>
-                                                            <Label Text="{Binding Title}" FontSize="16" FontAttributes="Bold" />
-                                                            <Label Text="{Binding Description}" FontSize="14" />
-                                                            <Label Text="{Binding Date, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}"
-                                                                   FontSize="12" TextColor="Gray" />
-                                                        </VerticalStackLayout>
-                                                    </Frame>
+                                                    <Label Text="{Binding Name}" FontSize="16" Padding="10,5"/>
                                                 </DataTemplate>
-                                            </CollectionView.ItemTemplate>
-                                        </CollectionView>
-                                    </VerticalStackLayout>
-                                </Frame>
+                                            </BindableLayout.ItemTemplate>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </Border>
+
+                                <Border Stroke="#E0E0E0" StrokeThickness="1" Padding="15">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10"/>
+                                    </Border.StrokeShape>
+                                    <Border.Shadow>
+                                        <Shadow Brush="#000" Opacity="0.1" Radius="10" Offset="5,5"/>
+                                    </Border.Shadow>
+                                    <StackLayout Spacing="10">
+                                        <Label Text="Próxima Evaluación" FontSize="18" FontAttributes="Bold" TextColor="#0C4251"/>
+                                        <StackLayout BindableLayout.ItemsSource="{Binding UpcomingEvaluations}">
+                                            <BindableLayout.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackLayout>
+                                                        <Label Text="{Binding Title}" FontSize="16" FontAttributes="Bold" />
+                                                        <Label Text="{Binding Description}" FontSize="14" />
+                                                        <Label Text="{Binding Date, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}" FontSize="12" TextColor="Gray" />
+                                                        <BoxView HeightRequest="1" Color="#E0E0E0" Margin="0,5"/>
+                                                    </StackLayout>
+                                                </DataTemplate>
+                                            </BindableLayout.ItemTemplate>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </Border>
                             </VerticalStackLayout>
                         </ScrollView>
                     </ContentView>
@@ -133,64 +165,59 @@
                     <ContentView IsVisible="{Binding IsParent}">
                         <ScrollView>
                             <VerticalStackLayout Padding="20" Spacing="15">
-
                                 <Label Text="Mis Hijos" FontSize="22" FontAttributes="Bold" TextColor="#0C4251" HorizontalOptions="Center" />
-                                <CollectionView ItemsSource="{Binding Hijos}">
-                                    <CollectionView.ItemTemplate>
+
+                                <StackLayout BindableLayout.ItemsSource="{Binding Hijos}">
+                                    <BindableLayout.ItemTemplate>
                                         <DataTemplate x:DataType="models:Child">
-                                            <Frame Padding="15" Margin="0,5" BorderColor="#0C4251" BackgroundColor="WhiteSmoke" CornerRadius="10">
-                                                <Frame.GestureRecognizers>
-                                                    <TapGestureRecognizer 
-        Command="{Binding BindingContext.SelectChildCommand, Source={x:Reference ThisPage}}"
-        CommandParameter="{Binding .}" />
-                                                </Frame.GestureRecognizers>
-                                                <StackLayout>
-                                                    <Label Text="{Binding StudentName}" FontSize="18" FontAttributes="Bold" TextColor="#0C4251"/>
-                                                </StackLayout>
-                                            </Frame>
+                                            <Border Stroke="#E0E0E0" StrokeThickness="1" Padding="15" Margin="0,5">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="10"/>
+                                                </Border.StrokeShape>
+                                                <Border.Shadow>
+                                                    <Shadow Brush="#000" Opacity="0.1" Radius="10" Offset="5,5"/>
+                                                </Border.Shadow>
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding BindingContext.SelectChildCommand, Source={x:Reference ThisPage}}"
+                                                          CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
+                                                <Label Text="{Binding StudentName}" FontSize="18" FontAttributes="Bold" TextColor="#0C4251"/>
+                                            </Border>
                                         </DataTemplate>
-                                    </CollectionView.ItemTemplate>
-                                </CollectionView>
+                                    </BindableLayout.ItemTemplate>
+                                </StackLayout>
 
                                 <BoxView HeightRequest="1" Color="LightGray" Margin="0,15,0,0"/>
 
-                                <StackLayout Margin="0,10,0,0">
-                                    <Frame CornerRadius="10" BackgroundColor="#0C4251"
-                                           Padding="0" HasShadow="False" BorderColor="#0C4251" HorizontalOptions="Center">
-                                        <Label Text="Notificaciones recientes" FontSize="20" FontAttributes="Bold"
-                                               Margin="0,5,0,5" Padding="40,10,40,10" HorizontalOptions="Center" TextColor="#f1c864"/>
-                                    </Frame>
+                                <Label Text="Notificaciones Recientes" FontSize="22" FontAttributes="Bold" TextColor="#0C4251" HorizontalOptions="Center" />
 
-                                    <StackLayout HorizontalOptions="Center" VerticalOptions="Center"
-                                                 IsVisible="{Binding HasNotifications, Converter={StaticResource InverseBooleanConverter}}">
-                                        <Label Text="&#xf1f6;" FontFamily="FontAwesomeSolid" FontSize="100"
-                                               TextColor="Gray" HorizontalOptions="Center" Margin="0,40,0,20"/>
-                                        <Label Text="No hay notificaciones recientes" FontSize="20"
-                                               HorizontalOptions="Center" Margin="0,10,0,20" TextColor="Gray"/>
-                                    </StackLayout>
-
-                                    <CollectionView ItemsSource="{Binding Notifications}" IsVisible="{Binding HasNotifications}">
-                                        <CollectionView.ItemTemplate>
-                                            <DataTemplate>
-                                                <Frame Padding="10" Margin="0,10,0,0" BackgroundColor="#0C4251" BorderColor="#0C4251">
-                                                    <Grid ColumnDefinitions="Auto,*">
-                                                        <Label Text="&#xf0f3;" FontSize="15" FontFamily="FontAwesomeSolid"
-                                                               VerticalOptions="Center" Grid.Column="0" Margin="0,0,10,0" TextColor="#f1c864"/>
-                                                        <StackLayout Grid.Column="1">
-                                                            <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" TextColor="#f1c864"/>
-                                                            <Label Text="{Binding Content}" FontSize="14" TextColor="#6bbdda"/>
-                                                            <Label Text="{Binding Date, StringFormat='{0:dd/MM/yyyy HH:mm}'}" FontSize="12" TextColor="White"/>
-                                                        </StackLayout>
-                                                    </Grid>
-                                                </Frame>
-                                            </DataTemplate>
-                                        </CollectionView.ItemTemplate>
-                                    </CollectionView>
-
-                                    <Button Text="Ir a página de notificaciones" Command="{Binding NotificationCommand}"
-                                            Padding="0" Margin="30,10,30,0"/>
+                                <StackLayout HorizontalOptions="Center" VerticalOptions="Center"
+                             IsVisible="{Binding HasNotifications, Converter={StaticResource InverseBooleanConverter}}">
+                                    <Label Text="&#xf1f6;" FontFamily="FontAwesomeSolid" FontSize="100" TextColor="LightGray" HorizontalOptions="Center" Margin="0,40,0,20"/>
+                                    <Label Text="No hay notificaciones recientes" FontSize="18" HorizontalOptions="Center" TextColor="Gray"/>
                                 </StackLayout>
 
+                                <StackLayout BindableLayout.ItemsSource="{Binding Notifications}" IsVisible="{Binding HasNotifications}">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Stroke="#E0E0E0" StrokeThickness="1" Padding="15" Margin="0,0,0,10">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="10"/>
+                                                </Border.StrokeShape>
+                                                <Border.Shadow>
+                                                    <Shadow Brush="#000" Opacity="0.1" Radius="10" Offset="5,5"/>
+                                                </Border.Shadow>
+                                                <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="5">
+                                                    <Label Grid.Row="0" Text="{Binding Title}" FontSize="16" FontAttributes="Bold" TextColor="#0C4251"/>
+                                                    <Label Grid.Row="1" Text="{Binding Content}" FontSize="14" TextColor="#333333"/>
+                                                    <Label Grid.Row="2" Text="{Binding Date, StringFormat='{0:dd/MM/yyyy HH:mm}'}" FontSize="12" TextColor="Gray" HorizontalOptions="End"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </StackLayout>
+
+                                <Button Text="Ver todas las notificaciones" Command="{Binding NotificationCommand}" Margin="20,10"/>
                             </VerticalStackLayout>
                         </ScrollView>
                     </ContentView>

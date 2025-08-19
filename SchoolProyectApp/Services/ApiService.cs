@@ -1147,11 +1147,11 @@ namespace SchoolProyectApp.Services
             }
         }
 
-        public async Task<List<User>?> GetStudentsEnrolledInActivityAsync(int activityId, int schoolId)
+        public async Task<List<StudentViewModel>?> GetStudentsEnrolledInActivityAsync(int activityId, int schoolId)
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<User>>($"api/extracurriculars/enrollments/activity/{activityId}/students?schoolId={schoolId}");
+                return await _httpClient.GetFromJsonAsync<List<StudentViewModel>>($"api/extracurriculars/enrollments/activity/{activityId}/students?schoolId={schoolId}");
             }
             catch (Exception ex)
             {
@@ -1181,6 +1181,65 @@ namespace SchoolProyectApp.Services
         }
 
 
+        //**********************PROMEDIO DE ESTUDIANTES*****************************************************
 
+       
+        public async Task<StudentAverageDto> GetStudentOverallAverageAsync(int userId, int schoolId)
+        {
+            try
+            {
+                string url = $"api/grades/student/{userId}/overall-average?schoolId={schoolId}";
+                var response = await _httpClient.GetAsync(url);
+                if (!response.IsSuccessStatusCode) return null;
+
+                var json = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<StudentAverageDto>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error en GetStudentOverallAverageAsync: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task<double> GetCourseAverageAsync(int courseId, int schoolId)
+        {
+            try
+            {
+                string url = $"api/grades/course/{courseId}/average?schoolId={schoolId}";
+                var response = await _httpClient.GetAsync(url);
+                if (!response.IsSuccessStatusCode) return 0;
+
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<Dictionary<string, double>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return result.ContainsKey("AverageGrade") ? result["AverageGrade"] : 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error en GetCourseAverageAsync: {ex.Message}");
+                return 0;
+            }
+        }
+
+        public async Task<double> GetStudentCourseAverageAsync(int studentId, int courseId, int schoolId)
+        {
+            try
+            {
+                string url = $"api/grades/student/{studentId}/course/{courseId}/average?schoolId={schoolId}";
+                var response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode) return 0;
+
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<StudentCourseAverageDto>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return result?.AverageGrade ?? 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error en GetStudentCourseAverageAsync: {ex.Message}");
+                return 0;
+            }
+        }
     }
 }

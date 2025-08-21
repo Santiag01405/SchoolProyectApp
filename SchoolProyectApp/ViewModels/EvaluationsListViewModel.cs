@@ -9,14 +9,34 @@ using System.Collections.Generic;
 
 namespace SchoolProyectApp.ViewModels
 {
-    [QueryProperty(nameof(SelectedChild), "SelectedChild")]
-    [QueryProperty(nameof(IsParentView), "IsParentView")]
+    [QueryProperty(nameof(StudentId), "studentId")]
+    [QueryProperty(nameof(ChildName), "childName")]
+
     public class EvaluationsListViewModel : BaseViewModel
     {
         private readonly ApiService _apiService;
         private int _userId;
         private int _roleId;
         private string _pageTitle = "Mis Evaluaciones";
+
+        private int _studentId;
+        public int StudentId
+        {
+            get => _studentId;
+            set
+            {
+                SetProperty(ref _studentId, value);
+                _ = InitializeAsync();
+            }
+        }
+
+        private string _childName = string.Empty;
+        public string ChildName
+        {
+            get => _childName;
+            set => SetProperty(ref _childName, value);
+        }
+    
 
         private bool _isBusy;
         public bool IsBusy
@@ -133,20 +153,19 @@ namespace SchoolProyectApp.ViewModels
             }
 
             int targetUserId;
-            if (SelectedChild != null)
+            if (StudentId > 0)
             {
-                targetUserId = SelectedChild.UserID;
-                PageTitle = $"Evaluaciones de {SelectedChild.StudentName}";
+                targetUserId = StudentId;
+                PageTitle = $"Evaluaciones de {ChildName}";
             }
             else
             {
                 var userIdStr = await SecureStorage.GetAsync("user_id");
                 if (!int.TryParse(userIdStr, out targetUserId))
-                {
                     return;
-                }
                 PageTitle = "Mis Evaluaciones";
             }
+
 
             _userId = targetUserId;
 

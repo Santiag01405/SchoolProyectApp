@@ -348,7 +348,8 @@ namespace SchoolProyectApp.ViewModels
             {
                 // Navegamos al dashboard del hijo, pasando su UserID en la URL.
                 // Esta es la forma recomendada y más robusta.
-                await Shell.Current.GoToAsync($"//childDashboard?studentId={child.UserID}&childName={Uri.EscapeDataString(child.StudentName)}");
+                await Shell.Current.GoToAsync($"childDashboard?studentId={child.UserID}&childName={Uri.EscapeDataString(child.StudentName)}");
+
 
             }
             catch (Exception ex)

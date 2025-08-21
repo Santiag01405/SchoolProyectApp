@@ -7,6 +7,7 @@ using System.Diagnostics; // Añadir para Debug.WriteLine
 namespace SchoolProyectApp.ViewModels
 {
     [QueryProperty(nameof(StudentId), "studentId")]
+    [QueryProperty(nameof(ChildName), "childName")]
     public class ChildDashboardViewModel : BaseViewModel
     {
         private int _studentId;

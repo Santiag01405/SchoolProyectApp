@@ -6,6 +6,9 @@
         {
             InitializeComponent();
 
+            // Establecer el tema de la aplicación
+            Current.UserAppTheme = AppTheme.Light;
+
             MainPage = new AppShell();
         }
     }

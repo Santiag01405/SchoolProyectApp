@@ -9,7 +9,7 @@ using System.Linq;
 namespace SchoolProyectApp.ViewModels
 {
     // Habilitar la recepción de un objeto Student desde la navegación
-    [QueryProperty(nameof(SelectedChild), "SelectedChild")]
+    [QueryProperty(nameof(StudentId), "studentId")]
     public class ScheduleViewModel : BaseViewModel
     {
         private readonly ApiService _apiService;
@@ -23,9 +23,20 @@ namespace SchoolProyectApp.ViewModels
         public ICommand RefreshCommand { get; }
         public ICommand GoBackCommand { get; }
 
+        
+
         public ICommand HomeCommand { get; }
         public ICommand FirstProfileCommand { get; }
         public ICommand OpenMenuCommand { get; }
+
+        public ICommand SelectDayCommand { get; }
+
+        private int _studentId;
+        public int StudentId
+        {
+            get => _studentId;
+            set => SetProperty(ref _studentId, value);
+        }
 
         public ScheduleViewModel()
         {
@@ -37,8 +48,27 @@ namespace SchoolProyectApp.ViewModels
             OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
 
+            // ✅ Recibir como object y convertir a int de forma segura
+            SelectDayCommand = new Command<object>(param =>
+            {   
+                try
+                {
+                    if (param == null) return;
 
-            // Establece el día actual al cargar, por defecto a lunes si es domingo
+                    int day;
+                    if (param is int i) day = i;
+                    else if (!int.TryParse(param.ToString(), out day)) return;
+
+                    SelectedDay = day; // Esto dispara FilterCourses()
+                    Debug.WriteLine($"[Schedule] SelectedDay -> {SelectedDay}");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[Schedule] Error en SelectDayCommand: {ex.Message}");
+                }
+            });
+
+            // Día actual (si es domingo -> lunes)
             SelectedDay = (int)DateTime.Now.DayOfWeek;
             if (SelectedDay == 0) SelectedDay = 1;
         }
@@ -154,14 +184,21 @@ namespace SchoolProyectApp.ViewModels
                     return;
                 }
 
-                int targetUserId;
+                int targetUserId = 0;
 
-                // Determina si se carga el horario del hijo o del usuario logeado
-                if (SelectedChild != null)
+                // ✅ 1. Si viene un StudentId desde query (caso padre)
+                if (StudentId != 0)
+                {
+                    targetUserId = StudentId;
+                    PageTitle = "Horario del estudiante";
+                }
+                // ✅ 2. Si viene un hijo cargado directamente
+                else if (SelectedChild != null)
                 {
                     targetUserId = SelectedChild.UserID;
                     PageTitle = $"Horario de {SelectedChild.StudentName}";
                 }
+                // ✅ 3. Si no, usa el usuario logeado
                 else
                 {
                     var userIdStr = await SecureStorage.GetAsync("user_id");
@@ -175,6 +212,7 @@ namespace SchoolProyectApp.ViewModels
 
                 Debug.WriteLine($"🔍 Buscando horario para el usuario ID: {targetUserId}, Escuela ID: {schoolId}");
 
+                // 👇 Aquí usas el id correcto (del hijo o del usuario)
                 var scheduleData = await _apiService.GetUserWeeklySchedule(targetUserId, schoolId);
 
                 AllCourses.Clear();
@@ -196,7 +234,7 @@ namespace SchoolProyectApp.ViewModels
                     Message = "";
                 }
 
-                FilterCourses(); // Actualiza la lista visible para el día seleccionado
+                FilterCourses();
                 Debug.WriteLine($"✅ Horario cargado. Total de cursos: {AllCourses.Count}");
             }
             catch (Exception ex)
@@ -209,6 +247,7 @@ namespace SchoolProyectApp.ViewModels
                 IsBusy = false;
             }
         }
+
 
         private void FilterCourses()
         {

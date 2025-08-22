@@ -1,5 +1,6 @@
 ﻿using Microsoft.Maui.Controls;
 using SchoolProyectApp.ViewModels;
+using System;
 
 namespace SchoolProyectApp.Views
 {
@@ -20,7 +21,7 @@ namespace SchoolProyectApp.Views
 
             if (_viewModel != null && (_viewModel.GradesByCourse == null || _viewModel.GradesByCourse.Count == 0))
             {
-                await _viewModel.LoadGradesAsync(); 
+                await _viewModel.LoadDataAsync(); // ⬅️ Corrección aquí
             }
         }
 
@@ -48,6 +49,5 @@ namespace SchoolProyectApp.Views
                 _isMenuVisible = true;
             }
         }
-
     }
 }

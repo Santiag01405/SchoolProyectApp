@@ -14,11 +14,15 @@ public class Evaluation
     public int UserID { get; set; }
     public int SchoolID { get; set; }
 
+    [JsonPropertyName("lapsoID")]
+    public int? LapsoID { get; set; }
+
     // Propiedades que pueden ser null, usa el operador '?'
     public School? School { get; set; } // <-- Hacemos esta propiedad nullable
     public int? ClassroomID { get; set; } // <-- Hacemos esta propiedad nullable
     public Classroom? Classroom { get; set; } // <-- Hacemos esta propiedad nullable
 
     // Puedes agregar una propiedad de navegación para el curso
-    public Course? Course { get; set; }
+    [JsonPropertyName("course")]
+    public Course Course { get; set; }
 }

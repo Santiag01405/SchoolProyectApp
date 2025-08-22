@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using SchoolProyectApp.Models;
+using static Microsoft.Maui.ApplicationModel.Permissions;
 
 
 namespace SchoolProyectApp.Services
@@ -1032,7 +1033,39 @@ namespace SchoolProyectApp.Services
             }
         }
 
-        public async Task<List<object>> GetUserGradesAsync(int userId, int schoolId)
+        /*  public async Task<List<object>> GetUserGradesAsync(int userId, int schoolId)
+          {
+              try
+              {
+                  string url = $"api/grades/user/{userId}/grades?schoolId={schoolId}";
+                  var response = await _httpClient.GetAsync(url);
+
+                  if (!response.IsSuccessStatusCode)
+                  {
+                      Console.WriteLine($"⚠️ Error al obtener calificaciones: {response.StatusCode}");
+                      return new List<object>();
+                  }
+
+                  var json = await response.Content.ReadAsStringAsync();
+                  return JsonSerializer.Deserialize<List<object>>(json, new JsonSerializerOptions
+                  {
+                      PropertyNameCaseInsensitive = true
+                  }) ?? new List<object>();
+              }
+              catch (Exception ex)
+              {
+                  Console.WriteLine($"❌ Error en GetUserGradesAsync: {ex.Message}");
+                  return new List<object>();
+              }
+          }*/
+
+        // SchoolProyectApp/Services/ApiService.cs
+
+        // ... (resto del código de ApiService)
+
+        // En tu archivo ApiService.cs
+
+        public async Task<List<GradeResult>> GetUserGradesAsync(int userId, int schoolId)
         {
             try
             {
@@ -1042,22 +1075,21 @@ namespace SchoolProyectApp.Services
                 if (!response.IsSuccessStatusCode)
                 {
                     Console.WriteLine($"⚠️ Error al obtener calificaciones: {response.StatusCode}");
-                    return new List<object>();
+                    return new List<GradeResult>();
                 }
 
                 var json = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<List<object>>(json, new JsonSerializerOptions
+                return JsonSerializer.Deserialize<List<GradeResult>>(json, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
-                }) ?? new List<object>();
+                }) ?? new List<GradeResult>();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"❌ Error en GetUserGradesAsync: {ex.Message}");
-                return new List<object>();
+                return new List<GradeResult>();
             }
         }
-
         //Obtener hijos de padre
         public async Task<List<Child>?> GetHijosAsync(int userId, int schoolId)
         {
@@ -1240,6 +1272,61 @@ namespace SchoolProyectApp.Services
                 Console.WriteLine($"❌ Error en GetStudentCourseAverageAsync: {ex.Message}");
                 return 0;
             }
+        }
+
+        //LAPSOS-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public async Task<Lapso?> GetCurrentLapsoAsync(int schoolId)
+        {
+            try
+            {
+                var url = $"api/lapsos?schoolId={schoolId}";
+                Console.WriteLine($"🌍 Llamando a la API para lapsos: {_httpClient.BaseAddress}{url}");
+
+                var response = await _httpClient.GetAsync(url);
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"❌ Error en la API de lapsos: {response.StatusCode}");
+                    return null;
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                var lapsos = JsonSerializer.Deserialize<List<Lapso>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                // Encontrar el lapso actual
+                if (lapsos != null)
+                {
+                    var today = DateTime.Now.Date;
+                    var currentLapso = lapsos.FirstOrDefault(l => today >= l.FechaInicio.Date && today <= l.FechaFin.Date);
+                    return currentLapso;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Excepción en GetCurrentLapsoAsync: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task<List<Lapso>> GetLapsosAsync(int schoolId)
+        {
+            var endpoint = $"api/lapsos?schoolId={schoolId}";
+            return await GetAsync<List<Lapso>>(endpoint);
+        }
+
+        // Nuevo método para obtener las notas filtradas por lapso
+        public async Task<List<GradeWithIncludes>> GetGradesByLapsoAsync(int studentId, int lapsoId, int schoolId)
+        {
+            var endpoint = $"api/grades/student/{studentId}/lapso/{lapsoId}?schoolId={schoolId}";
+            return await GetAsync<List<GradeWithIncludes>>(endpoint);
+        }
+
+
+        public async Task<OverallByLapso> GetOverallByLapsoAsync(int userId, int lapsoId, int schoolId)
+        {
+            var url = $"api/grades/student/{userId}/average-by-lapso?schoolId={schoolId}&lapsoId={lapsoId}";
+            return await GetAsync<OverallByLapso>(url);
         }
     }
 }

@@ -23,6 +23,12 @@ namespace SchoolProyectApp.ViewModels
             set => SetProperty(ref _isBusy, value);
         }
 
+        private string _currentLapsoName;
+        public string CurrentLapsoName
+        {
+            get => _currentLapsoName;
+            set => SetProperty(ref _currentLapsoName, value);
+        }
         public ObservableCollection<Evaluation> UpcomingEvaluations { get; set; } = new();
         public ObservableCollection<Course> TodaysClasses { get; set; } = new();
         public ObservableCollection<Notification> Notifications { get; set; } = new();
@@ -160,6 +166,15 @@ namespace SchoolProyectApp.ViewModels
                 if (IsStudent) // Opcional, pero recomendable para no cargar datos innecesarios
                 {
                     await LoadStudentOverallAverageAsync();
+                }
+                if (_schoolId != 0)
+                {
+                    var currentLapso = await _apiService.GetCurrentLapsoAsync(_schoolId);
+                    CurrentLapsoName = currentLapso != null ? currentLapso.Nombre : "Lapso no encontrado";
+                }
+                else
+                {
+                    CurrentLapsoName = "Lapso no asignado";
                 }
             }
             finally

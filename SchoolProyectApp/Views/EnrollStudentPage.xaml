@@ -22,7 +22,7 @@
 	<AbsoluteLayout>
 
 		<ContentView x:Name="MainContent"
-                     AbsoluteLayout.LayoutBounds="0,110,1,0.85"
+                     AbsoluteLayout.LayoutBounds="0,50,1,0.85"
                      AbsoluteLayout.LayoutFlags="WidthProportional,HeightProportional">
 
 			<Grid Padding="0" RowDefinitions="*,Auto">

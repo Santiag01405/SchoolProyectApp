@@ -199,7 +199,6 @@ namespace SchoolProyectApp.ViewModels
             if (string.IsNullOrEmpty(SearchQuery))
                 return;
 
-            // Obtener schoolId de SecureStorage
             var schoolIdStr = await SecureStorage.GetAsync("school_id");
             if (!int.TryParse(schoolIdStr, out int schoolId) || schoolId == 0)
             {
@@ -209,14 +208,29 @@ namespace SchoolProyectApp.ViewModels
 
             Console.WriteLine($"🔎 Buscando usuarios con query='{SearchQuery}' y schoolId={schoolId}");
 
-            // Llamar a la versión corregida del ApiService
-            var users = await _apiService.SearchUsersAsync(SearchQuery, schoolId);
+            IEnumerable<User> users = new List<User>();
+
+            // ✅ Nueva lógica de búsqueda: Por cédula si es numérico, por nombre si es texto.
+            if (long.TryParse(SearchQuery, out long cedula))
+            {
+                Console.WriteLine("Buscando por cédula...");
+                var userFound = await _apiService.GetUserByCedulaAsync(SearchQuery, schoolId);
+                if (userFound != null)
+                {
+                    users = new List<User> { userFound };
+                }
+            }
+            else
+            {
+                Console.WriteLine("Buscando por nombre de usuario...");
+                users = await _apiService.SearchUsersAsync(SearchQuery, schoolId);
+            }
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 SearchResults.Clear();
 
-                if (users != null && users.Count > 0)
+                if (users != null && users.Any())
                 {
                     foreach (var user in users)
                     {
@@ -231,8 +245,6 @@ namespace SchoolProyectApp.ViewModels
                 OnPropertyChanged(nameof(HasSearchResults));
             });
         }
-
-
         private async Task SendNotification()
         {
             if (!CanSendNotification) return;

@@ -1328,5 +1328,51 @@ namespace SchoolProyectApp.Services
             var url = $"api/grades/student/{userId}/average-by-lapso?schoolId={schoolId}&lapsoId={lapsoId}";
             return await GetAsync<OverallByLapso>(url);
         }
+
+        public async Task<bool> MarkAllNotificationsAsReadAsync(int userId, int schoolId)
+        {
+            try
+            {
+                var url = $"api/notifications/read-all?userID={userId}&schoolID={schoolId}";
+                var response = await _httpClient.PutAsync(url, null);
+
+                response.EnsureSuccessStatusCode();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al marcar todas las notificaciones como leídas: {ex.Message}");
+                return false;
+            }
+        }
+
+        // ✅ Método para buscar un usuario por su cédula
+        // ✅ Método para buscar un usuario por su cédula
+        public async Task<User?> GetUserByCedulaAsync(string cedula, int schoolId)
+        {
+            try
+            {
+                var url = new Uri(_httpClient.BaseAddress, $"api/users/by-cedula/{cedula}?schoolId={schoolId}");
+                Console.WriteLine($"🌍 Buscando usuario por cédula: {url}");
+
+                var response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"❌ Error al buscar por cédula: {response.StatusCode} - {errorMessage}");
+                    return null;
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<User>(json, _jsonOptions);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Excepción en GetUserByCedulaAsync: {ex.Message}");
+                return null;
+            }
+        }
     }
 }

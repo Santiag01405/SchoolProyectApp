@@ -22,27 +22,45 @@
                         <SwipeView.RightItems>
                             <SwipeItems>
                                 <SwipeItem Text="Eliminar"
-                                       BackgroundColor="Red"
-                                       Command="{Binding BindingContext.DeleteNotificationCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                       CommandParameter="{Binding .}">
+                           BackgroundColor="Red"
+                           Command="{Binding BindingContext.DeleteNotificationCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                           CommandParameter="{Binding .}">
                                     <SwipeItem.IconImageSource>
                                         <FontImageSource Glyph="&#xf1f8;" FontFamily="FontAwesomeSolid" Size="20" />
                                     </SwipeItem.IconImageSource>
                                 </SwipeItem>
                             </SwipeItems>
                         </SwipeView.RightItems>
-                        <Frame Padding="10" Margin="5" CornerRadius="10" BackgroundColor="#0C4251" BorderColor="#0C4251"
-                           Opacity="{Binding IsRead, Converter={StaticResource BoolToOpacityConverter}}">
-                            <StackLayout>
-                                <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" TextColor="#f1c864"/>
-                                <Label Text="{Binding Content}" FontSize="14" TextColor="#6bbdda"/>
-                                <Label Text="{Binding Date, StringFormat='Fecha: {0:dd/MM/yyyy}'}" FontSize="12" TextColor="White"/>
-                            </StackLayout>
+                        <Frame Padding="10" Margin="5" CornerRadius="10" BackgroundColor="#0C4251" BorderColor="#0C4251">
+                            <Grid>
+                                <StackLayout>
+                                    <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" TextColor="#f1c864"/>
+                                    <Label Text="{Binding Content}" FontSize="14" TextColor="#6bbdda"/>
+                                    <Label Text="{Binding Date, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}" FontSize="12" TextColor="White"/>
+                                </StackLayout>
+
+                                <StackLayout Orientation="Horizontal"
+                             HorizontalOptions="End"
+                             VerticalOptions="Start"
+                             IsVisible="{Binding IsRead}"
+                             Margin="0, -2, -1, 0">
+                                    <Label Text="Leído"
+                           TextColor="#dcdcdc"
+                           FontSize="10"
+                           FontAttributes="Bold"
+                           VerticalOptions="Center" />
+                                    <Label Text="&#xf058;"
+                           FontFamily="FontAwesomeSolid"
+                           TextColor="Green"
+                           FontSize="10"
+                           VerticalOptions="Center"
+                                           Margin="2,0,1,0"/>
+                                </StackLayout>
+                            </Grid>
                         </Frame>
                     </SwipeView>
                 </ViewCell>
             </DataTemplate>
-
             <!-- Template para notificaciones de asistencia -->
             <DataTemplate x:Key="AttendanceNotificationTemplate">
                 <ViewCell>

@@ -99,30 +99,3 @@
 </ContentPage>
 
 
-<!--<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
-             x:Class="SchoolProyectApp.Views.AssignGradesPage"
-             Title="Asignar Calificaciones">
-    <ContentPage.BindingContext>
-        <vm:AssignGradesViewModel />
-    </ContentPage.BindingContext>
-
-    <ScrollView>
-        <StackLayout Padding="20" Spacing="15">
-            <Label Text="Selecciona un curso:" FontAttributes="Bold" FontSize="18"/>
-            <Picker ItemsSource="{Binding Courses}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedCourse}"/>
-
-            <Label Text="Selecciona una evaluación:" FontAttributes="Bold" FontSize="18"/>
-            <Picker ItemsSource="{Binding Evaluations}" ItemDisplayBinding="{Binding Title}" SelectedItem="{Binding SelectedEvaluation}"/>
-
-            <Label Text="Selecciona un estudiante:" FontAttributes="Bold" FontSize="18"/>
-            <Picker ItemsSource="{Binding Students}" ItemDisplayBinding="{Binding StudentName}" SelectedItem="{Binding SelectedStudent}"/>
-
-            <Entry Placeholder="Calificación" Keyboard="Numeric" Text="{Binding GradeValue}"/>
-            <Editor Placeholder="Comentarios" HeightRequest="80" Text="{Binding Comments}"/>
-
-            <Button Text="Asignar Calificación" BackgroundColor="#6bbdda" Command="{Binding AssignGradeCommand}" />
-        </StackLayout>
-    </ScrollView>
-</ContentPage>-->

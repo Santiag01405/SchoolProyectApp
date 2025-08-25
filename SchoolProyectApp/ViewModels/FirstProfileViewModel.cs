@@ -14,8 +14,9 @@ namespace SchoolProyectApp.ViewModels
         private string _email;
         private string _role;
         private int _roleId;
+        private string _cedula; // 👈 NUEVA PROPIEDAD
 
-        public int RoleID
+        public int RoleID
         {
             get => _roleId;
             set
@@ -33,15 +34,12 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
-
-        // Propiedades booleanas para Binding en XAML
         public bool IsProfessor => RoleID == 2;
         public bool IsStudent => RoleID == 1;
         public bool IsParent => RoleID == 3;
 
         public bool IsHiddenForProfessor => !IsProfessor;
         public bool IsHiddenForStudent => !IsStudent;
-
 
         public string UserName
         {
@@ -59,6 +57,16 @@ namespace SchoolProyectApp.ViewModels
             set
             {
                 _email = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Cedula // 👈 NUEVA PROPIEDAD
+        {
+            get => _cedula;
+            set
+            {
+                _cedula = value;
                 OnPropertyChanged();
             }
         }
@@ -108,10 +116,8 @@ namespace SchoolProyectApp.ViewModels
                     UserName = user.UserName;
                     Email = user.Email;
                     Role = user.RoleID == 1 ? "Estudiante" : user.RoleID == 2 ? "Profesor" : user.RoleID == 3 ? "Padre" : "Desconocido";
-                    RoleID = user.RoleID; // Aquí nos aseguramos de que se asigne correctamente
-
-
-                    // 🔹 Forzar actualización en UI
+                    Cedula = user.Cedula; // 👈 ASIGNACIÓN DE LA CÉDULA
+                    RoleID = user.RoleID;
                     OnPropertyChanged(nameof(RoleID));
                     OnPropertyChanged(nameof(IsProfessor));
                     OnPropertyChanged(nameof(IsStudent));
@@ -119,12 +125,10 @@ namespace SchoolProyectApp.ViewModels
                 }
                 else
                 {
-                    RoleID = 0; // Asignar un valor por defecto si no se encuentra el usuario
+                    RoleID = 0;
                 }
-
+            }
         }
-        }
-        
 
         private async Task GoToProfilePage()
         {
@@ -132,4 +136,3 @@ namespace SchoolProyectApp.ViewModels
         }
     }
 }
-

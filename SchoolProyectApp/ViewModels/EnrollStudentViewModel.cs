@@ -114,7 +114,6 @@ namespace SchoolProyectApp.ViewModels
 
         private async Task SearchStudentsAsync()
         {
-            // Obtener schoolId en el momento de la ejecución del comando.
             var schoolIdStr = await SecureStorage.GetAsync("school_id");
             if (!int.TryParse(schoolIdStr, out int schoolId) || schoolId == 0)
             {
@@ -125,23 +124,34 @@ namespace SchoolProyectApp.ViewModels
             IsBusy = true;
             try
             {
-                // Usa el método que ya existe en tu ApiService
-                var users = await _apiService.SearchUsersAsync(SearchQuery, schoolId);
-
-                if (users != null)
+                if (long.TryParse(SearchQuery, out long cedula))
                 {
-                    MainThread.BeginInvokeOnMainThread(() =>
+                    // 🔍 Intenta buscar por cédula si el query es un número
+                    var user = await _apiService.GetUserByCedulaAsync(cedula.ToString(), schoolId);
+
+                    if (user != null && user.RoleID == 1)
                     {
-                        var studentsOnly = users.Where(u => u.RoleID == 1).ToList();
-                        Students = new ObservableCollection<User>(studentsOnly);
-                    });
+                        Students = new ObservableCollection<User>(new List<User> { user });
+                    }
+                    else
+                    {
+                        Students = new ObservableCollection<User>();
+                    }
                 }
                 else
                 {
-                    MainThread.BeginInvokeOnMainThread(() =>
+                    // 🔎 Si no es un número, o la búsqueda por cédula falló, usa la búsqueda por nombre
+                    var users = await _apiService.SearchUsersAsync(SearchQuery, schoolId);
+
+                    if (users != null)
+                    {
+                        var studentsOnly = users.Where(u => u.RoleID == 1).ToList();
+                        Students = new ObservableCollection<User>(studentsOnly);
+                    }
+                    else
                     {
                         Students = new ObservableCollection<User>();
-                    });
+                    }
                 }
             }
             finally

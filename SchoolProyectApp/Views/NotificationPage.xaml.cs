@@ -15,11 +15,17 @@ namespace SchoolProyectApp.Views
         }
       
 
-        protected override void OnDisappearing()
+       
+           protected override async void OnDisappearing()
         {
             base.OnDisappearing();
-            _viewModel.CancelTasks();
+            // Llama al método del ViewModel para marcar como leídas
+            if (_viewModel != null)
+            {
+                await _viewModel.MarkAllNotificationsAsReadOnExitAsync();
+            }
         }
+        
 
         private async void AnimateButton(object sender, EventArgs e)
         {

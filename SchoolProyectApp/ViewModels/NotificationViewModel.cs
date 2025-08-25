@@ -4,6 +4,9 @@ using System.Windows.Input;
 using Microsoft.Maui.Controls;
 using SchoolProyectApp.Models;
 using SchoolProyectApp.Services;
+using System.Linq;
+using System.Threading;
+using System;
 
 namespace SchoolProyectApp.ViewModels
 {
@@ -16,7 +19,6 @@ namespace SchoolProyectApp.ViewModels
         public ObservableCollection<Notification> RegularNotifications { get; set; } = new();
         public ObservableCollection<AttendanceNotification> AttendanceNotifications { get; set; } = new();
         public ObservableCollection<object> ActiveNotifications { get; set; } = new();
-
 
         private string _selectedTab = "Normales";
         public string SelectedTab
@@ -86,7 +88,6 @@ namespace SchoolProyectApp.ViewModels
 
             MarkAsReadCommand = new Command<Notification>(async (notification) => await MarkAsReadAsync(notification));
 
-
             //Eliminar notificacion
             DeleteNotificationCommand = new Command<Notification>(async (notification) =>
             {
@@ -141,13 +142,11 @@ namespace SchoolProyectApp.ViewModels
                 }
             });
 
-
-
             Task.Run(async () =>
             {
+                await LoadUserData(_cancellationTokenSource.Token);
                 await LoadNotifications(_cancellationTokenSource.Token);
                 await LoadAttendanceAsNotifications(_cancellationTokenSource.Token);
-                await LoadUserData(_cancellationTokenSource.Token);
             });
         }
 
@@ -193,6 +192,9 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+        // 🆕 Lógica para cargar y marcar las notificaciones como leídas
+        // ... (código existente)
+
         private async Task LoadNotifications(CancellationToken token)
         {
             if (token.IsCancellationRequested) return;
@@ -202,16 +204,27 @@ namespace SchoolProyectApp.ViewModels
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(schoolId)) return;
 
             var notifications = await _apiService.GetUserNotifications(int.Parse(userId), int.Parse(schoolId));
-            if (token.IsCancellationRequested) return;
+            var success = await _apiService.MarkAllNotificationsAsReadAsync(int.Parse(userId), int.Parse(schoolId));
 
-            MainThread.BeginInvokeOnMainThread(() =>
+            if (notifications != null)
             {
-                RegularNotifications.Clear();
-                foreach (var notification in notifications)
-                    RegularNotifications.Add(notification);
+                // 🆕 Ordena las notificaciones por fecha de forma descendente
+                var sortedNotifications = notifications.OrderByDescending(n => n.Date).ToList();
 
-                UpdateActiveNotifications();
-            });
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    RegularNotifications.Clear();
+                    foreach (var notification in sortedNotifications)
+                    {
+                        if (success)
+                        {
+                            notification.IsRead = true;
+                        }
+                        RegularNotifications.Add(notification);
+                    }
+                    UpdateActiveNotifications();
+                });
+            }
         }
 
         private async Task LoadAttendanceAsNotifications(CancellationToken token)
@@ -225,16 +238,19 @@ namespace SchoolProyectApp.ViewModels
             var attendanceRecords = await _apiService.GetAttendanceNotifications(int.Parse(userId), int.Parse(schoolId));
             if (token.IsCancellationRequested || attendanceRecords == null || attendanceRecords.Count == 0) return;
 
+            // 🆕 Ordena las notificaciones de asistencia por fecha de forma descendente
+            var sortedAttendance = attendanceRecords.OrderByDescending(a => a.Date).ToList();
+
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 AttendanceNotifications.Clear();
-                foreach (var a in attendanceRecords)
+                foreach (var a in sortedAttendance)
                 {
                     AttendanceNotifications.Add(a);
                 }
+                UpdateActiveNotifications();
             });
         }
-
 
         private void UpdateActiveNotifications()
         {
@@ -253,8 +269,28 @@ namespace SchoolProyectApp.ViewModels
             OnPropertyChanged(nameof(HasNotifications));
         }
 
+        public async Task MarkAllNotificationsAsReadOnExitAsync()
+        {
+            // Obtener los IDs del usuario y de la escuela
+            var userId = await SecureStorage.GetAsync("user_id");
+            var schoolId = await SecureStorage.GetAsync("school_id");
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(schoolId)) return;
 
-        private async Task MarkAsReadAsync(Notification notification)
+            // Llamar a la API para marcar todas las notificaciones como leídas
+            var success = await _apiService.MarkAllNotificationsAsReadAsync(int.Parse(userId), int.Parse(schoolId));
+            if (success)
+            {
+                // Opcional: Actualizar el estado en el ObservableCollection
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    foreach (var notification in RegularNotifications)
+                    {
+                        notification.IsRead = true;
+                    }
+                });
+            }
+        }
+        public async Task MarkAsReadAsync(Notification notification)
         {
             if (notification == null || notification.IsRead) return;
 
@@ -271,4 +307,5 @@ namespace SchoolProyectApp.ViewModels
 
 
 
-       
+
+

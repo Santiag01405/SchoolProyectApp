@@ -91,7 +91,6 @@ namespace SchoolProyectApp.ViewModels
         {
             if (string.IsNullOrEmpty(SearchQuery)) return;
 
-            // Obtener schoolId en el momento de la ejecución del comando.
             var schoolIdStr = await SecureStorage.GetAsync("school_id");
             if (!int.TryParse(schoolIdStr, out int schoolId) || schoolId == 0)
             {
@@ -102,20 +101,39 @@ namespace SchoolProyectApp.ViewModels
             IsBusy = true;
             try
             {
-                var users = await _apiService.SearchUsersAsync(SearchQuery, schoolId);
-                MainThread.BeginInvokeOnMainThread(() =>
+                if (long.TryParse(SearchQuery, out long cedula))
                 {
-                    SearchResults.Clear();
-                    if (users != null)
+                    // 🔍 Intenta buscar por cédula si el query es un número
+                    var user = await _apiService.GetUserByCedulaAsync(cedula.ToString(), schoolId);
+
+                    MainThread.BeginInvokeOnMainThread(() =>
                     {
-                        // Filtra para mostrar solo estudiantes (RoleID = 1)
-                        foreach (var user in users.Where(u => u.RoleID == 1))
+                        SearchResults.Clear();
+                        if (user != null && user.RoleID == 1)
                         {
                             SearchResults.Add(user);
                         }
-                    }
-                    OnPropertyChanged(nameof(HasSearchResults));
-                });
+                        OnPropertyChanged(nameof(HasSearchResults));
+                    });
+                }
+                else
+                {
+                    // 🔎 Si no es un número o la búsqueda por cédula falló, usa la búsqueda por nombre
+                    var users = await _apiService.SearchUsersAsync(SearchQuery, schoolId);
+
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        SearchResults.Clear();
+                        if (users != null)
+                        {
+                            foreach (var user in users.Where(u => u.RoleID == 1))
+                            {
+                                SearchResults.Add(user);
+                            }
+                        }
+                        OnPropertyChanged(nameof(HasSearchResults));
+                    });
+                }
             }
             finally
             {

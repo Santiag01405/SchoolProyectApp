@@ -70,6 +70,18 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+        private Color _messageColor = Colors.Red;
+        public Color MessageColor
+        {
+            get => _messageColor;
+            set
+            {
+                _messageColor = value;
+                OnPropertyChanged(nameof(MessageColor));
+            }
+        }
+
+
         public ICommand LoginCommand { get; }
         public ICommand NavigateToRegisterCommand { get; }
         public ICommand ResetFieldsCommand { get; }
@@ -137,11 +149,13 @@ namespace SchoolProyectApp.ViewModels
                     });
 
                     Message = "Login exitoso";
+                    MessageColor = Colors.Green; // ✅ Éxito → verde
                 }
             }
             else
             {
                 Message = "Error en el login";
+                MessageColor = Colors.Red;   // ❌ Error → rojo
             }
 
             IsBusy = false;

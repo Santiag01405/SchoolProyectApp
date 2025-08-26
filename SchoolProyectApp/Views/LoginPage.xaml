@@ -80,7 +80,14 @@
                 </Grid>
             </Frame>
 
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"/>
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                   IsVisible="{Binding IsBusy}"
+                   Color="#f1c864"
+                   HeightRequest="40"
+                   WidthRequest="40"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center" />
+
 
             <Button Text="Iniciar Sesión" 
         Command="{Binding LoginCommand}" 
@@ -97,8 +104,12 @@
             </Button>
 
 
-            <!-- Mensaje de error o éxito -->
-            <Label Text="{Binding Message}" TextColor="Red" HorizontalOptions="Center"/>
+
+            <Label Text="{Binding Message}"
+       TextColor="{Binding MessageColor}"
+       HorizontalOptions="Center"
+       FontAttributes="Bold"/>
+
 
             <!-- Botón para ir a la página de registro -->
             <!--<Button Text="Registrarse" Command="{Binding NavigateToRegisterCommand}" BackgroundColor="Gray" TextColor="White" FontAttributes="Bold" HorizontalOptions="Fill" Margin="10, 0, 10, 20"/>-->

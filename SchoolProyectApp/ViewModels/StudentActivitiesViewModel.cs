@@ -15,6 +15,13 @@ namespace SchoolProyectApp.ViewModels
         private ObservableCollection<ExtracurricularActivity> _activities;
         private int _currentUserId;
         private int _currentSchoolId;
+        private string _pageTitle;
+
+        public string PageTitle
+        {
+            get => _pageTitle;
+            set => SetProperty(ref _pageTitle, value);
+        }
 
         public ObservableCollection<ExtracurricularActivity> Activities
         {
@@ -43,11 +50,25 @@ namespace SchoolProyectApp.ViewModels
             try
             {
                 await LoadUserDataAsync();
+                await SetPageTitleAsync();
                 await LoadActivitiesAsync();
             }
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        private async Task SetPageTitleAsync()
+        {
+            var user = await _apiService.GetUserDetailsAsync(_currentUserId);
+            if (user != null)
+            {
+                PageTitle = $"{user.UserName}";
+            }
+            else
+            {
+                PageTitle = "Actividades Extracurriculares";
             }
         }
 
@@ -77,7 +98,6 @@ namespace SchoolProyectApp.ViewModels
             IsBusy = true;
             try
             {
-                // **Cambio clave: ahora se llama a un método que carga las actividades del estudiante actual**
                 var enrolledActivities = await _apiService.GetStudentActivitiesAsync(_currentUserId);
                 if (enrolledActivities != null)
                 {

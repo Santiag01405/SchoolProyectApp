@@ -6,6 +6,7 @@ using Microsoft.Maui.Controls;
 using Microsoft.Maui.Storage;
 using SchoolProyectApp.Models;
 using SchoolProyectApp.Services;
+using System.Collections.Generic;
 
 namespace SchoolProyectApp.ViewModels
 {
@@ -49,7 +50,6 @@ namespace SchoolProyectApp.ViewModels
             set
             {
                 SetProperty(ref _searchQuery, value);
-                // No necesitas llamar a SearchStudentsAsync aquí, el comando del SearchBar lo hará.
             }
         }
 
@@ -77,7 +77,7 @@ namespace SchoolProyectApp.ViewModels
             {
                 await LoadSchoolDataAsync();
                 await LoadActivitiesAsync();
-                await SearchStudentsAsync(); // Carga inicial para mostrar todos los estudiantes al abrir la página
+                await SearchStudentsAsync();
             }
             finally
             {
@@ -126,7 +126,6 @@ namespace SchoolProyectApp.ViewModels
             {
                 if (long.TryParse(SearchQuery, out long cedula))
                 {
-                    // 🔍 Intenta buscar por cédula si el query es un número
                     var user = await _apiService.GetUserByCedulaAsync(cedula.ToString(), schoolId);
 
                     if (user != null && user.RoleID == 1)
@@ -140,7 +139,6 @@ namespace SchoolProyectApp.ViewModels
                 }
                 else
                 {
-                    // 🔎 Si no es un número, o la búsqueda por cédula falló, usa la búsqueda por nombre
                     var users = await _apiService.SearchUsersAsync(SearchQuery, schoolId);
 
                     if (users != null)

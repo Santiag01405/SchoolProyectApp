@@ -25,32 +25,71 @@
 				   Text="{Binding ChildName, StringFormat='Dashboard de {0}'}" TextColor="White" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
 		</Grid>
 
-		<ScrollView Grid.Row="1">
-			<VerticalStackLayout Spacing="15" Padding="20" x:DataType="vm:ChildDashboardViewModel">
-				<Frame Padding="20" CornerRadius="10" HasShadow="True">
-					<VerticalStackLayout Spacing="10">
-						<Label Text="&#xf073;" FontFamily="FontAwesomeSolid" FontSize="40" HorizontalOptions="Center" TextColor="#0C4251"/>
-						<Label Text="Horario" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center"/>
-						<Button Text="Ver Horario" Command="{Binding GoToScheduleCommand}" />
-					</VerticalStackLayout>
-				</Frame>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="15" Padding="20" x:DataType="vm:ChildDashboardViewModel">
 
-				<Frame Padding="20" CornerRadius="10" HasShadow="True">
-					<VerticalStackLayout Spacing="10">
-						<Label Text="&#xf0f6;" FontFamily="FontAwesomeSolid" FontSize="40" HorizontalOptions="Center" TextColor="#0C4251"/>
-						<Label Text="Evaluaciones" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center"/>
-						<Button Text="Ver Evaluaciones" Command="{Binding GoToEvaluationsCommand}" />
-					</VerticalStackLayout>
-				</Frame>
+                <!-- Horario -->
+                <Frame Padding="20" CornerRadius="10" HasShadow="True"
+               BackgroundColor="White">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToScheduleCommand}" />
+                    </Frame.GestureRecognizers>
 
-				<Frame Padding="20" CornerRadius="10" HasShadow="True">
-					<VerticalStackLayout Spacing="10">
-						<Label Text="&#xf19d;" FontFamily="FontAwesomeSolid" FontSize="40" HorizontalOptions="Center" TextColor="#0C4251"/>
-						<Label Text="Calificaciones" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center"/>
-						<Button Text="Ver Calificaciones" Command="{Binding GoToGradesCommand}" />
-					</VerticalStackLayout>
-				</Frame>
-			</VerticalStackLayout>
-		</ScrollView>
-	</Grid>
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="&#xf073;" FontFamily="FontAwesomeSolid" FontSize="40" 
+                       HorizontalOptions="Center" TextColor="#0C4251"/>
+                        <Label Text="Horario" FontSize="18" FontAttributes="Bold" 
+                       HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Evaluaciones -->
+                <Frame Padding="20" CornerRadius="10" HasShadow="True"
+               BackgroundColor="White">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToEvaluationsCommand}" />
+                    </Frame.GestureRecognizers>
+
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="&#xf0f6;" FontFamily="FontAwesomeSolid" FontSize="40" 
+                       HorizontalOptions="Center" TextColor="#0C4251"/>
+                        <Label Text="Evaluaciones" FontSize="18" FontAttributes="Bold" 
+                       HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Calificaciones -->
+                <Frame Padding="20" CornerRadius="10" HasShadow="True"
+               BackgroundColor="White">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToGradesCommand}" />
+                    </Frame.GestureRecognizers>
+
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="&#xf19d;" FontFamily="FontAwesomeSolid" FontSize="40" 
+                       HorizontalOptions="Center" TextColor="#0C4251"/>
+                        <Label Text="Calificaciones" FontSize="18" FontAttributes="Bold" 
+                       HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!--ACTIVIDADES EXTRACURRICULARES-->
+                <Frame Padding="20" CornerRadius="10" HasShadow="True"
+       BackgroundColor="White">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToExtraActivitiesCommand}" />
+                    </Frame.GestureRecognizers>
+
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="&#xf1ae;" FontFamily="FontAwesomeSolid" FontSize="40" 
+               HorizontalOptions="Center" TextColor="#0C4251"/>
+                        <Label Text="Actividades Extra" FontSize="18" FontAttributes="Bold" 
+               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </Grid>
 </ContentPage>

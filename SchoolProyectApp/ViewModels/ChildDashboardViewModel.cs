@@ -28,6 +28,7 @@ namespace SchoolProyectApp.ViewModels
         public ICommand GoToEvaluationsCommand { get; }
         public ICommand GoToGradesCommand { get; }
         public ICommand GoBackCommand { get; }
+        public ICommand GoToExtraActivitiesCommand { get; }
 
         public ChildDashboardViewModel()
         {
@@ -55,6 +56,12 @@ namespace SchoolProyectApp.ViewModels
             GoToGradesCommand = new Command(async () => {
                 Debug.WriteLine("DEBUG: GoToGradesCommand ejecutado.");
                 await NavigateToChildPage("seeGrades");
+            });
+
+            // -----IR A ACTIVIDADES EXTRACURRICULARES----
+            GoToExtraActivitiesCommand = new Command(async () => {
+                Debug.WriteLine("DEBUG: GoToExtraActivitiesCommand ejecutado.");
+                await NavigateToChildPage("seeExtra");
             });
         }
 

@@ -6,7 +6,7 @@ using Microsoft.Maui.Storage;
 using Microsoft.Maui.Controls;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-
+using Microsoft.Maui.Networking;
 namespace SchoolProyectApp.ViewModels
 {
     public class LoginViewModel : BaseViewModel
@@ -106,60 +106,117 @@ namespace SchoolProyectApp.ViewModels
             if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
             {
                 Message = "Email y contraseña requeridos";
+                MessageColor = Colors.Red;
+                return;
+            }
+
+            // 1) Chequeo rápido de conectividad local antes de mostrar spinner
+            var access = Connectivity.Current.NetworkAccess;
+            if (access != NetworkAccess.Internet)
+            {
+                Message = "❌ No hay conexión a Internet. Verifica tu red.";
+                MessageColor = Colors.Red;
+                Console.WriteLine($"[LoginAsync] No hay Internet (Connectivity): {access}");
                 return;
             }
 
             IsBusy = true;
-            var user = new User { Email = Email, Password = Password };
-            var authResponse = await _apiService.LoginAsync(user);
-
-            if (authResponse != null && !string.IsNullOrEmpty(authResponse.Token))
+            try
             {
-                await SecureStorage.SetAsync("auth_token", authResponse.Token);
+                var user = new User { Email = Email, Password = Password };
+                var authResponse = await _apiService.LoginAsync(user);
 
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var jwtToken = tokenHandler.ReadJwtToken(authResponse.Token);
-                var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
+                // diagnóstico en consola
+                Console.WriteLine($"[LoginAsync] authResponse == null? {authResponse == null}");
 
-                if (!string.IsNullOrEmpty(userIdClaim) && int.TryParse(userIdClaim, out int userId))
+                if (authResponse == null)
                 {
-                    await SecureStorage.SetAsync("user_id", userId.ToString());
-                    Console.WriteLine($"✔ UserID guardado: {userId}");
+                    // Internet hay, pero ApiService no devolvió objeto → posible fallo en la API
+                    //Se actualizo el codigo para decir Credenciales Invalidas ya que no esta configurado
+                    Message = "❌ Credenciales inválidas.";
+                    MessageColor = Colors.Red;
+                    Console.WriteLine("[LoginAsync] authResponse == null después de llamar a ApiService.");
+                }
+                else if (!string.IsNullOrEmpty(authResponse.Token))
+                {
+                    // ✅ Login correcto
+                    await SecureStorage.SetAsync("auth_token", authResponse.Token);
 
-                    var userDetails = await _apiService.GetUserDetailsAsync(userId);
-                    if (userDetails != null)
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var jwtToken = tokenHandler.ReadJwtToken(authResponse.Token);
+                    var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
+
+                    if (!string.IsNullOrEmpty(userIdClaim) && int.TryParse(userIdClaim, out int userId))
                     {
-                        Console.WriteLine($"✔ Usuario cargado: {userDetails.UserName}");
-                        await SecureStorage.SetAsync("user_role", userDetails.RoleID.ToString());
+                        await SecureStorage.SetAsync("user_id", userId.ToString());
+                        Console.WriteLine($"✔ UserID guardado: {userId}");
 
-                        // ✅ Guardar IDs para usarlos en las demás vistas
-                        if (userDetails.SchoolID > 0)
-                            await SecureStorage.SetAsync("school_id", userDetails.SchoolID.ToString());
+                        var userDetails = await _apiService.GetUserDetailsAsync(userId);
+                        if (userDetails != null)
+                        {
+                            Console.WriteLine($"✔ Usuario cargado: {userDetails.UserName}");
+                            await SecureStorage.SetAsync("user_role", userDetails.RoleID.ToString());
 
-                        if (userDetails.ClassroomID.HasValue)
-                            await SecureStorage.SetAsync("classroom_id", userDetails.ClassroomID.Value.ToString());
+                            if (userDetails.SchoolID > 0)
+                                await SecureStorage.SetAsync("school_id", userDetails.SchoolID.ToString());
 
-                        if (userDetails.School != null)
-                            await SecureStorage.SetAsync("school_name", userDetails.School.Name);
+                            if (userDetails.ClassroomID.HasValue)
+                                await SecureStorage.SetAsync("classroom_id", userDetails.ClassroomID.Value.ToString());
+
+                            if (userDetails.School != null)
+                                await SecureStorage.SetAsync("school_name", userDetails.School.Name);
+                        }
+
+                        Device.BeginInvokeOnMainThread(async () =>
+                        {
+                            await Shell.Current.GoToAsync("//homepage");
+                        });
+
+                        Message = "✔ Login exitoso";
+                        MessageColor = Colors.Green;
                     }
-
-                    Device.BeginInvokeOnMainThread(async () =>
+                    else
                     {
-                        await Shell.Current.GoToAsync("//homepage");
-                    });
-
-                    Message = "Login exitoso";
-                    MessageColor = Colors.Green; // ✅ Éxito → verde
+                        // Token presente pero no se pudo extraer userId
+                        Message = "✔ Login (token recibido) — pero no se pudo leer UserID";
+                        MessageColor = Colors.Orange;
+                        Console.WriteLine("[LoginAsync] Token recibido pero no se pudo extraer UserID del JWT.");
+                    }
+                }
+                else
+                {
+                    // ApiService devolvió objeto pero sin token → credenciales inválidas
+                    Message = "❌ Credenciales inválidas";
+                    MessageColor = Colors.Red;
+                    Console.WriteLine("[LoginAsync] authResponse sin token. Asumiendo credenciales inválidas.");
                 }
             }
-            else
+            catch (HttpRequestException ex)
             {
-                Message = "Error en el login";
-                MessageColor = Colors.Red;   // ❌ Error → rojo
+                Message = $"Error de conexión: {ex.Message}";
+                MessageColor = Colors.Red;
+                Console.WriteLine($"[LoginAsync] HttpRequestException: {ex}");
             }
-
-            IsBusy = false;
+            catch (TaskCanceledException ex)
+            {
+                Message = $"Tiempo de espera agotado: {ex.Message}";
+                MessageColor = Colors.Red;
+                Console.WriteLine($"[LoginAsync] TaskCanceledException (timeout): {ex}");
+            }
+            catch (Exception ex)
+            {
+                Message = $"Error inesperado: {ex.Message}";
+                MessageColor = Colors.Red;
+                Console.WriteLine($"[LoginAsync] Exception inesperada: {ex}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
+
+
+
     }
 }
 

@@ -19,6 +19,9 @@ namespace SchoolProyectApp
             Routing.RegisterRoute("schedule", typeof(SchedulePage));
             Routing.RegisterRoute("evaluation", typeof(EvaluationsListPage));
             Routing.RegisterRoute("seeGrades", typeof(GradesPage));
+
+            //Ruta actividades extracurriculares
+            Routing.RegisterRoute("seeExtra", typeof(StudentActivitiesPage));
         }
         public async Task Logout()
         {

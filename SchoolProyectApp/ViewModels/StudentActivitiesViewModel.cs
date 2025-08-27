@@ -6,16 +6,39 @@ using Microsoft.Maui.Controls;
 using Microsoft.Maui.Storage;
 using SchoolProyectApp.Models;
 using SchoolProyectApp.Services;
+using System.Diagnostics;
 
 namespace SchoolProyectApp.ViewModels
 {
+    // =========================================================================
+    // CAMBIO 1: Añadimos QueryProperty para recibir el ID del hijo desde el dashboard
+    // =========================================================================
+    [QueryProperty(nameof(StudentId), "studentId")]
     public class StudentActivitiesViewModel : BaseViewModel
     {
         private readonly ApiService _apiService;
         private ObservableCollection<ExtracurricularActivity> _activities;
-        private int _currentUserId;
-        private int _currentSchoolId;
         private string _pageTitle;
+        private int _studentId; // Para recibir el ID del hijo
+
+        // =========================================================================
+        // CAMBIO 2: Creamos la propiedad StudentId.
+        // Cuando recibe un valor (del padre), dispara la carga de datos.
+        // =========================================================================
+        public int StudentId
+        {
+            get => _studentId;
+            set
+            {
+                if (_studentId != value)
+                {
+                    SetProperty(ref _studentId, value);
+                    Debug.WriteLine($"[DEBUG] StudentId recibido: {value}. Cargando datos para este estudiante.");
+                    // Carga los datos usando el ID del hijo que acabamos de recibir.
+                    _ = LoadDataForStudentAsync(value);
+                }
+            }
+        }
 
         public string PageTitle
         {
@@ -37,21 +60,31 @@ namespace SchoolProyectApp.ViewModels
         public StudentActivitiesViewModel()
         {
             _apiService = new ApiService();
-            LoadActivitiesCommand = new Command(async () => await LoadActivitiesAsync());
-            _ = LoadUserDataAndActivitiesAsync();
+            Activities = new ObservableCollection<ExtracurricularActivity>();
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
             OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
+
+            // Se dispara automáticamente solo cuando un estudiante abre su propia vista.
+            _ = LoadDataForCurrentUserAsync();
         }
 
-        private async Task LoadUserDataAndActivitiesAsync()
+        // =========================================================================
+        // CAMBIO 3: Nueva función para cargar datos cuando el padre navega.
+        // =========================================================================
+        private async Task LoadDataForStudentAsync(int studentId)
         {
+            if (studentId == 0) return;
             IsBusy = true;
             try
             {
-                await LoadUserDataAsync();
-                await SetPageTitleAsync();
-                await LoadActivitiesAsync();
+                await SetPageTitleAsync(studentId);
+                await LoadActivitiesAsync(studentId);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ERROR] Falló LoadDataForStudentAsync: {ex.Message}");
+                Message = "Error al cargar los datos del estudiante.";
             }
             finally
             {
@@ -59,63 +92,83 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
-        private async Task SetPageTitleAsync()
+        // =========================================================================
+        // CAMBIO 4: Lógica original, ahora en su propia función.
+        // Se ejecuta solo si no se ha recibido un StudentId (vista del estudiante).
+        // =========================================================================
+        private async Task LoadDataForCurrentUserAsync()
         {
-            var user = await _apiService.GetUserDetailsAsync(_currentUserId);
-            if (user != null)
+            // Si ya se cargaron datos para un hijo (vista de padre), no hagas nada.
+            if (StudentId > 0)
             {
-                PageTitle = $"{user.UserName}";
-            }
-            else
-            {
-                PageTitle = "Actividades Extracurriculares";
-            }
-        }
-
-        private async Task LoadUserDataAsync()
-        {
-            var userIdString = await SecureStorage.GetAsync("user_id");
-            var schoolIdString = await SecureStorage.GetAsync("school_id");
-
-            if (!string.IsNullOrEmpty(userIdString) && int.TryParse(userIdString, out int userId))
-            {
-                _currentUserId = userId;
-            }
-            if (!string.IsNullOrEmpty(schoolIdString) && int.TryParse(schoolIdString, out int schoolId))
-            {
-                _currentSchoolId = schoolId;
-            }
-        }
-
-        private async Task LoadActivitiesAsync()
-        {
-            if (_currentUserId == 0)
-            {
-                Message = "No se pudo obtener el ID del usuario.";
+                Debug.WriteLine("[DEBUG] Se omite la carga para el usuario actual porque ya se cargó para un StudentId.");
                 return;
             }
 
             IsBusy = true;
             try
             {
-                var enrolledActivities = await _apiService.GetStudentActivitiesAsync(_currentUserId);
-                if (enrolledActivities != null)
+                var userIdString = await SecureStorage.GetAsync("user_id");
+                if (!string.IsNullOrEmpty(userIdString) && int.TryParse(userIdString, out int currentUserId))
                 {
-                    Activities = new ObservableCollection<ExtracurricularActivity>(enrolledActivities);
-                    if (enrolledActivities.Count == 0)
-                    {
-                        Message = "No estás inscrito en ninguna actividad.";
-                    }
+                    await SetPageTitleAsync(currentUserId);
+                    await LoadActivitiesAsync(currentUserId);
                 }
                 else
                 {
-                    Activities = new ObservableCollection<ExtracurricularActivity>();
-                    Message = "No se pudieron cargar las actividades.";
+                    Message = "No se pudo identificar al usuario.";
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ERROR] Falló LoadDataForCurrentUserAsync: {ex.Message}");
+                Message = "Error al cargar tus datos.";
             }
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        // =========================================================================
+        // CAMBIO 5: Ambos métodos de carga ahora usan el mismo método base con un ID.
+        // =========================================================================
+        private async Task SetPageTitleAsync(int userId)
+        {
+            var user = await _apiService.GetUserDetailsAsync(userId);
+            PageTitle = user != null ? user.UserName : "Actividades";
+        }
+
+        private async Task LoadActivitiesAsync(int userId)
+        {
+            if (userId == 0)
+            {
+                Message = "ID de usuario no válido.";
+                return;
+            }
+
+            try
+            {
+                var enrolledActivities = await _apiService.GetStudentActivitiesAsync(userId);
+                if (enrolledActivities != null && enrolledActivities.Any())
+                {
+                    Activities.Clear();
+                    foreach (var activity in enrolledActivities)
+                    {
+                        Activities.Add(activity);
+                    }
+                    Message = string.Empty;
+                }
+                else
+                {
+                    Activities.Clear();
+                    Message = "No hay actividades inscritas.";
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ERROR] Falló LoadActivitiesAsync: {ex.Message}");
+                Message = "No se pudieron cargar las actividades.";
             }
         }
     }

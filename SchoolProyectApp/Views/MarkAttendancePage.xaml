@@ -8,14 +8,15 @@
              x:Class="SchoolProyectApp.Views.MarkAttendancePage"
              Title="Marcar Asistencia"
              droid:NavigationBar.Color="white"
-             droid:NavigationBar.Style="LightContent">
+             droid:NavigationBar.Style="LightContent"
+             BackgroundColor="{Binding PageBackgroundColor}">
 
 	<ContentPage.BindingContext>
 		<local:MarkAttendanceViewModel />
 	</ContentPage.BindingContext>
 
 	<ContentPage.Behaviors>
-		<toolkit:StatusBarBehavior StatusBarColor="#0C4251"
+		<toolkit:StatusBarBehavior StatusBarColor="{Binding PrimaryColor}"
                                    StatusBarStyle="LightContent" />
 	</ContentPage.Behaviors>
 
@@ -32,7 +33,7 @@
 
 				<StackLayout Grid.Row="0" Padding="20" Spacing="15">
 					<Label Text="Marcar Asistencia" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
-					<ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Color="Blue" />
+					<ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Color="{Binding SecondaryColor}" />
 					<Frame CornerRadius="10" Padding="10" BorderColor="LightGray" HasShadow="True">
 						<Picker Title="Selecciona una Actividad" ItemsSource="{Binding Activities}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedActivity}" />
 					</Frame>
@@ -48,7 +49,7 @@
 							</DataTemplate>
 						</CollectionView.ItemTemplate>
 					</CollectionView>
-					<Button Text="Guardar Asistencia" Command="{Binding SaveAttendanceCommand}" CornerRadius="10" Margin="0,20,0,0" BackgroundColor="Blue" TextColor="White" FontSize="18"
+					<Button Text="Guardar Asistencia" Command="{Binding SaveAttendanceCommand}" CornerRadius="10" Margin="0,20,0,0" BackgroundColor="{Binding SecondaryColor}" TextColor="{Binding TextColor}" FontSize="18"
                             VerticalOptions="EndAndExpand"/>
 				</StackLayout>
 
@@ -61,19 +62,19 @@
 
 					<StackLayout Grid.Column="0" HorizontalOptions="Center">
 						<Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
+                                TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
 						<Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
 					</StackLayout>
 
 					<StackLayout Grid.Column="1" HorizontalOptions="Center">
 						<Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
+                                TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
 						<Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
 					</StackLayout>
 
 					<StackLayout Grid.Column="2" HorizontalOptions="Center">
 						<Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="#0C4251" BackgroundColor="WhiteSmoke"
+                                TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke"
                                 Clicked="MenuButton_Clicked" />
 						<Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
 					</StackLayout>
@@ -83,7 +84,7 @@
 
 		<ContentView x:Name="SideMenu"
                      WidthRequest="260"
-                     BackgroundColor="#0C4251"
+                     BackgroundColor="{Binding PrimaryColor}"
                      IsVisible="False"
                      TranslationX="-260"
                      AbsoluteLayout.LayoutBounds="0,0,260,1"

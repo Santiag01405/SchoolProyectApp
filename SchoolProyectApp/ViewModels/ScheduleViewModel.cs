@@ -23,7 +23,67 @@ namespace SchoolProyectApp.ViewModels
         public ICommand RefreshCommand { get; }
         public ICommand GoBackCommand { get; }
 
-        
+        // Propiedades de colores
+        private Color _primaryColor;
+        public Color PrimaryColor
+        {
+            get => _primaryColor;
+            set => SetProperty(ref _primaryColor, value);
+        }
+
+        private Color _accentColor;
+        public Color AccentColor
+        {
+            get => _accentColor;
+            set => SetProperty(ref _accentColor, value);
+        }
+
+        private Color _pageBackgroundColor;
+        public Color PageBackgroundColor
+        {
+            get => _pageBackgroundColor;
+            set => SetProperty(ref _pageBackgroundColor, value);
+        }
+
+        private Color _dayButtonTextColor;
+        public Color DayButtonTextColor
+        {
+            get => _dayButtonTextColor;
+            set => SetProperty(ref _dayButtonTextColor, value);
+        }
+
+        private Color _dayButtonBackgroundColor;
+        public Color DayButtonBackgroundColor
+        {
+            get => _dayButtonBackgroundColor;
+            set => SetProperty(ref _dayButtonBackgroundColor, value);
+        }
+
+        private async Task LoadThemeAsync()
+        {
+            var schoolIdStr = await SecureStorage.GetAsync("school_id");
+            if (int.TryParse(schoolIdStr, out int schoolId))
+            {
+                // 🎨 aplicar colores dinámicos
+                if (schoolId == 5)
+                {
+                    PrimaryColor = Color.FromArgb("#0d4483");
+                    AccentColor = Color.FromArgb("#f1c864");
+                    PageBackgroundColor = Colors.White;
+                    DayButtonTextColor = Color.FromArgb("#0d4483");
+                    DayButtonBackgroundColor = Colors.White;
+                }
+                else
+                {
+                    PrimaryColor = Color.FromArgb("#0C4251");
+                    AccentColor = Color.FromArgb("#f1c864");
+                    PageBackgroundColor = Colors.White;
+                    DayButtonTextColor = Color.FromArgb("#0C4251");
+                    DayButtonBackgroundColor = Colors.White;
+                }
+            }
+        }
+
 
         public ICommand HomeCommand { get; }
         public ICommand FirstProfileCommand { get; }
@@ -40,6 +100,7 @@ namespace SchoolProyectApp.ViewModels
 
         public ScheduleViewModel()
         {
+
             _apiService = new ApiService();
             RefreshCommand = new Command(async () => await LoadWeeklySchedule());
             GoBackCommand = new Command(async () => await GoBackAsync());
@@ -71,6 +132,12 @@ namespace SchoolProyectApp.ViewModels
             // Día actual (si es domingo -> lunes)
             SelectedDay = (int)DateTime.Now.DayOfWeek;
             if (SelectedDay == 0) SelectedDay = 1;
+
+            // ----- AÑADE ESTAS DOS LÍNEAS AQUÍ -----
+            _ = LoadThemeAsync();
+            _ = LoadWeeklySchedule();
+
+
         }
 
         #region Properties

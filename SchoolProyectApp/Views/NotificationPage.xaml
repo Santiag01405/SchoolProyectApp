@@ -10,7 +10,8 @@
              x:Class="SchoolProyectApp.Views.NotificationPage"
              Title="Notificaciones"
              droid:NavigationBar.Color="white"
-             droid:NavigationBar.Style="LightContent">
+             droid:NavigationBar.Style="LightContent"
+             BackgroundColor="{Binding PageBackgroundColor}">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -31,12 +32,12 @@
                                 </SwipeItem>
                             </SwipeItems>
                         </SwipeView.RightItems>
-                        <Frame Padding="10" Margin="5" CornerRadius="10" BackgroundColor="#0C4251" BorderColor="#0C4251">
+                        <Frame Padding="10" Margin="5" CornerRadius="10" BackgroundColor="{Binding AccentColor}" BorderColor="{Binding AccentColor}">
                             <Grid>
                                 <StackLayout>
-                                    <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" TextColor="#f1c864"/>
-                                    <Label Text="{Binding Content}" FontSize="14" TextColor="#6bbdda"/>
-                                    <Label Text="{Binding Date, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}" FontSize="12" TextColor="White"/>
+                                    <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" TextColor="{Binding AccentColor}"/>
+                                    <Label Text="{Binding Content}" FontSize="14" TextColor="{Binding SecondaryColor}"/>
+                                    <Label Text="{Binding Date, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}" FontSize="12" TextColor="{Binding TextColor}"/>
                                 </StackLayout>
 
                                 <StackLayout Orientation="Horizontal"
@@ -77,20 +78,20 @@
                                 </SwipeItem>
                             </SwipeItems>
                         </SwipeView.RightItems>
-                        <Frame Padding="10" Margin="5" BorderColor="#0C4251" CornerRadius="10" BackgroundColor="#0C4251">
+                        <Frame Padding="10" Margin="5" BorderColor="{Binding AccentColor}" CornerRadius="10" BackgroundColor="{Binding AccentColor}">
                             <StackLayout>
                                 <Label Text="Asistencia de su representado"
                                    FontSize="18"
                                    FontAttributes="Bold"
-                                   TextColor="#f1c864" />
+                                   TextColor="{Binding AccentColor}" />
 
                                                         <Label Text="{Binding ContentText}"
                                    FontSize="14"
-                                   TextColor="#6bbdda" />
+                                   TextColor="{Binding SecondaryColor}" />
 
                                                     <Label Text="{Binding Date, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}"
                                    FontSize="12"
-                                   TextColor="White" /> 
+                                   TextColor="{Binding TextColor}" /> 
                             </StackLayout>
 
                         </Frame>
@@ -107,7 +108,7 @@
 
 
     <ContentPage.Behaviors>
-        <toolkit:StatusBarBehavior StatusBarColor="White" StatusBarStyle="LightContent" />
+        <toolkit:StatusBarBehavior StatusBarColor="{Binding PageBackgroundColor}" StatusBarStyle="LightContent" />
     </ContentPage.Behaviors>
 
     <AbsoluteLayout>
@@ -118,14 +119,14 @@
 
                 <!-- Header y pestañas -->
                 <StackLayout Grid.Row="0" Padding="20,10,20,0" Margin="0,30,0,0">
-                    <Label Text="Notificaciones" FontSize="30" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,0,0,30" TextColor="#0C4251"/>
+                    <Label Text="Notificaciones" FontSize="30" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,0,0,30" TextColor="{Binding PrimaryColor}"/>
                     <Grid ColumnDefinitions="*,*" HorizontalOptions="FillAndExpand" HeightRequest="40">
                         <Button Text="Avisos"
                                 Grid.Column="0"
                                 Command="{Binding SwitchTabCommand}"
                                 CommandParameter="Normales"
                                 BackgroundColor="{Binding SelectedTab, Converter={StaticResource TabBackgroundConverter}, ConverterParameter=Normales}"
-                                TextColor="White"
+                                TextColor="{Binding TextColor}"
                                 CornerRadius="10"
                                 FontAttributes="Bold"
                                 Margin="5,0,5,0"
@@ -135,7 +136,7 @@
                                 Command="{Binding SwitchTabCommand}"
                                 CommandParameter="Asistencia"
                                 BackgroundColor="{Binding SelectedTab, Converter={StaticResource TabBackgroundConverter}, ConverterParameter=Asistencia}"
-                                TextColor="White"
+                                TextColor="{Binding TextColor}"
                                 CornerRadius="10"
                                 FontAttributes="Bold" 
                                 Margin="5,0,5,0"
@@ -180,19 +181,19 @@
 
                     <StackLayout Grid.Column="0" HorizontalOptions="Center">
                         <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
+                                TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
                         <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
                     </StackLayout>
 
                     <StackLayout Grid.Column="1" HorizontalOptions="Center">
                         <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
+                                TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
                         <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
                     </StackLayout>
 
                     <StackLayout Grid.Column="2" HorizontalOptions="Center">
                         <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Clicked="MenuButton_Clicked" />
+                                TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke" Clicked="MenuButton_Clicked" />
                         <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
                     </StackLayout>
                 </Grid>
@@ -202,7 +203,7 @@
         <!-- Menú lateral -->
         <ContentView x:Name="SideMenu"
                      WidthRequest="260"
-                     BackgroundColor="#0C4251"
+                     BackgroundColor="{Binding AccentColor}"
                      IsVisible="False"
                      TranslationX="-260"
                      AbsoluteLayout.LayoutBounds="0,0,260,1"

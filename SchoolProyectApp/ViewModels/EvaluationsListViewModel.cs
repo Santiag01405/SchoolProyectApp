@@ -73,6 +73,42 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+        // Propiedades de colores
+        private Color _primaryColor;
+        public Color PrimaryColor
+        {
+            get => _primaryColor;
+            set => SetProperty(ref _primaryColor, value);
+        }
+
+        private Color _secondaryColor;
+        public Color SecondaryColor
+        {
+            get => _secondaryColor;
+            set => SetProperty(ref _secondaryColor, value);
+        }
+
+        private Color _accentColor;
+        public Color AccentColor
+        {
+            get => _accentColor;
+            set => SetProperty(ref _accentColor, value);
+        }
+
+        private Color _textColor;
+        public Color TextColor
+        {
+            get => _textColor;
+            set => SetProperty(ref _textColor, value);
+        }
+
+        private Color _pageBackgroundColor;
+        public Color PageBackgroundColor
+        {
+            get => _pageBackgroundColor;
+            set => SetProperty(ref _pageBackgroundColor, value);
+        }
+
         public int RoleID
         {
             get => _roleId;
@@ -219,6 +255,25 @@ namespace SchoolProyectApp.ViewModels
                     var user = await _apiService.GetUserDetailsAsync(userId);
                     if (user != null)
                     {
+                        var schoolId = user.SchoolID;
+                        // 🎨 aplicar colores dinámicos
+                        if (schoolId == 5)
+                        {
+                            PrimaryColor = Color.FromArgb("#0d4483");
+                            SecondaryColor = Color.FromArgb("#0098da");
+                            AccentColor = Color.FromArgb("#f1c864");
+                            TextColor = Colors.White;
+                            PageBackgroundColor = Colors.White;
+                        }
+                        else
+                        {
+                            PrimaryColor = Color.FromArgb("#0C4251");
+                            SecondaryColor = Color.FromArgb("#6bbdda");
+                            AccentColor = Color.FromArgb("#f1c864");
+                            TextColor = Colors.White;
+                            PageBackgroundColor = Colors.White;
+                        }
+
                         RoleID = user.RoleID;
                     }
                 }

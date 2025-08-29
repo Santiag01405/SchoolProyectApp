@@ -4,25 +4,26 @@
              xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
              x:Class="SchoolProyectApp.Views.ChildDashboardPage"
              Shell.NavBarIsVisible="False"
-             x:Name="ThisChildDashboardPage">
+             x:Name="ThisChildDashboardPage"
+			 BackgroundColor="{Binding PageBackgroundColor}">
 
 	<ContentPage.BindingContext>
 		<vm:ChildDashboardViewModel />
 	</ContentPage.BindingContext>
 
 	<Grid RowDefinitions="Auto, *">
-		<Grid Grid.Row="0" ColumnDefinitions="Auto, *" BackgroundColor="#0C4251" Padding="10">
+		<Grid Grid.Row="0" ColumnDefinitions="Auto, *" BackgroundColor="{Binding PrimaryColor}" Padding="10">
 			<Button Grid.Column="0"
 				Text="&#xf060;"
 				FontFamily="FontAwesomeSolid" FontSize="24"
-				TextColor="White"
+				TextColor="{Binding TextColor}"
 				BackgroundColor="Transparent"
 				BorderWidth="0"
 				Command="{Binding GoBackCommand}"
 				VerticalOptions="Center"/>
 
 			<Label Grid.Column="1"
-				   Text="{Binding ChildName, StringFormat='Dashboard de {0}'}" TextColor="White" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+				   Text="{Binding ChildName, StringFormat='Dashboard de {0}'}" TextColor="{Binding TextColor}" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
 		</Grid>
 
         <ScrollView Grid.Row="1">
@@ -30,14 +31,14 @@
 
                 <!-- Horario -->
                 <Frame Padding="20" CornerRadius="10" HasShadow="True"
-               BackgroundColor="White">
+               BackgroundColor="{Binding PageBackgroundColor}">
                     <Frame.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding GoToScheduleCommand}" />
                     </Frame.GestureRecognizers>
 
                     <VerticalStackLayout Spacing="10">
                         <Label Text="&#xf073;" FontFamily="FontAwesomeSolid" FontSize="40" 
-                       HorizontalOptions="Center" TextColor="#0C4251"/>
+                       HorizontalOptions="Center" TextColor="{Binding PrimaryColor}"/>
                         <Label Text="Horario" FontSize="18" FontAttributes="Bold" 
                        HorizontalOptions="Center"/>
                     </VerticalStackLayout>
@@ -45,14 +46,14 @@
 
                 <!-- Evaluaciones -->
                 <Frame Padding="20" CornerRadius="10" HasShadow="True"
-               BackgroundColor="White">
+               BackgroundColor="{Binding PageBackgroundColor}">
                     <Frame.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding GoToEvaluationsCommand}" />
                     </Frame.GestureRecognizers>
 
                     <VerticalStackLayout Spacing="10">
                         <Label Text="&#xf0f6;" FontFamily="FontAwesomeSolid" FontSize="40" 
-                       HorizontalOptions="Center" TextColor="#0C4251"/>
+                       HorizontalOptions="Center" TextColor="{Binding PrimaryColor}"/>
                         <Label Text="Evaluaciones" FontSize="18" FontAttributes="Bold" 
                        HorizontalOptions="Center"/>
                     </VerticalStackLayout>
@@ -60,14 +61,14 @@
 
                 <!-- Calificaciones -->
                 <Frame Padding="20" CornerRadius="10" HasShadow="True"
-               BackgroundColor="White">
+               BackgroundColor="{Binding PageBackgroundColor}">
                     <Frame.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding GoToGradesCommand}" />
                     </Frame.GestureRecognizers>
 
                     <VerticalStackLayout Spacing="10">
                         <Label Text="&#xf19d;" FontFamily="FontAwesomeSolid" FontSize="40" 
-                       HorizontalOptions="Center" TextColor="#0C4251"/>
+                       HorizontalOptions="Center" TextColor="{Binding PrimaryColor}"/>
                         <Label Text="Calificaciones" FontSize="18" FontAttributes="Bold" 
                        HorizontalOptions="Center"/>
                     </VerticalStackLayout>
@@ -75,14 +76,14 @@
                 
                 <!--ACTIVIDADES EXTRACURRICULARES-->
                 <Frame Padding="20" CornerRadius="10" HasShadow="True"
-       BackgroundColor="White">
+       BackgroundColor="{Binding PageBackgroundColor}">
                     <Frame.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding GoToExtraActivitiesCommand}" />
                     </Frame.GestureRecognizers>
 
                     <VerticalStackLayout Spacing="10">
                         <Label Text="&#xf1ae;" FontFamily="FontAwesomeSolid" FontSize="40" 
-               HorizontalOptions="Center" TextColor="#0C4251"/>
+               HorizontalOptions="Center" TextColor="{Binding PrimaryColor}"/>
                         <Label Text="Actividades Extra" FontSize="18" FontAttributes="Bold" 
                HorizontalOptions="Center"/>
                     </VerticalStackLayout>

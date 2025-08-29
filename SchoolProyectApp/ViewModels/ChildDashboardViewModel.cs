@@ -24,6 +24,28 @@ namespace SchoolProyectApp.ViewModels
             set => SetProperty(ref _childName, value);
         }
 
+        // Propiedades de colores
+        private Color _primaryColor;
+        public Color PrimaryColor
+        {
+            get => _primaryColor;
+            set => SetProperty(ref _primaryColor, value);
+        }
+
+        private Color _textColor;
+        public Color TextColor
+        {
+            get => _textColor;
+            set => SetProperty(ref _textColor, value);
+        }
+
+        private Color _pageBackgroundColor;
+        public Color PageBackgroundColor
+        {
+            get => _pageBackgroundColor;
+            set => SetProperty(ref _pageBackgroundColor, value);
+        }
+
         public ICommand GoToScheduleCommand { get; }
         public ICommand GoToEvaluationsCommand { get; }
         public ICommand GoToGradesCommand { get; }
@@ -32,6 +54,8 @@ namespace SchoolProyectApp.ViewModels
 
         public ChildDashboardViewModel()
         {
+            Task.Run(async () => await InitializeAsync());
+
             Debug.WriteLine("DEBUG: ChildDashboardViewModel constructor llamado.");
 
             GoToScheduleCommand = new Command(async () => {
@@ -65,6 +89,27 @@ namespace SchoolProyectApp.ViewModels
             });
         }
 
+        private async Task InitializeAsync()
+        {
+            var schoolIdStr = await SecureStorage.GetAsync("school_id");
+            if (int.TryParse(schoolIdStr, out int schoolId))
+            {
+                // 🎨 aplicar colores dinámicos
+                if (schoolId == 5)
+                {
+                    PrimaryColor = Color.FromArgb("#0d4483");
+                    TextColor = Colors.White;
+                    PageBackgroundColor = Color.FromArgb("#f0f2f5"); // Un gris claro para el fondo
+                }
+                else
+                {
+                    PrimaryColor = Color.FromArgb("#0C4251");
+                    TextColor = Colors.White;
+                    PageBackgroundColor = Colors.White;
+                }
+            }
+        }
+
 
         private async Task NavigateToChildPage(string route)
         {
@@ -91,6 +136,8 @@ namespace SchoolProyectApp.ViewModels
                 Debug.WriteLine($"❌ Error al navegar a la página '{route}': {ex.Message}");
                 await Application.Current.MainPage!.DisplayAlert("Error", "No se pudo abrir esta sección: " + ex.Message, "OK");
             }
+
+
         }
     }
 }

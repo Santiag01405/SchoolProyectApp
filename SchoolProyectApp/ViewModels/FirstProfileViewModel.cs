@@ -80,6 +80,34 @@ namespace SchoolProyectApp.ViewModels
                 OnPropertyChanged();
             }
         }
+        // Propiedades de colores
+        private Color _primaryColor;
+        public Color PrimaryColor
+        {
+            get => _primaryColor;
+            set => SetProperty(ref _primaryColor, value);
+        }
+
+        private Color _secondaryColor;
+        public Color SecondaryColor
+        {
+            get => _secondaryColor;
+            set => SetProperty(ref _secondaryColor, value);
+        }
+
+        private Color _accentColor;
+        public Color AccentColor
+        {
+            get => _accentColor;
+            set => SetProperty(ref _accentColor, value);
+        }
+
+        private Color _pageBackgroundColor;
+        public Color PageBackgroundColor
+        {
+            get => _pageBackgroundColor;
+            set => SetProperty(ref _pageBackgroundColor, value);
+        }
 
         public ICommand NavigateToProfileCommand { get; }
         public ICommand HomeCommand { get; }
@@ -113,6 +141,24 @@ namespace SchoolProyectApp.ViewModels
 
                 if (user != null)
                 {
+                    var schoolId = user.SchoolID;
+
+                    // 🎨 aplicar colores dinámicos
+                    if (schoolId == 5)
+                    {
+                        PrimaryColor = Color.FromArgb("#0d4483");
+                        SecondaryColor = Color.FromArgb("#0098da");
+                        AccentColor = Color.FromArgb("#f1c864"); // Se mantiene el acento dorado
+                        PageBackgroundColor = Colors.White;
+                    }
+                    else
+                    {
+                        PrimaryColor = Color.FromArgb("#0C4251");
+                        SecondaryColor = Color.FromArgb("#6bbdda");
+                        AccentColor = Color.FromArgb("#f1c864");
+                        PageBackgroundColor = Colors.White;
+                    }
+
                     UserName = user.UserName;
                     Email = user.Email;
                     Role = user.RoleID == 1 ? "Estudiante" : user.RoleID == 2 ? "Profesor" : user.RoleID == 3 ? "Padre" : "Desconocido";

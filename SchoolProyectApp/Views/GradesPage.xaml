@@ -25,18 +25,22 @@
                      AbsoluteLayout.LayoutFlags="WidthProportional,HeightProportional">
             <ScrollView>
                 <StackLayout Padding="20" Spacing="15">
+
                     <Label Text="Mis Calificaciones"
                            FontSize="30"
                            FontAttributes="Bold"
                            TextColor="#0C4251"
                            HorizontalOptions="Center"
                            Margin="0,20,0,0" />
+
+                    <!-- Promedio general -->
                     <Label Text="{Binding StudentOverallAverage, StringFormat='Promedio General: {0}'}"
                            FontSize="18"
                            TextColor="#0C4251"
                            HorizontalOptions="Center"
                            Margin="0,20,0,0" />
 
+                    <!-- Selector de lapso -->
                     <Picker Title="Selecciona un lapso"
                             ItemsSource="{Binding Lapsos}"
                             SelectedItem="{Binding SelectedLapso}"
@@ -44,6 +48,7 @@
                             TextColor="#0C4251"
                             HorizontalOptions="FillAndExpand" />
 
+                    <!-- Promedio del lapso -->
                     <Label Text="{Binding StudentLapsoAverage, StringFormat='Promedio del lapso: {0}'}"
                            FontSize="18"
                            TextColor="#0C4251"
@@ -51,6 +56,7 @@
                            HorizontalOptions="Center"
                            Margin="0,0,0,0" />
 
+                    <!-- Calificaciones agrupadas por curso -->
                     <CollectionView ItemsSource="{Binding GradesByCourse}" Margin="0,10,0,0">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
@@ -62,20 +68,45 @@
                                                    FontSize="18"
                                                    TextColor="#0C4251" />
                                             <BoxView HeightRequest="1" Color="#0C4251" Margin="0,5" />
+
+                                            <!-- Items del curso -->
                                             <CollectionView ItemsSource="{Binding Calificaciones}">
                                                 <CollectionView.ItemTemplate>
                                                     <DataTemplate>
-                                                        <Grid Padding="5,0,5,0">
+
+                                                        <!-- Dos filas: 1) evaluación + nota, 2) comentario (si hay) -->
+                                                        <Grid Padding="5,4" ColumnSpacing="8" RowSpacing="2">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto" />
+                                                                <RowDefinition Height="Auto" />
+                                                            </Grid.RowDefinitions>
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition Width="*" />
                                                                 <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
-                                                            <Label Grid.Column="0" Text="{Binding Evaluacion}"
-                                                                   TextColor="#0C4251" />
-                                                            <Label Grid.Column="1" Text="{Binding GradeValue, StringFormat='{0:F2}'}"
-                                                                   TextColor="#0C4251"
-                                                                   FontAttributes="Bold" />
+
+                                                            <!-- Evaluación -->
+                                                            <!-- Evaluación -->
+                                                            <Label Grid.Row="0" Grid.Column="0"
+       Text="{Binding Evaluacion}"
+       TextColor="#0C4251" />
+
+                                                            <!-- ÚNICO: nota (numérica o texto) -->
+                                                            <Label Grid.Row="0" Grid.Column="1"
+       Text="{Binding DisplayGrade}"
+       TextColor="#0C4251"
+       FontAttributes="Bold"
+       HorizontalTextAlignment="End"
+       HorizontalOptions="End" />
+
+
+                                                            <!-- Comentarios (si hay texto, ocupa altura; si no, no ocupa espacio) -->
+                                                            <Label Grid.Row="1" Grid.ColumnSpan="2"
+                                                                   Text="{Binding Comments}"
+                                                                   TextColor="#37474F"
+                                                                   FontSize="13" />
                                                         </Grid>
+
                                                     </DataTemplate>
                                                 </CollectionView.ItemTemplate>
                                             </CollectionView>
@@ -89,6 +120,7 @@
             </ScrollView>
         </ContentView>
 
+        <!-- Menú lateral -->
         <ContentView x:Name="SideMenu"
                      WidthRequest="260"
                      BackgroundColor="#0C4251"
@@ -99,6 +131,7 @@
             <local:MenuPage />
         </ContentView>
 
+        <!-- Barra inferior -->
         <Grid BackgroundColor="WhiteSmoke" Padding="10"
               AbsoluteLayout.LayoutBounds="0,1,1,80"
               AbsoluteLayout.LayoutFlags="WidthProportional,PositionProportional">
@@ -129,3 +162,4 @@
         </Grid>
     </AbsoluteLayout>
 </ContentPage>
+    

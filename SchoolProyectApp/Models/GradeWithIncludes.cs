@@ -1,6 +1,4 @@
-﻿// SchoolProyectApp/Models/GradeWithIncludes.cs
-
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace SchoolProyectApp.Models
 {
@@ -16,18 +14,20 @@ namespace SchoolProyectApp.Models
         public int CourseID { get; set; }
 
         [JsonPropertyName("evaluationID")]
-        public int EvaluationID { get; set; }
+        public int? EvaluationID { get; set; }
 
         [JsonPropertyName("schoolID")]
         public int SchoolID { get; set; }
 
         [JsonPropertyName("gradeValue")]
-        public double GradeValue { get; set; }
+        public decimal? GradeValue { get; set; }   // 👈 nullable
+
+        [JsonPropertyName("gradeText")]
+        public string? GradeText { get; set; }     // 👈 NUEVO
 
         [JsonPropertyName("comments")]
-        public string Comments { get; set; }
+        public string? Comments { get; set; }
 
-        // Propiedades para los objetos anidados
         [JsonPropertyName("course")]
         public Course Course { get; set; }
 

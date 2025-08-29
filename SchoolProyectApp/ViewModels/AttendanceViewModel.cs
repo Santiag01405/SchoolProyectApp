@@ -11,6 +11,7 @@ namespace SchoolProyectApp.ViewModels
     public class AttendanceViewModel : BaseViewModel
     {
         private readonly ApiService _apiService;
+        private int _schoolId;
 
         public ObservableCollection<Course> Courses { get; set; } = new();
         public ObservableCollection<StudentViewModel> Students { get; set; } = new();
@@ -40,6 +41,35 @@ namespace SchoolProyectApp.ViewModels
                 _selectedStudent = value;
                 OnPropertyChanged();
             }
+        }
+
+        // Propiedades de colores
+        private Color _primaryColor;
+        public Color PrimaryColor
+        {
+            get => _primaryColor;
+            set => SetProperty(ref _primaryColor, value);
+        }
+
+        private Color _secondaryColor;
+        public Color SecondaryColor
+        {
+            get => _secondaryColor;
+            set => SetProperty(ref _secondaryColor, value);
+        }
+
+        private Color _pageBackgroundColor;
+        public Color PageBackgroundColor
+        {
+            get => _pageBackgroundColor;
+            set => SetProperty(ref _pageBackgroundColor, value);
+        }
+
+        private Color _dangerColor;
+        public Color DangerColor
+        {
+            get => _dangerColor;
+            set => SetProperty(ref _dangerColor, value);
         }
 
         public ICommand LoadCoursesCommand { get; }
@@ -72,7 +102,7 @@ namespace SchoolProyectApp.ViewModels
 
 
 
-            Task.Run(async () => await LoadCoursesAsync());
+            Task.Run(async () => await InitializeAsync());
         }
 
         private async Task LoadCoursesAsync()
@@ -138,6 +168,30 @@ namespace SchoolProyectApp.ViewModels
                 await Application.Current.MainPage.DisplayAlert("✔", "Asistencia registrada", "OK");
             else
                 await Application.Current.MainPage.DisplayAlert("❌", "Error al registrar asistencia", "OK");
+        }
+
+        private async Task InitializeAsync()
+        {
+            var schoolIdStr = await SecureStorage.GetAsync("school_id");
+            if (int.TryParse(schoolIdStr, out _schoolId))
+            {
+                // 🎨 aplicar colores dinámicos
+                if (_schoolId == 5)
+                {
+                    PrimaryColor = Color.FromArgb("#0d4483");
+                    SecondaryColor = Color.FromArgb("#0098da");
+                    PageBackgroundColor = Colors.White;
+                    DangerColor = Color.FromArgb("#E53935"); // Un rojo más intenso para el tema
+                }
+                else
+                {
+                    PrimaryColor = Color.FromArgb("#0C4251");
+                    SecondaryColor = Color.FromArgb("#6bbdda");
+                    PageBackgroundColor = Colors.White;
+                    DangerColor = Colors.LightCoral;
+                }
+            }
+            await LoadCoursesAsync();
         }
     }
 

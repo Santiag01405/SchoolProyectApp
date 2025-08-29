@@ -8,12 +8,13 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
              droid:NavigationBar.Color="white"
+             BackgroundColor="{Binding PageBackgroundColor}"
              droid:NavigationBar.Style="LightContent"
              x:Name="ThisPage">
 
     <ContentPage.Behaviors>
-        <toolkit:StatusBarBehavior StatusBarColor="#0C4251"
-                                     StatusBarStyle="LightContent" />
+        <toolkit:StatusBarBehavior StatusBarColor="{Binding PrimaryColor}"
+                           StatusBarStyle="LightContent" />
     </ContentPage.Behaviors>
 
     <ContentPage.BindingContext>
@@ -22,7 +23,7 @@
 
     <AbsoluteLayout>
 
-        <BoxView Color="#0C4251"
+        <BoxView Color="{Binding PrimaryColor}"
                  AbsoluteLayout.LayoutBounds="0,0,1,70"
                  AbsoluteLayout.LayoutFlags="WidthProportional" />
 
@@ -39,22 +40,24 @@
             <Grid Padding="0" RowDefinitions="Auto,*,Auto">
 
                 <Label Grid.Row="0"
-                       Text="{Binding SchoolName}"
-                       FontSize="20"
-                       FontAttributes="Bold"
-                       HorizontalOptions="Center"
-                       TextColor="#6bbdda"
-                       Margin="0,10,0,5"/>
+                   Text="{Binding SchoolName}"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="{Binding SecondaryColor}"
+                    Margin="0,10,0,5"/>
+
 
 
                 <Label Text="{Binding CurrentLapsoName}"
-               FontSize="16"
-               FontAttributes="Italic"
-               TextColor="#0C4251"
-               HorizontalOptions="Center"
-               Margin="0,50,0,5"/>
+                    FontSize="16"
+                    FontAttributes="Italic"
+                    TextColor="{Binding PrimaryColor}"
+                    HorizontalOptions="Center"
+                    Margin="0,50,0,5"/>
 
-                <Grid Grid.Row="1">
+
+                    <Grid Grid.Row="1">
 
                     <ContentView IsVisible="{Binding IsNurseAndProfessor}">
                         <StackLayout Padding="20" Spacing="15">
@@ -253,7 +256,7 @@
 
                     <StackLayout Grid.Column="2" HorizontalOptions="Center">
                         <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="#0C4251" BackgroundColor="WhiteSmoke"
+                                TextColor="{Binding PrimaryColor}"
                                 Clicked="MenuButton_Clicked" />
                         <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
                     </StackLayout>

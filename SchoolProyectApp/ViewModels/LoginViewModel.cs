@@ -219,10 +219,3 @@ namespace SchoolProyectApp.ViewModels
 
     }
 }
-
-
-
-
-
-
-

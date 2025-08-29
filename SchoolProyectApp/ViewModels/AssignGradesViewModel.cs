@@ -10,6 +10,7 @@ namespace SchoolProyectApp.ViewModels
     public class AssignGradesViewModel : BaseViewModel
     {
         private readonly ApiService _apiService;
+        private int _schoolId; // <-- Añade esta línea
 
         public ObservableCollection<Course> Courses { get; set; } = new();
         public ObservableCollection<Evaluation> Evaluations { get; set; } = new();
@@ -78,6 +79,30 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+        // Propiedades de colores
+        private Color _primaryColor;
+        public Color PrimaryColor
+        {
+            get => _primaryColor;
+            set => SetProperty(ref _primaryColor, value);
+        }
+
+        private Color _secondaryColor;
+        public Color SecondaryColor
+        {
+            get => _secondaryColor;
+            set => SetProperty(ref _secondaryColor, value);
+        }
+
+        private Color _pageBackgroundColor;
+        public Color PageBackgroundColor
+        {
+            get => _pageBackgroundColor;
+            set => SetProperty(ref _pageBackgroundColor, value);
+        }
+
+        
+
         public ICommand LoadCoursesCommand { get; }
         public ICommand LoadEvaluationsCommand { get; }
         public ICommand LoadStudentsCommand { get; }
@@ -85,6 +110,8 @@ namespace SchoolProyectApp.ViewModels
         public ICommand HomeCommand { get; }
         public ICommand FirstProfileCommand { get; }
         public ICommand OpenMenuCommand { get; }
+
+
 
         public AssignGradesViewModel()
         {
@@ -97,7 +124,7 @@ namespace SchoolProyectApp.ViewModels
             OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
 
-            Task.Run(async () => await LoadCoursesAsync());
+            Task.Run(async () => await InitializeAsync());
         }
 
         private async Task LoadCoursesAsync()
@@ -184,6 +211,28 @@ namespace SchoolProyectApp.ViewModels
                 await Application.Current.MainPage.DisplayAlert("✔", "Calificación asignada correctamente", "OK");
             else
                 await Application.Current.MainPage.DisplayAlert("❌", "Error al asignar calificación", "OK");
+        }
+
+        private async Task InitializeAsync()
+        {
+            var schoolIdStr = await SecureStorage.GetAsync("school_id");
+            if (int.TryParse(schoolIdStr, out _schoolId))
+            {
+                // 🎨 aplicar colores dinámicos
+                if (_schoolId == 5)
+                {
+                    PrimaryColor = Color.FromArgb("#0d4483");
+                    SecondaryColor = Color.FromArgb("#0098da");
+                    PageBackgroundColor = Colors.White;
+                }
+                else
+                {
+                    PrimaryColor = Color.FromArgb("#0C4251");
+                    SecondaryColor = Color.FromArgb("#6bbdda");
+                    PageBackgroundColor = Colors.White;
+                }
+            }
+            await LoadCoursesAsync();
         }
     }
 }

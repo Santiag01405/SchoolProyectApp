@@ -40,6 +40,36 @@ namespace SchoolProyectApp.ViewModels
         public bool IsHiddenForProfessor => !IsProfessor;
         public bool IsHiddenForStudent => !IsStudent;
 
+        // Propiedades de colores
+        private Color _primaryColor;
+        public Color PrimaryColor
+        {
+            get => _primaryColor;
+            set => SetProperty(ref _primaryColor, value);
+        }
+
+        private Color _secondaryColor;
+        public Color SecondaryColor
+        {
+            get => _secondaryColor;
+            set => SetProperty(ref _secondaryColor, value);
+        }
+
+        private Color _menuTextColor;
+        public Color MenuTextColor
+        {
+            get => _menuTextColor;
+            set => SetProperty(ref _menuTextColor, value);
+        }
+
+        private Color _iconColor;
+        public Color IconColor
+        {
+            get => _iconColor;
+            set => SetProperty(ref _iconColor, value);
+        }
+
+
         public ICommand HomeCommand { get; }
         public ICommand ProfileCommand { get; }
         public ICommand OpenMenuCommand { get; }
@@ -100,8 +130,26 @@ namespace SchoolProyectApp.ViewModels
                     if (user != null)
                     {
                         
-                        RoleID = user.RoleID; 
-                       
+                        RoleID = user.RoleID;
+                        var schoolId = user.SchoolID;
+
+                        // 🎨 aplicar colores dinámicos
+                        if (schoolId == 5)
+                        {
+                            PrimaryColor = Color.FromArgb("#0d4483");
+                            SecondaryColor = Color.FromArgb("#0098da");
+                            MenuTextColor = Colors.White;
+                            IconColor = Color.FromArgb("#f1c864"); // Manteniendo el amarillo para los íconos
+                        }
+                        else
+                        {
+                            // Colores por defecto del XAML original
+                            PrimaryColor = Color.FromArgb("#0C4251");
+                            SecondaryColor = Color.FromArgb("#6bbdda");
+                            MenuTextColor = Colors.White;
+                            IconColor = Color.FromArgb("#f1c864");
+                        }
+
 
                         // 🔹 Forzar actualización en UI
                         OnPropertyChanged(nameof(RoleID));
@@ -115,11 +163,13 @@ namespace SchoolProyectApp.ViewModels
                 {
                     RoleID = 0; // Asignar un valor por defecto si no se encuentra el usuario
                 }
+
             }
             catch (Exception ex)
             {
                 await Application.Current.MainPage.DisplayAlert("Error", "No se pudo cargar el usuario: " + ex.Message, "OK");
             }
+
         }
 
         private async Task Logout()

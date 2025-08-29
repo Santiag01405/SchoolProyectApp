@@ -8,10 +8,11 @@
              xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
              droid:NavigationBar.Color="white"
              droid:NavigationBar.Style="LightContent"
-             Title="Asignar Calificaciones">
+             Title="Asignar Calificaciones"
+			 BackgroundColor="{Binding PageBackgroundColor}">
 
 	<ContentPage.Behaviors>
-		<toolkit:StatusBarBehavior StatusBarColor="#0C4251"
+		<toolkit:StatusBarBehavior StatusBarColor="{Binding PrimaryColor}"
                                    StatusBarStyle="LightContent" />
 	</ContentPage.Behaviors>
 
@@ -21,7 +22,7 @@
 
 	<AbsoluteLayout>
 		<!-- Barra superior -->
-		<BoxView Color="#0C4251"
+		<BoxView Color="{Binding PrimaryColor}"
                  AbsoluteLayout.LayoutBounds="0,0,1,70"
                  AbsoluteLayout.LayoutFlags="WidthProportional" />
 
@@ -50,7 +51,7 @@
 					<Entry Placeholder="Calificación" Keyboard="Numeric" Text="{Binding GradeValue}"/>
 					<Editor Placeholder="Comentarios" HeightRequest="80" Text="{Binding Comments}"/>
 
-					<Button Text="Asignar Calificación" BackgroundColor="#6bbdda" Command="{Binding AssignGradeCommand}" />
+					<Button Text="Asignar Calificación" BackgroundColor="{Binding SecondaryColor}" Command="{Binding AssignGradeCommand}" />
 				</StackLayout>
 			</ScrollView>
 		</ContentView>
@@ -58,7 +59,7 @@
 		<!-- Menú lateral -->
 		<ContentView x:Name="SideMenu"
                      WidthRequest="260"
-                     BackgroundColor="#0C4251"
+                     BackgroundColor="{Binding PrimaryColor}"
                      IsVisible="False"
                      TranslationX="-260"
                      AbsoluteLayout.LayoutBounds="0,0,260,1"
@@ -78,19 +79,19 @@
 
 			<StackLayout Grid.Column="0" HorizontalOptions="Center">
 				<Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
-                        TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
+                        TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
 				<Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
 			</StackLayout>
 
 			<StackLayout Grid.Column="1" HorizontalOptions="Center">
 				<Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
-                        TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
+                        TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
 				<Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
 			</StackLayout>
 
 			<StackLayout Grid.Column="2" HorizontalOptions="Center">
 				<Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
-                        TextColor="#0C4251" BackgroundColor="WhiteSmoke"
+                        TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke"
                         Clicked="MenuButton_Clicked" />
 				<Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
 			</StackLayout>

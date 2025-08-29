@@ -8,7 +8,8 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
              droid:NavigationBar.Color="white"
-             droid:NavigationBar.Style="LightContent">
+             droid:NavigationBar.Style="LightContent"
+             BackgroundColor="{Binding PageBackgroundColor}">
 
     <ContentPage.Behaviors>
         <toolkit:StatusBarBehavior StatusBarColor="White"
@@ -37,14 +38,14 @@
                 <StackLayout Grid.Row="0" Spacing="10" Padding="20">
                     <Label Text="Marcar asistencia"
                            FontAttributes="Bold"
-                           TextColor="#0C4251"
+                           TextColor="{Binding PrimaryColor}"
                            FontSize="30"
                            HorizontalTextAlignment="Center" 
                            Margin="0,10,0,20"/>
 
                     <Label Text="Selecciona un curso:"
                            FontAttributes="Bold"
-                           TextColor="#6bbdda"
+                           TextColor="{Binding SecondaryColor}"
                            FontSize="20" 
                            Margin="0,10,0,0"/>
 
@@ -57,7 +58,7 @@
                 <StackLayout Grid.Row="1" Padding="20">
                     <Label Text="Estudiantes:"
                            FontAttributes="Bold"
-                           TextColor="#6bbdda"
+                           TextColor="{Binding SecondaryColor}"
                            FontSize="20"
                            Margin="0,0,0,0" />
 
@@ -83,7 +84,7 @@
                      Spacing="10"
                      Padding="20">
                             <Button Text="Presente"
-                    BackgroundColor="#6bbdda"
+                    BackgroundColor="{Binding SecondaryColor}"
                     WidthRequest="130"
                     HeightRequest="45"
                     FontSize="18"
@@ -92,7 +93,7 @@
                     CommandParameter="{Binding SelectedStudent}" />
 
                     <Button Text="Ausente"
-                    BackgroundColor="LightCoral"
+                    BackgroundColor="{Binding DangerColor}"
                     WidthRequest="130"
                     HeightRequest="45"
                     FontSize="18"
@@ -117,7 +118,7 @@
                         <Button Text="&#xf015;"
                                 FontFamily="FontAwesomeSolid"
                                 FontSize="24"
-                                TextColor="#0C4251"
+                                TextColor="{Binding PrimaryColor}"
                                 BackgroundColor="WhiteSmoke"
                                 Command="{Binding HomeCommand}" />
                         <Label Text="Inicio"
@@ -130,7 +131,7 @@
                         <Button Text="&#xf007;"
                                 FontFamily="FontAwesomeSolid"
                                 FontSize="24"
-                                TextColor="#0C4251"
+                                TextColor="{Binding PrimaryColor}"
                                 BackgroundColor="WhiteSmoke"
                                 Command="{Binding FirstProfileCommand}" />
                         <Label Text="Perfil"
@@ -143,7 +144,7 @@
                         <Button Text="&#xf0c9;"
                                 FontFamily="FontAwesomeSolid"
                                 FontSize="24"
-                                TextColor="#0C4251"
+                                TextColor="{Binding PrimaryColor}"
                                 BackgroundColor="WhiteSmoke"
                                 Clicked="MenuButton_Clicked" />
                         <Label Text="Menú"
@@ -157,7 +158,7 @@
         <!-- Menú lateral -->
         <ContentView x:Name="SideMenu"
                      WidthRequest="260"
-                     BackgroundColor="#0C4251"
+                     BackgroundColor="{Binding PrimaryColor}"
                      IsVisible="False"
                      TranslationX="-260"
                      AbsoluteLayout.LayoutBounds="0,0,260,1"

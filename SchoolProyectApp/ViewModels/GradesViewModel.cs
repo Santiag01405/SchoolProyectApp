@@ -183,16 +183,11 @@ namespace SchoolProyectApp.ViewModels
         }
         public async Task LoadGradesAsync()
         {
-            if (SelectedLapso == null)
-            {
-                return;
-            }
+            if (SelectedLapso == null) return;
 
             var userIdToLoad = StudentId > 0 ? StudentId.ToString() : await SecureStorage.GetAsync("user_id");
             var schoolId = await SecureStorage.GetAsync("school_id");
-
-            if (!int.TryParse(userIdToLoad, out int uId) || !int.TryParse(schoolId, out int schId))
-                return;
+            if (!int.TryParse(userIdToLoad, out int uId) || !int.TryParse(schoolId, out int schId)) return;
 
             var response = await _apiService.GetGradesByLapsoAsync(uId, SelectedLapso.LapsoID, schId);
 
@@ -202,27 +197,43 @@ namespace SchoolProyectApp.ViewModels
                 if (response != null)
                 {
                     var grouped = response
-                        .Where(g => g.Course != null)
-                        .GroupBy(g => g.Course.Name)
-                        .Select(gr => new GradesByCourseGroup
-                        {
-                            Curso = gr.Key,
-                            Calificaciones = gr.Select(grade => new GradeResult
-                            {
-                                GradeID = grade.GradeID,
-                                UserID = grade.UserID,
-                                Curso = grade.Course?.Name,
-                                CourseID = grade.CourseID,
-                                Evaluacion = grade.Evaluation?.Title,
-                                GradeValue = (decimal?)grade.GradeValue,
-                                Comments = grade.Comments,
-                            }).ToList()
-                        }).ToList();
+        .Where(g => g.Course != null)
+        .GroupBy(g => g.Course.Name)
+        .Select(gr => new GradesByCourseGroup
+        {
+            Curso = gr.Key,
+            Calificaciones = gr.Select(grade =>
+            {
+                var dec = grade.GradeValue;         // double? desde la API con includes
+                var txt = grade.GradeText;          // texto cualitativo
+
+                // Convierte double? -> decimal?
+                decimal? decNullable = dec.HasValue ? (decimal?)dec.Value : null;
+
+                return new GradeResult
+                {
+                    GradeID = grade.GradeID,
+                    UserID = grade.UserID,
+                    Curso = grade.Course?.Name,
+                    CourseID = grade.CourseID,
+                    Evaluacion = grade.Evaluation?.Title,
+                    GradeValue = decNullable,
+                    GradeText = string.IsNullOrWhiteSpace(txt) ? null : txt,
+                    Comments = grade.Comments,
+
+                    // 👇 Única propiedad para la UI
+                    DisplayGrade = decNullable.HasValue
+                        ? decNullable.Value.ToString("0.00")
+                        : (!string.IsNullOrWhiteSpace(txt) ? txt : "—")
+                };
+            }).ToList()
+        })
+        .ToList();
+
+
 
                     foreach (var group in grouped)
-                    {
                         GradesByCourse.Add(group);
-                    }
                 }
             });
         }

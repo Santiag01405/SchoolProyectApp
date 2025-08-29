@@ -57,8 +57,8 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
-        private decimal _gradeValue;
-        public decimal GradeValue
+        private decimal? _gradeValue;
+        public decimal? GradeValue
         {
             get => _gradeValue;
             set
@@ -79,6 +79,14 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+        private string _gradeText;                     // 👈 NUEVO
+        public string GradeText
+        {
+            get => _gradeText;
+            set { _gradeText = value; OnPropertyChanged(); }
+        }
+
+      
         // Propiedades de colores
         private Color _primaryColor;
         public Color PrimaryColor
@@ -195,22 +203,44 @@ namespace SchoolProyectApp.ViewModels
             var schoolId = await SecureStorage.GetAsync("school_id");
             if (!int.TryParse(schoolId, out int schId)) return;
 
+            // Validación: al menos uno (numérico, texto) o comentario
+            bool hasNumeric = GradeValue.HasValue;
+            bool hasTextual = !string.IsNullOrWhiteSpace(GradeText);
+            bool hasComment = !string.IsNullOrWhiteSpace(Comments);
+
+            if (!hasNumeric && !hasTextual && !hasComment)
+            {
+                await Application.Current.MainPage.DisplayAlert("Atención",
+                    "Debes ingresar una nota (numérica o cualitativa) o un comentario.", "OK");
+                return;
+            }
+
             var grade = new Grade
             {
                 UserID = SelectedStudent.UserID,
                 CourseID = SelectedCourse.CourseID,
                 EvaluationID = SelectedEvaluation.EvaluationID,
                 SchoolID = schId,
-                GradeValue = GradeValue,
-                Comments = Comments
+                GradeValue = hasNumeric ? GradeValue : null,
+                GradeText = hasTextual ? GradeText : null,
+                Comments = hasComment ? Comments : null
             };
 
+            // Tu ApiService ya tiene PostAsync/AssignGradeAsync; usa el que prefieras.
             bool success = await _apiService.PostAsync("api/grades/assign", grade);
 
             if (success)
+            {
                 await Application.Current.MainPage.DisplayAlert("✔", "Calificación asignada correctamente", "OK");
+                // Opcional: limpiar inputs
+                GradeValue = null;
+                GradeText = string.Empty;
+                Comments = string.Empty;
+            }
             else
+            {
                 await Application.Current.MainPage.DisplayAlert("❌", "Error al asignar calificación", "OK");
+            }
         }
 
         private async Task InitializeAsync()

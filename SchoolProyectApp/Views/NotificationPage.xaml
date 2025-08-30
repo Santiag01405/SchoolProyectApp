@@ -22,7 +22,7 @@
                     <SwipeView>
                         <SwipeView.RightItems>
                             <SwipeItems>
-                                <SwipeItem Text="Eliminar"
+                                <SwipeItem Text="Eliminar" 
                            BackgroundColor="Red"
                            Command="{Binding BindingContext.DeleteNotificationCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
                            CommandParameter="{Binding .}">
@@ -32,12 +32,12 @@
                                 </SwipeItem>
                             </SwipeItems>
                         </SwipeView.RightItems>
-                        <Frame Padding="10" Margin="5" CornerRadius="10" BackgroundColor="{Binding AccentColor}" BorderColor="{Binding AccentColor}">
+                        <Frame Padding="10" Margin="5" CornerRadius="10" BackgroundColor="{Binding BindingContext.CardBackgroundColor, Source={RelativeSource AncestorType={x:Type ContentPage}}}" BorderColor="{Binding BindingContext.CardBackgroundColor, Source={RelativeSource AncestorType={x:Type ContentPage}}}">
                             <Grid>
                                 <StackLayout>
-                                    <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" TextColor="{Binding AccentColor}"/>
-                                    <Label Text="{Binding Content}" FontSize="14" TextColor="{Binding SecondaryColor}"/>
-                                    <Label Text="{Binding Date, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}" FontSize="12" TextColor="{Binding TextColor}"/>
+                                    <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" TextColor="{Binding BindingContext.AccentColor, Source={RelativeSource AncestorType={x:Type ContentPage}}}"/>
+                                    <Label Text="{Binding Content}" FontSize="14" TextColor="{Binding BindingContext.SecondaryColor, Source={RelativeSource AncestorType={x:Type ContentPage}}}"/>
+                                    <Label Text="{Binding Date, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}" FontSize="12" TextColor="{Binding BindingContext.TextColor, Source={RelativeSource AncestorType={x:Type ContentPage}}}"/>
                                 </StackLayout>
 
                                 <StackLayout Orientation="Horizontal"
@@ -46,7 +46,7 @@
                              IsVisible="{Binding IsRead}"
                              Margin="0, -2, -1, 0">
                                     <Label Text="Leído"
-                           TextColor="#dcdcdc"
+                           TextColor="Black"
                            FontSize="10"
                            FontAttributes="Bold"
                            VerticalOptions="Center" />
@@ -78,20 +78,20 @@
                                 </SwipeItem>
                             </SwipeItems>
                         </SwipeView.RightItems>
-                        <Frame Padding="10" Margin="5" BorderColor="{Binding AccentColor}" CornerRadius="10" BackgroundColor="{Binding AccentColor}">
+                        <Frame Padding="10" Margin="5" BorderColor="{Binding BindingContext.CardBackgroundColor, Source={RelativeSource AncestorType={x:Type ContentPage}}}" CornerRadius="10" BackgroundColor="{Binding BindingContext.CardBackgroundColor, Source={RelativeSource AncestorType={x:Type ContentPage}}}">
                             <StackLayout>
                                 <Label Text="Asistencia de su representado"
                                    FontSize="18"
                                    FontAttributes="Bold"
-                                   TextColor="{Binding AccentColor}" />
+                                   TextColor="{Binding BindingContext.AccentColor, Source={RelativeSource AncestorType={x:Type ContentPage}}}" />
 
                                                         <Label Text="{Binding ContentText}"
                                    FontSize="14"
-                                   TextColor="{Binding SecondaryColor}" />
+                                   TextColor="{Binding BindingContext.SecondaryColor, Source={RelativeSource AncestorType={x:Type ContentPage}}}" />
 
                                                     <Label Text="{Binding Date, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}"
                                    FontSize="12"
-                                   TextColor="{Binding TextColor}" /> 
+                                   TextColor="{Binding BindingContext.TextColor, Source={RelativeSource AncestorType={x:Type ContentPage}}}" /> 
                             </StackLayout>
 
                         </Frame>
@@ -126,7 +126,7 @@
                                 Command="{Binding SwitchTabCommand}"
                                 CommandParameter="Normales"
                                 BackgroundColor="{Binding SelectedTab, Converter={StaticResource TabBackgroundConverter}, ConverterParameter=Normales}"
-                                TextColor="{Binding TextColor}"
+                                TextColor="{Binding BindingContext.TextColor, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
                                 CornerRadius="10"
                                 FontAttributes="Bold"
                                 Margin="5,0,5,0"
@@ -136,7 +136,7 @@
                                 Command="{Binding SwitchTabCommand}"
                                 CommandParameter="Asistencia"
                                 BackgroundColor="{Binding SelectedTab, Converter={StaticResource TabBackgroundConverter}, ConverterParameter=Asistencia}"
-                                TextColor="{Binding TextColor}"
+                                TextColor="{Binding BindingContext.TextColor, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
                                 CornerRadius="10"
                                 FontAttributes="Bold" 
                                 Margin="5,0,5,0"
@@ -203,7 +203,7 @@
         <!-- Menú lateral -->
         <ContentView x:Name="SideMenu"
                      WidthRequest="260"
-                     BackgroundColor="{Binding AccentColor}"
+                     BackgroundColor="{Binding BindingContext.CardBackgroundColor, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
                      IsVisible="False"
                      TranslationX="-260"
                      AbsoluteLayout.LayoutBounds="0,0,260,1"

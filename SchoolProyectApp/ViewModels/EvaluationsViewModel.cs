@@ -116,6 +116,43 @@ namespace SchoolProyectApp.ViewModels
             set => SetProperty(ref _isCreateButtonVisible, value);
         }
 
+
+        // Propiedades de colores
+        private Color _primaryColor;
+        public Color PrimaryColor
+        {
+            get => _primaryColor;
+            set => SetProperty(ref _primaryColor, value);
+        }
+
+        private Color _accentColor;
+        public Color AccentColor
+        {
+            get => _accentColor;
+            set => SetProperty(ref _accentColor, value);
+        }
+
+        private Color _resetButtonBackgroundColor;
+        public Color ResetButtonBackgroundColor
+        {
+            get => _resetButtonBackgroundColor;
+            set => SetProperty(ref _resetButtonBackgroundColor, value);
+        }
+
+        private Color _resetButtonTextColor;
+        public Color ResetButtonTextColor
+        {
+            get => _resetButtonTextColor;
+            set => SetProperty(ref _resetButtonTextColor, value);
+        }
+
+        private Color _pageBackgroundColor;
+        public Color PageBackgroundColor
+        {
+            get => _pageBackgroundColor;
+            set => SetProperty(ref _pageBackgroundColor, value);
+        }
+
         public ICommand CreateEvaluationCommand { get; }
         public ICommand LoadCoursesCommand { get; }
         public ICommand HomeCommand { get; }
@@ -164,6 +201,24 @@ namespace SchoolProyectApp.ViewModels
                 if (!string.IsNullOrEmpty(storedSchoolId) && int.TryParse(storedSchoolId, out int schoolId))
                 {
                     _schoolId = schoolId;
+
+                    // 🎨 aplicar colores dinámicos
+                    if (_schoolId == 5)
+                    {
+                        PrimaryColor = Color.FromArgb("#0d4483");
+                        AccentColor = Color.FromArgb("#0098da");
+                        ResetButtonBackgroundColor = Colors.LightGray;
+                        ResetButtonTextColor = Colors.Black;
+                        PageBackgroundColor = Colors.White;
+                    }
+                    else
+                    {
+                        PrimaryColor = Color.FromArgb("#0C4251");
+                        AccentColor = Color.FromArgb("#f1c864");
+                        ResetButtonBackgroundColor = Colors.LightGray;
+                        ResetButtonTextColor = Colors.Black;
+                        PageBackgroundColor = Colors.White;
+                    }
                 }
 
                 if (_userId > 0)

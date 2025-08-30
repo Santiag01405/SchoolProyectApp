@@ -52,6 +52,35 @@ namespace SchoolProyectApp.ViewModels
             set => SetProperty(ref _activities, value);
         }
 
+        // Propiedades de colores
+        private Color _primaryColor;
+        public Color PrimaryColor
+        {
+            get => _primaryColor;
+            set => SetProperty(ref _primaryColor, value);
+        }
+
+        private Color _secondaryColor;
+        public Color SecondaryColor
+        {
+            get => _secondaryColor;
+            set => SetProperty(ref _secondaryColor, value);
+        }
+
+        private Color _subtleTextColor;
+        public Color SubtleTextColor
+        {
+            get => _subtleTextColor;
+            set => SetProperty(ref _subtleTextColor, value);
+        }
+
+        private Color _pageBackgroundColor;
+        public Color PageBackgroundColor
+        {
+            get => _pageBackgroundColor;
+            set => SetProperty(ref _pageBackgroundColor, value);
+        }
+
         public ICommand LoadActivitiesCommand { get; }
         public ICommand HomeCommand { get; }
         public ICommand FirstProfileCommand { get; }
@@ -64,6 +93,8 @@ namespace SchoolProyectApp.ViewModels
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
             OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
+
+            _ = LoadThemeAsync();
 
             // Se dispara automáticamente solo cuando un estudiante abre su propia vista.
             _ = LoadDataForCurrentUserAsync();
@@ -169,6 +200,29 @@ namespace SchoolProyectApp.ViewModels
             {
                 Debug.WriteLine($"[ERROR] Falló LoadActivitiesAsync: {ex.Message}");
                 Message = "No se pudieron cargar las actividades.";
+            }
+        }
+
+        private async Task LoadThemeAsync()
+        {
+            var schoolIdStr = await SecureStorage.GetAsync("school_id");
+            if (int.TryParse(schoolIdStr, out int schoolId))
+            {
+                // 🎨 aplicar colores dinámicos
+                if (schoolId == 5)
+                {
+                    PrimaryColor = Color.FromArgb("#0d4483");
+                    SecondaryColor = Color.FromArgb("#0098da");
+                    SubtleTextColor = Colors.DarkGray;
+                    PageBackgroundColor = Colors.White;
+                }
+                else
+                {
+                    PrimaryColor = Color.FromArgb("#0C4251");
+                    SecondaryColor = Colors.Blue;
+                    SubtleTextColor = Colors.Gray;
+                    PageBackgroundColor = Colors.White;
+                }
             }
         }
     }

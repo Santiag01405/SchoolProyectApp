@@ -71,6 +71,13 @@ namespace SchoolProyectApp.ViewModels
             set => SetProperty(ref _pageBackgroundColor, value);
         }
 
+        private Color _cardBackgroundColor;
+        public Color CardBackgroundColor
+        {
+            get => _cardBackgroundColor;
+            set => SetProperty(ref _cardBackgroundColor, value);
+        }
+
         public ICommand SwitchTabCommand => new Command<string>((tab) => SelectedTab = tab);
 
         public ICommand RefreshCommand { get; }
@@ -209,22 +216,25 @@ namespace SchoolProyectApp.ViewModels
                 var user = await _apiService.GetUserDetailsAsync(userId);
                 if (token.IsCancellationRequested || user == null) return;
                 var schoolId = user.SchoolID;
+
                 // 🎨 aplicar colores dinámicos
                 if (schoolId == 5)
                 {
                     PrimaryColor = Color.FromArgb("#0d4483");
                     SecondaryColor = Color.FromArgb("#0098da");
-                    AccentColor = Color.FromArgb("#f1c864");
-                    TextColor = Colors.White;
+                    AccentColor = Color.FromArgb("#0000FF");
+                    TextColor = Colors.DarkGray;
                     PageBackgroundColor = Colors.White;
+                    CardBackgroundColor = Color.FromArgb("#e1f5fe");
                 }
                 else
                 {
                     PrimaryColor = Color.FromArgb("#0C4251");
                     SecondaryColor = Color.FromArgb("#6bbdda");
                     AccentColor = Color.FromArgb("#f1c864");
-                    TextColor = Colors.White;
+                    TextColor = Colors.DarkGray;
                     PageBackgroundColor = Colors.White;
+                    CardBackgroundColor = Color.FromArgb("#E0F7FA");
                 }
 
                 MainThread.BeginInvokeOnMainThread(() =>

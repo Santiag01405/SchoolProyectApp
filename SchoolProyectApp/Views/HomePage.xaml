@@ -109,9 +109,9 @@
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="10"/>
                                     </Border.StrokeShape>
-                                    <Border.Shadow>
+                                    <!--<Border.Shadow>
                                         <Shadow Brush="#000" Opacity="0.1" Radius="10" Offset="5,5"/>
-                                    </Border.Shadow>
+                                    </Border.Shadow>-->
                                     <StackLayout>
                                         <Label Text="Promedio General" 
                                            FontSize="18" 
@@ -131,9 +131,9 @@
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="10"/>
                                     </Border.StrokeShape>
-                                    <Border.Shadow>
+                                    <!--<Border.Shadow>
                                         <Shadow Brush="#000" Opacity="0.1" Radius="10" Offset="5,5"/>
-                                    </Border.Shadow>
+                                    </Border.Shadow>-->
                                     <StackLayout>
                                         <Label Text="Clases de hoy" FontSize="18" FontAttributes="Bold" BackgroundColor="{Binding PageBackgroundColor}"/>
                                         <StackLayout BindableLayout.ItemsSource="{Binding TodaysClasses}" Margin="0,10,0,0">
@@ -150,9 +150,9 @@
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="10"/>
                                     </Border.StrokeShape>
-                                    <Border.Shadow>
+                                    <!--<Border.Shadow>
                                         <Shadow Brush="#000" Opacity="0.1" Radius="10" Offset="5,5"/>
-                                    </Border.Shadow>
+                                    </Border.Shadow>-->
                                     <StackLayout Spacing="10">
                                         <Label Text="Próxima Evaluación" FontSize="18" FontAttributes="Bold" BackgroundColor="{Binding PageBackgroundColor}"/>
                                         <StackLayout BindableLayout.ItemsSource="{Binding UpcomingEvaluations}">

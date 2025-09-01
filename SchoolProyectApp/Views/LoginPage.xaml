@@ -14,13 +14,20 @@
     </ContentPage.Behaviors>
     <ContentPage.Content>
         <VerticalStackLayout Padding="20" Spacing="15">
-            <Image Source="Images/artboard.png"
-                   BackgroundColor="Transparent"
-       Aspect="AspectFit"
-       HeightRequest="45"
-       HorizontalOptions="Center"
-       Margin="0,100,10,70"/>
+            <!-- Imagen envuelta en un Border para que resalte -->
+            <Border Stroke="Transparent"
+        StrokeThickness="2"
+        HorizontalOptions="Center"
+        Margin="0,50,0,50">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
 
+                <Image Source="Images/artboard.png"
+       BackgroundColor="Transparent"
+       Aspect="Fill"  
+       HeightRequest="100"/>
+            </Border>
 
             <!-- Email con fondo circular -->
             <Frame BackgroundColor="#0C4251"

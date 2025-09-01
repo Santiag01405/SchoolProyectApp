@@ -4,16 +4,16 @@
              xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
              xmlns:local="clr-namespace:SchoolProyectApp.Views"
              x:Class="SchoolProyectApp.Views.SchedulePage"
-             Title="Horario"        
+             Title="Horario"     
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-         xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
-         droid:NavigationBar.Color="white"
-         droid:NavigationBar.Style="LightContent"
-         BackgroundColor="{Binding PageBackgroundColor}">
+             xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
+             droid:NavigationBar.Color="{x:Static vm:ThemeColors.PageBackgroundColor}"
+             droid:NavigationBar.Style="LightContent"
+             BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}">
 
     <ContentPage.Behaviors>
-        <toolkit:StatusBarBehavior StatusBarColor="{Binding PageBackgroundColor}"
-                           StatusBarStyle="LightContent" />
+        <toolkit:StatusBarBehavior StatusBarColor="{x:Static vm:ThemeColors.PrimaryColor}"
+                                   StatusBarStyle="LightContent" />
     </ContentPage.Behaviors>
 
     <ContentPage.BindingContext>
@@ -22,27 +22,24 @@
 
     <AbsoluteLayout>
 
-        <!--Capa principal-->
         <ContentView x:Name="MainContent"
                      AbsoluteLayout.LayoutBounds="0,0,1,1"
                      AbsoluteLayout.LayoutFlags="All">
-            
+
 
             <Grid Padding="0" RowDefinitions="Auto,Auto,*,Auto">
 
-                <!-- Mensaje -->
                 <Label Text="Horario" 
                        FontSize="30" FontAttributes="Bold" 
                        HorizontalOptions="Center" 
                        Margin="0,30,0,30" 
-                       TextColor="{Binding PrimaryColor}"
+                       TextColor="{x:Static vm:ThemeColors.PrimaryColor}"
                        Grid.Row="0"/>
 
-                <!-- Botones de días con scroll horizontal -->
                 <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Always" Grid.Row="1">
                     <StackLayout Orientation="Horizontal" Spacing="5" Padding="20,0">
 
-                        <Button Text="Lunes" Command="{Binding SelectDayCommand}" CommandParameter="1" BackgroundColor="{Binding PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
+                        <Button Text="Lunes" Command="{Binding SelectDayCommand}" CommandParameter="1" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
                             <Button.Triggers>
                                 <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="1">
                                     <Setter Property="FontAttributes" Value="Bold" />
@@ -50,7 +47,7 @@
                             </Button.Triggers>
                         </Button>
 
-                        <Button Text="Martes" Command="{Binding SelectDayCommand}" CommandParameter="2" BackgroundColor="{Binding PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
+                        <Button Text="Martes" Command="{Binding SelectDayCommand}" CommandParameter="2" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
                             <Button.Triggers>
                                 <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="2">
                                     <Setter Property="FontAttributes" Value="Bold" />
@@ -58,7 +55,7 @@
                             </Button.Triggers>
                         </Button>
 
-                        <Button Text="Miércoles" Command="{Binding SelectDayCommand}" CommandParameter="3" BackgroundColor="{Binding PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
+                        <Button Text="Miércoles" Command="{Binding SelectDayCommand}" CommandParameter="3" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
                             <Button.Triggers>
                                 <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="3">
                                     <Setter Property="FontAttributes" Value="Bold" />
@@ -66,7 +63,7 @@
                             </Button.Triggers>
                         </Button>
 
-                        <Button Text="Jueves" Command="{Binding SelectDayCommand}" CommandParameter="4" BackgroundColor="{Binding PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
+                        <Button Text="Jueves" Command="{Binding SelectDayCommand}" CommandParameter="4" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
                             <Button.Triggers>
                                 <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="4">
                                     <Setter Property="FontAttributes" Value="Bold" />
@@ -74,7 +71,7 @@
                             </Button.Triggers>
                         </Button>
 
-                        <Button Text="Viernes" Command="{Binding SelectDayCommand}" CommandParameter="5" BackgroundColor="{Binding PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
+                        <Button Text="Viernes" Command="{Binding SelectDayCommand}" CommandParameter="5" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
                             <Button.Triggers>
                                 <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="5">
                                     <Setter Property="FontAttributes" Value="Bold" />
@@ -85,29 +82,23 @@
                     </StackLayout>
                 </ScrollView>
 
-                <!-- Lista filtrada y botón Actualizar -->
                 <ScrollView Grid.Row="2">
                     <StackLayout Padding="20,0" Spacing="10" Margin="0,40,0,0">
 
                         <CollectionView ItemsSource="{Binding FilteredCourses}">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Frame Padding="15" Margin="0,0,0,10" CornerRadius="10" BackgroundColor="{Binding PrimaryColor}" BorderColor="{Binding PrimaryColor}">
-                                        <Label Text="{Binding Name}" FontSize="16" TextColor="{Binding AccentColor}"/>
+                                    <Frame Padding="15" Margin="0,0,0,10" CornerRadius="10" BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}" BorderColor="{x:Static vm:ThemeColors.PrimaryColor}">
+                                        <Label Text="{Binding Name}" FontSize="16" TextColor="{x:Static vm:ThemeColors.AccentColor}"/>
                                     </Frame>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
 
-                       <!--<Button Text="Actualizar"
-                    Command="{Binding RefreshCommand}"
-                    BackgroundColor="DodgerBlue"
-                    TextColor="White"/>-->
                     </StackLayout>
                 </ScrollView>
 
-                <!-- Barra inferior -->
-                <Grid Grid.Row="3" BackgroundColor="WhiteSmoke" Padding="10">
+                <Grid Grid.Row="3" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" Padding="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -116,30 +107,29 @@
 
                     <StackLayout Grid.Column="0" HorizontalOptions="Center">
                         <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
-                    TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
-                        <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+                                TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" Command="{Binding HomeCommand}" />
+                        <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" TextColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
                     </StackLayout>
 
                     <StackLayout Grid.Column="1" HorizontalOptions="Center">
                         <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
-                    TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
-                        <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+                                TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" Command="{Binding FirstProfileCommand}" />
+                        <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" TextColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
                     </StackLayout>
 
                     <StackLayout Grid.Column="2" HorizontalOptions="Center">
                         <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
-                    TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke"
-                    Clicked="MenuButton_Clicked"/>
-                        <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+                                TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}"
+                                Clicked="MenuButton_Clicked"/>
+                        <Label Text="Menú" FontSize="10" HorizontalOptions="Center" TextColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
                     </StackLayout>
                 </Grid>
             </Grid>
         </ContentView>
 
-        <!--Menú lateral oculto-->
         <ContentView x:Name="SideMenu"
                      WidthRequest="260"
-                     BackgroundColor="{Binding PrimaryColor}"
+                     BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"
                      IsVisible="False"
                      TranslationX="-260"
                      AbsoluteLayout.LayoutBounds="0,0,260,1"

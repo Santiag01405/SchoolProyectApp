@@ -2,59 +2,56 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SchoolProyectApp.Views.LoginPage"
-             BackgroundColor="white"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
-             droid:NavigationBar.Color="white"
+             xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
+             BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}"
+             droid:NavigationBar.Color="{x:Static vm:ThemeColors.PageBackgroundColor}"
              droid:NavigationBar.Style="LightContent">
 
     <ContentPage.Behaviors>
-        <toolkit:StatusBarBehavior StatusBarColor="white"
+        <toolkit:StatusBarBehavior StatusBarColor="{x:Static vm:ThemeColors.PageBackgroundColor}"
                                    StatusBarStyle="LightContent" />
     </ContentPage.Behaviors>
     <ContentPage.Content>
         <VerticalStackLayout Padding="20" Spacing="15">
-            <!-- Imagen envuelta en un Border para que resalte -->
             <Border Stroke="Transparent"
-        StrokeThickness="2"
-        HorizontalOptions="Center"
-        Margin="0,50,0,50">
+                    StrokeThickness="2"
+                    HorizontalOptions="Center"
+                    Margin="0,0,0,15">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10"/>
                 </Border.StrokeShape>
 
                 <Image Source="Images/artboard.png"
-       BackgroundColor="Transparent"
-       Aspect="Fill"  
-       HeightRequest="100"/>
+                       BackgroundColor="Transparent"
+                       Aspect="Fill"  
+                       HeightRequest="250"/>
             </Border>
 
-            <!-- Email con fondo circular -->
-            <Frame BackgroundColor="#0C4251"
-       CornerRadius="3"
-       Padding="10"
-       HeightRequest="60"
-       WidthRequest="300"
-       HorizontalOptions="Center"
-       BorderColor="#6bbdda">
+            <Frame BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"
+                   CornerRadius="3"
+                   Padding="10"
+                   HeightRequest="60"
+                   WidthRequest="300"
+                   HorizontalOptions="Center"
+                   BorderColor="{x:Static vm:ThemeColors.SecondaryColor}">
                 <Entry Placeholder="Email"
-       Text="{Binding Email}"
-       Keyboard="Email"
-       BackgroundColor="#f1c864"
-       PlaceholderColor="#6bbdda"
-       HorizontalOptions="FillAndExpand"
-       FontAttributes="Bold"/>
-
+                       Text="{Binding Email}"
+                       Keyboard="Email"
+                       BackgroundColor="{x:Static vm:ThemeColors.AccentColor}"
+                       PlaceholderColor="{x:Static vm:ThemeColors.SecondaryColor}"
+                       HorizontalOptions="FillAndExpand"
+                       FontAttributes="Bold"/>
             </Frame>
 
-            <!-- Contraseña con fondo circular -->
-            <Frame BackgroundColor="#0C4251"
-       CornerRadius="3"
-       Padding="10"
-       HeightRequest="60"
-       WidthRequest="300"
-       HorizontalOptions="Center"
-       BorderColor="#6bbdda">
+            <Frame BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"
+                   CornerRadius="3"
+                   Padding="10"
+                   HeightRequest="60"
+                   WidthRequest="300"
+                   HorizontalOptions="Center"
+                   BorderColor="{x:Static vm:ThemeColors.SecondaryColor}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -62,24 +59,24 @@
                     </Grid.ColumnDefinitions>
 
                     <Entry Placeholder="Contraseña" 
-               PlaceholderColor="#6bbdda"
-               Text="{Binding Password}"
-               IsPassword="True"
-               x:Name="PasswordEntry"
-               Grid.Column="0"
-               BackgroundColor="#0C4251"
-               HorizontalOptions="FillAndExpand"
-               FontSize="15"
-               FontAttributes="Bold"/>
+                           PlaceholderColor="{x:Static vm:ThemeColors.SecondaryColor}"
+                           Text="{Binding Password}"
+                           IsPassword="True"
+                           x:Name="PasswordEntry"
+                           Grid.Column="0"
+                           BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"
+                           HorizontalOptions="FillAndExpand"
+                           FontSize="15"
+                           FontAttributes="Bold"/>
 
                     <Label x:Name="TogglePasswordLabel"
-               Text="&#xf06e;"
-               FontFamily="FontAwesomeSolid"
-               FontSize="24"
-               Grid.Column="1"
-               VerticalOptions="Center"
-               HorizontalOptions="Center"
-               TextColor="#6bbdda">
+                           Text="&#xf06e;"
+                           FontFamily="FontAwesomeSolid"
+                           FontSize="24"
+                           Grid.Column="1"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           TextColor="{x:Static vm:ThemeColors.SecondaryColor}">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Tapped="TogglePasswordLabel_Tapped" />
                         </Label.GestureRecognizers>
@@ -88,38 +85,31 @@
             </Frame>
 
             <ActivityIndicator IsRunning="{Binding IsBusy}"
-                   IsVisible="{Binding IsBusy}"
-                   Color="#f1c864"
-                   HeightRequest="40"
-                   WidthRequest="40"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center" />
-
+                               IsVisible="{Binding IsBusy}"
+                               Color="{x:Static vm:ThemeColors.AccentColor}"
+                               HeightRequest="40"
+                               WidthRequest="40"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
 
             <Button Text="Iniciar Sesión" 
-        Command="{Binding LoginCommand}" 
-        BackgroundColor="#f1c864" 
-        TextColor="#0C4251" 
-        FontAttributes="Bold" 
-        WidthRequest="300"
-        HorizontalOptions="Center"
-        Margin="0, 40, 0, 10"
-        CornerRadius="3">
+                    Command="{Binding LoginCommand}" 
+                    BackgroundColor="{x:Static vm:ThemeColors.AccentColor}" 
+                    TextColor="{x:Static vm:ThemeColors.PrimaryColor}" 
+                    FontAttributes="Bold" 
+                    WidthRequest="300"
+                    HorizontalOptions="Center"
+                    Margin="0, 40, 0, 10"
+                    CornerRadius="3">
                 <Button.Shadow>
                     <Shadow Brush="black" Opacity="0.3" Offset="0,8" Radius="8" />
                 </Button.Shadow>
             </Button>
 
-
-
             <Label Text="{Binding Message}"
-       TextColor="{Binding MessageColor}"
-       HorizontalOptions="Center"
-       FontAttributes="Bold"/>
-
-
-            <!-- Botón para ir a la página de registro -->
-            <!--<Button Text="Registrarse" Command="{Binding NavigateToRegisterCommand}" BackgroundColor="Gray" TextColor="White" FontAttributes="Bold" HorizontalOptions="Fill" Margin="10, 0, 10, 20"/>-->
+                   TextColor="{Binding MessageColor}"
+                   HorizontalOptions="Center"
+                   FontAttributes="Bold"/>
         </VerticalStackLayout>
     </ContentPage.Content>
 </ContentPage>

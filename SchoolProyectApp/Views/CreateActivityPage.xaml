@@ -9,79 +9,76 @@
              Title="Crear Actividad"
              droid:NavigationBar.Color="white"
              droid:NavigationBar.Style="LightContent"
-              BackgroundColor="{Binding PageBackgroundColor}">
+             BackgroundColor="{x:Static local:ThemeColors.PageBackgroundColor}">
 
-	<ContentPage.BindingContext>
-		<local:CreateActivityViewModel />
-	</ContentPage.BindingContext>
+    <ContentPage.BindingContext>
+        <local:CreateActivityViewModel />
+    </ContentPage.BindingContext>
 
-	<ContentPage.Behaviors>
-		<toolkit:StatusBarBehavior StatusBarColor="{Binding PrimaryColor}"
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="{x:Static local:ThemeColors.PrimaryColor}"
                                    StatusBarStyle="LightContent" />
-	</ContentPage.Behaviors>
+    </ContentPage.Behaviors>
 
-	<AbsoluteLayout>
-
-
-		<ContentView x:Name="MainContent"
+    <AbsoluteLayout>
+        <ContentView x:Name="MainContent"
                      AbsoluteLayout.LayoutBounds="0,110,1,0.85"
                      AbsoluteLayout.LayoutFlags="WidthProportional,HeightProportional">
 
-			<Grid Padding="0" RowDefinitions="*,Auto">
+            <Grid Padding="0" RowDefinitions="*,Auto">
+                <StackLayout Grid.Row="0" Padding="20" Spacing="15">
+                    <Label Text="Crear Nueva Actividad" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Color="{x:Static local:ThemeColors.SecondaryColor}" />
+                    <Frame CornerRadius="10" Padding="10" BorderColor="LightGray" HasShadow="True">
+                        <Entry Placeholder="Nombre de la Actividad" Text="{Binding ActivityName}" />
+                    </Frame>
+                    <Frame CornerRadius="10" Padding="10" BorderColor="LightGray" HasShadow="True">
+                        <Editor Placeholder="Descripción de la Actividad" Text="{Binding Description}" AutoSize="TextChanges" />
+                    </Frame>
+                    <Frame CornerRadius="10" Padding="10" BorderColor="LightGray" HasShadow="True">
+                        <Picker Title="Selecciona un día" ItemsSource="{Binding DaysOfWeek}" SelectedItem="{Binding SelectedDay}" />
+                    </Frame>
+                    <Button Text="Crear Actividad" Command="{Binding CreateActivityCommand}" CornerRadius="10" Margin="0,20,0,0" BackgroundColor="{x:Static local:ThemeColors.SecondaryColor}" TextColor="White" FontSize="18"/>
+                </StackLayout>
 
-				<StackLayout Grid.Row="0" Padding="20" Spacing="15">
-					<Label Text="Crear Nueva Actividad" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
-					<ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Color="{Binding SecondaryColor}" />
-					<Frame CornerRadius="10" Padding="10" BorderColor="LightGray" HasShadow="True">
-						<Entry Placeholder="Nombre de la Actividad" Text="{Binding ActivityName}" />
-					</Frame>
-					<Frame CornerRadius="10" Padding="10" BorderColor="LightGray" HasShadow="True">
-						<Editor Placeholder="Descripción de la Actividad" Text="{Binding Description}" AutoSize="TextChanges" />
-					</Frame>
-					<Frame CornerRadius="10" Padding="10" BorderColor="LightGray" HasShadow="True">
-						<Picker Title="Selecciona un día" ItemsSource="{Binding DaysOfWeek}" SelectedItem="{Binding SelectedDay}" />
-					</Frame>
-					<Button Text="Crear Actividad" Command="{Binding CreateActivityCommand}" CornerRadius="10" Margin="0,20,0,0" BackgroundColor="{Binding SecondaryColor}" TextColor="{Binding TextColor}" FontSize="18"/>
-				</StackLayout>
+                <Grid Grid.Row="1" BackgroundColor="WhiteSmoke" Padding="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-				<Grid Grid.Row="1" BackgroundColor="WhiteSmoke" Padding="10">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*" />
-						<ColumnDefinition Width="*" />
-						<ColumnDefinition Width="*" />
-					</Grid.ColumnDefinitions>
+                    <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                        <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="{x:Static local:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
+                        <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
 
-					<StackLayout Grid.Column="0" HorizontalOptions="Center">
-						<Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
-						<Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
-					</StackLayout>
+                    <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                        <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="{x:Static local:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
+                        <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
 
-					<StackLayout Grid.Column="1" HorizontalOptions="Center">
-						<Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
-						<Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
-					</StackLayout>
-
-					<StackLayout Grid.Column="2" HorizontalOptions="Center">
-						<Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke"
+                    <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                        <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="{x:Static local:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke"
                                 Clicked="MenuButton_Clicked" />
-						<Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
-					</StackLayout>
-				</Grid>
-			</Grid>
-		</ContentView>
+                        <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
+                    </StackLayout>
+                </Grid>
+            </Grid>
+        </ContentView>
 
-		<ContentView x:Name="SideMenu"
+        <ContentView x:Name="SideMenu"
                      WidthRequest="260"
-                     BackgroundColor="#0C4251"
+                     BackgroundColor="{x:Static local:ThemeColors.PrimaryColor}"
                      IsVisible="False"
                      TranslationX="-260"
                      AbsoluteLayout.LayoutBounds="0,0,260,1"
                      AbsoluteLayout.LayoutFlags="PositionProportional,HeightProportional">
-			<views:MenuPage />
-		</ContentView>
+            <views:MenuPage />
+        </ContentView>
 
-	</AbsoluteLayout>
+    </AbsoluteLayout>
 </ContentPage>

@@ -5,139 +5,139 @@
              xmlns:views="clr-namespace:SchoolProyectApp.Views"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
+             xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
              x:Class="SchoolProyectApp.Views.PostNurseVisitPage"
              Title="Registrar Visita a Enfermería"
-             droid:NavigationBar.Color="white"
+             droid:NavigationBar.Color="{x:Static vm:ThemeColors.PageBackgroundColor}"
              droid:NavigationBar.Style="LightContent">
 
-    <ContentPage.BindingContext>
-        <local:PostNurseVisitViewModel />
-    </ContentPage.BindingContext>
-    
-    <ContentPage.Behaviors>
-        <toolkit:StatusBarBehavior StatusBarColor="#0C4251"
-                                   StatusBarStyle="LightContent" />
-    </ContentPage.Behaviors>
+	<ContentPage.BindingContext>
+		<local:PostNurseVisitViewModel />
+	</ContentPage.BindingContext>
 
-    <AbsoluteLayout>
-        
-        <BoxView Color="#0C4251"
+	<ContentPage.Behaviors>
+		<toolkit:StatusBarBehavior StatusBarColor="{x:Static vm:ThemeColors.PrimaryColor}"
+                                   StatusBarStyle="LightContent" />
+	</ContentPage.Behaviors>
+
+	<AbsoluteLayout>
+
+		<BoxView Color="{x:Static vm:ThemeColors.PrimaryColor}"
                  AbsoluteLayout.LayoutBounds="0,0,1,70"
                  AbsoluteLayout.LayoutFlags="WidthProportional" />
 
-        <Image Source="Images/artboard.png"
+		<Image Source="Images/artboard.png"
                AbsoluteLayout.LayoutBounds="0.5,0,170,90"
                AbsoluteLayout.LayoutFlags="PositionProportional"
                Aspect="AspectFit"
                BackgroundColor="Transparent" />
 
-        <ContentView x:Name="MainContent"
+		<ContentView x:Name="MainContent"
                      AbsoluteLayout.LayoutBounds="0,110,1,0.85"
                      AbsoluteLayout.LayoutFlags="WidthProportional,HeightProportional">
 
-            <Grid Padding="0" RowDefinitions="*,Auto">
+			<Grid Padding="0" RowDefinitions="*,Auto">
 
-                <ScrollView Grid.Row="0">
-                    <StackLayout Padding="20" Spacing="20">
-                        <Label Text="Registrar Visita a Enfermería" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />
+				<ScrollView Grid.Row="0">
+					<StackLayout Padding="20" Spacing="20">
+						<Label Text="Registrar Visita a Enfermería" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{x:Static vm:ThemeColors.PrimaryColor}" />
 
-                        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" Color="Blue" />
+						<ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" Color="{x:Static vm:ThemeColors.SecondaryColor}" />
 
-                        <Label Text="Buscar Estudiante" FontSize="18" FontAttributes="Bold" />
-                        <Grid ColumnDefinitions="*, Auto">
-                            <Entry Grid.Column="0"
+						<Label Text="Buscar Estudiante" FontSize="18" FontAttributes="Bold" TextColor="{x:Static vm:ThemeColors.PrimaryColor}" />
+						<Grid ColumnDefinitions="*, Auto">
+							<Entry Grid.Column="0"
                                    Placeholder="Nombre del estudiante..."
                                    Text="{Binding SearchQuery}"
                                    Completed="SearchEntry_Completed" />
-                            <Button Grid.Column="1" Text="Buscar" Command="{Binding SearchCommand}" />
-                        </Grid>
+							<Button Grid.Column="1" Text="Buscar" Command="{Binding SearchCommand}" />
+						</Grid>
 
-                        <CollectionView ItemsSource="{Binding SearchResults}"
+						<CollectionView ItemsSource="{Binding SearchResults}"
                                         SelectionMode="Single"
                                         SelectedItem="{Binding SelectedStudent}"
                                         IsVisible="{Binding HasSearchResults}"
                                         HeightRequest="200"
-                                        BackgroundColor="White">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Padding="10" BackgroundColor="#F0F0F0">
-                                        <VisualStateManager.VisualStateGroups>
-                                            <VisualStateGroupList>
-                                                <VisualStateGroup x:Name="CommonStates">
-                                                    <VisualState x:Name="Normal" />
-                                                    <VisualState x:Name="Selected">
-                                                        <VisualState.Setters>
-                                                            <Setter Property="BackgroundColor" Value="#d2e3fc" />
-                                                        </VisualState.Setters>
-                                                    </VisualState>
-                                                </VisualStateGroup>
-                                            </VisualStateGroupList>
-                                        </VisualStateManager.VisualStateGroups>
-                                        <Label Text="{Binding UserName}" FontSize="16" />
-                                    </Grid>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
+                                        BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}">
+							<CollectionView.ItemTemplate>
+								<DataTemplate>
+									<Grid Padding="10" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}">
+										<VisualStateManager.VisualStateGroups>
+											<VisualStateGroupList>
+												<VisualStateGroup x:Name="CommonStates">
+													<VisualState x:Name="Normal" />
+													<VisualState x:Name="Selected">
+														<VisualState.Setters>
+															<Setter Property="BackgroundColor" Value="{x:Static vm:ThemeColors.SecondaryColor}" />
+														</VisualState.Setters>
+													</VisualState>
+												</VisualStateGroup>
+											</VisualStateGroupList>
+										</VisualStateManager.VisualStateGroups>
+										<Label Text="{Binding UserName}" FontSize="16" TextColor="{x:Static vm:ThemeColors.PrimaryColor}" />
+									</Grid>
+								</DataTemplate>
+							</CollectionView.ItemTemplate>
+						</CollectionView>
 
-                        <Label Text="Datos de la Visita" FontSize="18" FontAttributes="Bold" Margin="0,20,0,0"/>
+						<Label Text="Datos de la Visita" FontSize="18" FontAttributes="Bold" Margin="0,20,0,0" TextColor="{x:Static vm:ThemeColors.PrimaryColor}" />
 
-                        <Entry Placeholder="Razón de la visita..." Text="{Binding Reason}" />
+						<Entry Placeholder="Razón de la visita..." Text="{Binding Reason}" />
 
-                        <Entry Placeholder="Tratamiento aplicado (opcional)..." Text="{Binding Treatment}" />
+						<Entry Placeholder="Tratamiento aplicado (opcional)..." Text="{Binding Treatment}" />
 
-                        <Button Text="Registrar Visita"
+						<Button Text="Registrar Visita"
                                 Command="{Binding PostVisitCommand}"
                                 IsEnabled="{Binding CanPostVisit}"
-                                BackgroundColor="#007bff"
-                                TextColor="White"
+                                BackgroundColor="{x:Static vm:ThemeColors.SecondaryColor}"
+                                TextColor="{x:Static vm:ThemeColors.TextColor}"
                                 FontAttributes="Bold" />
 
-                        <Button Text="Limpiar Formulario"
+						<Button Text="Limpiar Formulario"
                                 Command="{Binding ResetCommand}"
-                                BackgroundColor="Gray"
-                                TextColor="White"
+                                BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"
+                                TextColor="{x:Static vm:ThemeColors.TextColor}"
                                 FontAttributes="Bold" />
-                    </StackLayout>
-                </ScrollView>
-                
-                <Grid Grid.Row="1" BackgroundColor="WhiteSmoke" Padding="10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+					</StackLayout>
+				</ScrollView>
 
-                    <StackLayout Grid.Column="0" HorizontalOptions="Center">
-                        <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
-                        <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
-                    </StackLayout>
+				<Grid Grid.Row="1" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" Padding="10">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
 
-                    <StackLayout Grid.Column="1" HorizontalOptions="Center">
-                        <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
-                        <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
-                    </StackLayout>
+					<StackLayout Grid.Column="0" HorizontalOptions="Center">
+						<Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" Command="{Binding HomeCommand}" />
+						<Label Text="Inicio" FontSize="10" HorizontalOptions="Center" TextColor="{x:Static vm:ThemeColors.PrimaryColor}" />
+					</StackLayout>
 
-                    <StackLayout Grid.Column="2" HorizontalOptions="Center">
-                        <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="#0C4251" BackgroundColor="WhiteSmoke"
+					<StackLayout Grid.Column="1" HorizontalOptions="Center">
+						<Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" Command="{Binding FirstProfileCommand}" />
+						<Label Text="Perfil" FontSize="10" HorizontalOptions="Center" TextColor="{x:Static vm:ThemeColors.PrimaryColor}" />
+					</StackLayout>
+
+					<StackLayout Grid.Column="2" HorizontalOptions="Center">
+						<Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
+                                TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}"
                                 Clicked="MenuButton_Clicked" />
-                        <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
-                    </StackLayout>
-                </Grid>
-            </Grid>
-        </ContentView>
+						<Label Text="Menú" FontSize="10" HorizontalOptions="Center" TextColor="{x:Static vm:ThemeColors.PrimaryColor}" />
+					</StackLayout>
+				</Grid>
+			</Grid>
+		</ContentView>
 
-        <ContentView x:Name="SideMenu"
+		<ContentView x:Name="SideMenu"
                      WidthRequest="260"
-                     BackgroundColor="#0C4251"
+                     BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"
                      IsVisible="False"
                      TranslationX="-260"
                      AbsoluteLayout.LayoutBounds="0,0,260,1"
                      AbsoluteLayout.LayoutFlags="PositionProportional,HeightProportional">
-            <views:MenuPage />
-        </ContentView>
-
-    </AbsoluteLayout>
+			<views:MenuPage />
+		</ContentView>
+	</AbsoluteLayout>
 </ContentPage>

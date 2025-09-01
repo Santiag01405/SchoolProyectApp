@@ -9,10 +9,10 @@
              droid:NavigationBar.Color="white"
              droid:NavigationBar.Style="LightContent"
              Title="Asignar Calificaciones"
-             BackgroundColor="{Binding PageBackgroundColor}">
+             BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}">
 
     <ContentPage.Behaviors>
-        <toolkit:StatusBarBehavior StatusBarColor="{Binding PrimaryColor}"
+        <toolkit:StatusBarBehavior StatusBarColor="{x:Static vm:ThemeColors.PrimaryColor}"
                                    StatusBarStyle="LightContent" />
     </ContentPage.Behaviors>
 
@@ -21,44 +21,37 @@
     </ContentPage.BindingContext>
 
     <AbsoluteLayout>
-        <!-- Barra superior -->
-        <BoxView Color="{Binding PrimaryColor}"
+        <BoxView Color="{x:Static vm:ThemeColors.PrimaryColor}"
                  AbsoluteLayout.LayoutBounds="0,0,1,70"
                  AbsoluteLayout.LayoutFlags="WidthProportional" />
 
-        <!-- Logo -->
         <Image Source="Images/artboard.png"
                AbsoluteLayout.LayoutBounds="0.5,0,170,90"
                AbsoluteLayout.LayoutFlags="PositionProportional"
                Aspect="AspectFit"
                BackgroundColor="Transparent" />
 
-        <!-- Contenido principal -->
         <ContentView x:Name="MainContent"
                      AbsoluteLayout.LayoutBounds="0,110,1,0.85"
                      AbsoluteLayout.LayoutFlags="WidthProportional,HeightProportional">
             <ScrollView>
                 <VerticalStackLayout Padding="20" Spacing="15">
 
-                    <!-- Curso -->
                     <Label Text="Selecciona un curso:" FontAttributes="Bold" FontSize="18"/>
                     <Picker ItemsSource="{Binding Courses}"
                             ItemDisplayBinding="{Binding Name}"
                             SelectedItem="{Binding SelectedCourse}"/>
 
-                    <!-- Evaluación -->
                     <Label Text="Selecciona una evaluación:" FontAttributes="Bold" FontSize="18"/>
                     <Picker ItemsSource="{Binding Evaluations}"
                             ItemDisplayBinding="{Binding Title}"
                             SelectedItem="{Binding SelectedEvaluation}"/>
 
-                    <!-- Estudiante -->
                     <Label Text="Selecciona un estudiante:" FontAttributes="Bold" FontSize="18"/>
                     <Picker ItemsSource="{Binding Students}"
                             ItemDisplayBinding="{Binding StudentName}"
                             SelectedItem="{Binding SelectedStudent}"/>
 
-                    <!-- Instrucción -->
                     <Frame Padding="10" BackgroundColor="#f6f6f6" BorderColor="#e5e5e5" CornerRadius="8">
                         <Label FontSize="13">
                             <Label.FormattedText>
@@ -73,13 +66,11 @@
                         </Label>
                     </Frame>
 
-                    <!-- Nota numérica -->
                     <Label Text="Nota numérica (deja vacío si usarás cualitativa):" FontAttributes="Bold" />
                     <Entry Placeholder="Ej: 18.5"
                            Keyboard="Numeric"
                            Text="{Binding GradeValue}"
                            MaxLength="5">
-                        <!-- Valida numérico (opcional) -->
                         <Entry.Behaviors>
                             <toolkit:TextValidationBehavior
                                 Flags="ValidateOnValueChanged"
@@ -88,10 +79,8 @@
                         </Entry.Behaviors>
                     </Entry>
 
-                    <!-- Nota cualitativa -->
                     <Label Text="Calificación cualitativa (deja vacío si usas numérica):" FontAttributes="Bold" />
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                        <!-- Picker con opciones comunes -->
                         <Picker Grid.Column="0"
                                 Title="Selecciona (opcional)"
                                 SelectedItem="{Binding GradeText}">
@@ -107,23 +96,20 @@
                             </Picker.Items>
                         </Picker>
 
-                        <!-- Entrada libre para texto personalizado -->
                         <Entry Grid.Column="1"
                                WidthRequest="180"
                                Placeholder="o escribe aquí"
                                Text="{Binding GradeText}" />
                     </Grid>
 
-                    <!-- Comentarios -->
                     <Label Text="Comentarios (opcional):" FontAttributes="Bold" />
                     <Editor Placeholder="Ej: Excelente participación y progreso"
                             HeightRequest="90"
                             Text="{Binding Comments}"/>
 
-                    <!-- Botón -->
                     <Button Text="Asignar Calificación"
                             CornerRadius="8"
-                            BackgroundColor="{Binding SecondaryColor}"
+                            BackgroundColor="{x:Static vm:ThemeColors.SecondaryColor}"
                             TextColor="White"
                             FontAttributes="Bold"
                             Command="{Binding AssignGradeCommand}" />
@@ -132,10 +118,9 @@
             </ScrollView>
         </ContentView>
 
-        <!-- Menú lateral -->
         <ContentView x:Name="SideMenu"
                      WidthRequest="260"
-                     BackgroundColor="{Binding PrimaryColor}"
+                     BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"
                      IsVisible="False"
                      TranslationX="-260"
                      AbsoluteLayout.LayoutBounds="0,0,260,1"
@@ -143,7 +128,6 @@
             <local:MenuPage />
         </ContentView>
 
-        <!-- Barra inferior -->
         <Grid BackgroundColor="WhiteSmoke" Padding="10"
               AbsoluteLayout.LayoutBounds="0,1,1,50"
               AbsoluteLayout.LayoutFlags="WidthProportional,PositionProportional">
@@ -155,19 +139,19 @@
 
             <StackLayout Grid.Column="0" HorizontalOptions="Center">
                 <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
-                        TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
+                        TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
                 <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
             </StackLayout>
 
             <StackLayout Grid.Column="1" HorizontalOptions="Center">
                 <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
-                        TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
+                        TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
                 <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
             </StackLayout>
 
             <StackLayout Grid.Column="2" HorizontalOptions="Center">
                 <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
-                        TextColor="{Binding PrimaryColor}" BackgroundColor="WhiteSmoke"
+                        TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke"
                         Clicked="MenuButton_Clicked" />
                 <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
             </StackLayout>

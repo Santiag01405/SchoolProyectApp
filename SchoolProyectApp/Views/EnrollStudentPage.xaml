@@ -8,12 +8,13 @@
              x:Class="SchoolProyectApp.Views.EnrollStudentPage"
              Title="Inscribir Estudiante en Actividad"
              droid:NavigationBar.Color="white"
-             droid:NavigationBar.Style="LightContent">
+             droid:NavigationBar.Style="LightContent"
+             BackgroundColor="{x:Static local:ThemeColors.PageBackgroundColor}">
     <ContentPage.BindingContext>
         <local:EnrollStudentViewModel />
     </ContentPage.BindingContext>
     <ContentPage.Behaviors>
-        <toolkit:StatusBarBehavior StatusBarColor="#0C4251" StatusBarStyle="LightContent" />
+        <toolkit:StatusBarBehavior StatusBarColor="{x:Static local:ThemeColors.PrimaryColor}" StatusBarStyle="LightContent" />
     </ContentPage.Behaviors>
     <AbsoluteLayout>
         <ContentView x:Name="MainContent" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
@@ -23,8 +24,8 @@
                 </Grid.GestureRecognizers>
 
                 <StackLayout Grid.Row="0" Spacing="15" Padding="20,20,20,0"  Margin="0,30,0,0">
-                    <Label Text="Inscripción de Estudiantes" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" TextColor="#0C4251"/>
-                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Color="Blue" />
+                    <Label Text="Inscripción de Estudiantes" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{x:Static local:ThemeColors.PrimaryColor}"/>
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Color="{x:Static local:ThemeColors.SecondaryColor}" />
                     <SearchBar x:Name="StudentSearchBar"
                                Placeholder="Buscar estudiante con cédula o nombre..."
                                Text="{Binding SearchQuery}"
@@ -57,7 +58,7 @@
                     <Button Text="Inscribir Estudiante"
                             Command="{Binding EnrollStudentCommand}"
                             CornerRadius="10"
-                            BackgroundColor="#0C4251"
+                            BackgroundColor="{x:Static local:ThemeColors.SecondaryColor}"
                             TextColor="White"
                             FontSize="18"
                             HorizontalOptions="FillAndExpand"
@@ -71,15 +72,15 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <StackLayout Grid.Column="0" HorizontalOptions="Center">
-                        <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
+                        <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="{x:Static local:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
                         <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
                     </StackLayout>
                     <StackLayout Grid.Column="1" HorizontalOptions="Center">
-                        <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
+                        <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="{x:Static local:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
                         <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
                     </StackLayout>
                     <StackLayout Grid.Column="2" HorizontalOptions="Center">
-                        <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="#0C4251" BackgroundColor="WhiteSmoke" Clicked="MenuButton_Clicked" />
+                        <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24" TextColor="{x:Static local:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke" Clicked="MenuButton_Clicked" />
                         <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
                     </StackLayout>
                 </Grid>
@@ -87,7 +88,7 @@
         </ContentView>
         <ContentView x:Name="SideMenu"
                      WidthRequest="260"
-                     BackgroundColor="#0C4251"
+                     BackgroundColor="{x:Static local:ThemeColors.PrimaryColor}"
                      IsVisible="False"
                      TranslationX="-260"
                      AbsoluteLayout.LayoutBounds="0,0,260,1"

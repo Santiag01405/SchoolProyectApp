@@ -39,7 +39,7 @@
                 <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Always" Grid.Row="1">
                     <StackLayout Orientation="Horizontal" Spacing="5" Padding="20,0">
 
-                        <Button Text="Lunes" Command="{Binding SelectDayCommand}" CommandParameter="1" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
+                        <Button Text="Lunes" Command="{Binding SelectDayCommand}" CommandParameter="1" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{x:Static vm:ThemeColors.PrimaryColor}" FontAttributes="None">
                             <Button.Triggers>
                                 <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="1">
                                     <Setter Property="FontAttributes" Value="Bold" />
@@ -47,7 +47,7 @@
                             </Button.Triggers>
                         </Button>
 
-                        <Button Text="Martes" Command="{Binding SelectDayCommand}" CommandParameter="2" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
+                        <Button Text="Martes" Command="{Binding SelectDayCommand}" CommandParameter="2" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{x:Static vm:ThemeColors.PrimaryColor}" FontAttributes="None">
                             <Button.Triggers>
                                 <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="2">
                                     <Setter Property="FontAttributes" Value="Bold" />
@@ -55,7 +55,7 @@
                             </Button.Triggers>
                         </Button>
 
-                        <Button Text="Miércoles" Command="{Binding SelectDayCommand}" CommandParameter="3" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
+                        <Button Text="Miércoles" Command="{Binding SelectDayCommand}" CommandParameter="3" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{x:Static vm:ThemeColors.PrimaryColor}" FontAttributes="None">
                             <Button.Triggers>
                                 <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="3">
                                     <Setter Property="FontAttributes" Value="Bold" />
@@ -63,7 +63,7 @@
                             </Button.Triggers>
                         </Button>
 
-                        <Button Text="Jueves" Command="{Binding SelectDayCommand}" CommandParameter="4" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
+                        <Button Text="Jueves" Command="{Binding SelectDayCommand}" CommandParameter="4" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{x:Static vm:ThemeColors.PrimaryColor}" FontAttributes="None">
                             <Button.Triggers>
                                 <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="4">
                                     <Setter Property="FontAttributes" Value="Bold" />
@@ -71,7 +71,7 @@
                             </Button.Triggers>
                         </Button>
 
-                        <Button Text="Viernes" Command="{Binding SelectDayCommand}" CommandParameter="5" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{Binding DayButtonTextColor}" FontAttributes="None">
+                        <Button Text="Viernes" Command="{Binding SelectDayCommand}" CommandParameter="5" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" TextColor="{x:Static vm:ThemeColors.PrimaryColor}" FontAttributes="None">
                             <Button.Triggers>
                                 <DataTrigger TargetType="Button" Binding="{Binding SelectedDay}" Value="5">
                                     <Setter Property="FontAttributes" Value="Bold" />

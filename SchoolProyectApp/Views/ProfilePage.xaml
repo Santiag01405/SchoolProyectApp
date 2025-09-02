@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
              xmlns:local="clr-namespace:SchoolProyectApp.Views"
              x:Class="SchoolProyectApp.Views.ProfilePage"
              Title="Perfil">
@@ -10,7 +11,7 @@
         <!-- Menú lateral -->
         <ContentView x:Name="SideMenu"
                      WidthRequest="260"
-                     BackgroundColor="#0C4251"
+                     BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"
                      IsVisible="False"
                      TranslationX="-260"
                      AbsoluteLayout.LayoutBounds="0,0,260,1"
@@ -87,19 +88,19 @@
 
                     <StackLayout Grid.Column="0" HorizontalOptions="Center">
                         <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
+                                TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
                         <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
                     </StackLayout>
 
                     <StackLayout Grid.Column="1" HorizontalOptions="Center">
                         <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="#0C4251" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
+                                TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
                         <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
                     </StackLayout>
 
                     <StackLayout Grid.Column="2" HorizontalOptions="Center">
                         <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
-                                TextColor="#0C4251" BackgroundColor="WhiteSmoke"
+                                TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke"
                                 Clicked="MenuButton_Clicked" />
                         <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
                     </StackLayout>

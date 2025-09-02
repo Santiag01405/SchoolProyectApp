@@ -174,14 +174,14 @@
                                                 <Border.StrokeShape>
                                                     <RoundRectangle CornerRadius="10"/>
                                                 </Border.StrokeShape>
-                                                <Border.Shadow>
+                                                <!--<Border.Shadow>
                                                     <Shadow Brush="#000" Opacity="0.1" Radius="10" Offset="5,5"/>
-                                                </Border.Shadow>
+                                                </Border.Shadow>-->
                                                 <Border.GestureRecognizers>
                                                     <TapGestureRecognizer Command="{Binding BindingContext.SelectChildCommand, Source={x:Reference ThisPage}}"
                                                                           CommandParameter="{Binding .}" />
                                                 </Border.GestureRecognizers>
-                                                <Label Text="{Binding StudentName}" FontSize="18" FontAttributes="Bold" TextColor="#0C4251"/>
+                                                <Label Text="{Binding StudentName}" FontSize="18" FontAttributes="Bold" TextColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
                                             </Border>
                                         </DataTemplate>
                                     </BindableLayout.ItemTemplate>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
        xmlns:views="clr-namespace:SchoolProyectApp.Views"
        x:Class="SchoolProyectApp.AppShell"
        Shell.FlyoutBehavior="Disabled"
@@ -26,20 +27,20 @@
     <ShellContent Title="Registro" Route="register" ContentTemplate="{DataTemplate views:RegisterPage}" Shell.TitleColor="White"/>
 
     <!-- Página de Inicio -->
-    <ShellContent Route="homepage" Icon="Images/artboard.png" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:HomePage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Route="homepage" Icon="Images/artboard.png" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:HomePage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
     
     <!--Nuevo menu-->
-    <ShellContent Title="Menu" Route="menu" ContentTemplate="{DataTemplate views:MenuPage}" Shell.TitleColor="#0C4251" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Menu" Route="menu" ContentTemplate="{DataTemplate views:MenuPage}" Shell.TitleColor="{x:Static vm:ThemeColors.PrimaryColor}" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
     
     <!--Perfil de usuario-->
-    <ShellContent Title="Perfil" Route="firtsprofile" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:FirstProfile}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Perfil" Route="firtsprofile" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:FirstProfile}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
     
     <!--Modificar perfil del usuario-->
-    <ShellContent Title="Modicar perfil" Route="profile" ContentTemplate="{DataTemplate views:ProfilePage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Modicar perfil" Route="profile" ContentTemplate="{DataTemplate views:ProfilePage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
     
     <!--Horario-->
     
-    <ShellContent Title="Horario" Route="schedule" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:SchedulePage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Horario" Route="schedule" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:SchedulePage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 
     <!-- Página de Edición del Horario (Solo Teachers) -->
     <!--<ShellContent Title="Editar Horario" Route="editschedule" ContentTemplate="{DataTemplate views:EditSchedulePage}" />-->
@@ -48,13 +49,13 @@
     <!--<ShellContent Title="Cursos" Route="courses" ContentTemplate="{DataTemplate views:CoursesPage}" Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>-->
 
     <!--Notificaciones-->
-    <ShellContent Title="Notificaciones" Route="notification" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:NotificationPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Notificaciones" Route="notification" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:NotificationPage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
     
     <!--Enviar notificaciones-->
-    <ShellContent Title="Enviar Notificaciones" Route="sendNotification" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:SendNotificationPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Enviar Notificaciones" Route="sendNotification" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:SendNotificationPage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 
     <!--Crear evaluaciones-->
-    <ShellContent Title="Crear evaluaciones" Route="createEvaluation" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:EvaluationsPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Crear evaluaciones" Route="createEvaluation" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:EvaluationsPage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 
     <!--Ver evaluaciones-->
     <ShellContent Title="Plan de evaluación" Route="evaluation" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False">
@@ -66,35 +67,35 @@
     </ShellContent>
     
     <!--Marcar asistencia-->
-    <ShellContent Title="Asistencia" Route="attendance" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:AttendancePage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Asistencia" Route="attendance" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:AttendancePage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 
     <!--Asignar calificacion-->
-    <ShellContent Title="Asignar calificacion" Route="assingGrade" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:AssignGradesPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Asignar calificacion" Route="assingGrade" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:AssignGradesPage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 
     <!--Ver calificacion-->
-    <ShellContent Title="Ver calificaciones" Route="seeGrades" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:GradesPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Ver calificaciones" Route="seeGrades" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:GradesPage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 
     <!--Dashboard para padres-->
-    <ShellContent Title="Dashboard del Estudiante" Route="childDashboard" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:ChildDashboardPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Dashboard del Estudiante" Route="childDashboard" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:ChildDashboardPage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 
     <!--<ShellContent Title="Plan de evaluacion" Route="planEvaluation" 
           ContentTemplate="{DataTemplate views: EvaluationsListPage}" 
                   Shell.TitleColor="White" Shell.BackgroundColor="Blue"/>-->
 
     <!--Creacion actividad extracurricular-->
-    <ShellContent Title="Crear actividad extracurricular" Route="createExtra" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:CreateActivityPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Crear actividad extracurricular" Route="createExtra" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:CreateActivityPage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 
     <!--Ver actividades extracurriculares-->
-    <ShellContent Title="Ver actividades extra del estudiante" Route="seeExtra" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:StudentActivitiesPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Ver actividades extra del estudiante" Route="seeExtra" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:StudentActivitiesPage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 
     <!--Marcar asistencia actividad extracurricular-->
-    <ShellContent Title="Marcar asistencia extra" Route="extraAttendance" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:MarkAttendancePage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Marcar asistencia extra" Route="extraAttendance" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:MarkAttendancePage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 
     <!--Inscribir estudiante a actividad extracurricular-->
-    <ShellContent Title="Inscribir estudiante a actividad extracurricular" Route="enrollExtra" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:EnrollStudentPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Inscribir estudiante a actividad extracurricular" Route="enrollExtra" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:EnrollStudentPage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 
     <!--Visita a enfermeria-->
-    <ShellContent Title="Enfermeria" Route="nurseVisit" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:PostNurseVisitPage}" Shell.TitleColor="White" Shell.BackgroundColor="#0C4251"/>
+    <ShellContent Title="Enfermeria" Route="nurseVisit" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:PostNurseVisitPage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 
 </Shell>
 

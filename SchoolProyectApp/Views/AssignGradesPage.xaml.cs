@@ -3,15 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SchoolProyectApp.ViewModels;
 
 namespace SchoolProyectApp.Views
 {
     public partial class AssignGradesPage : ContentPage
     {
         private bool _isMenuVisible = false;
+
+        private readonly AssignGradesViewModel _viewModel;
         public AssignGradesPage()
         {
             InitializeComponent();
+            _viewModel = new AssignGradesViewModel();
+            BindingContext = _viewModel;
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            if (_viewModel.LoadCoursesCommand.CanExecute(null))
+            {
+                await _viewModel.LoadCoursesAsync();
+            }
         }
         private async void AnimateButton(object sender, EventArgs e)
         {

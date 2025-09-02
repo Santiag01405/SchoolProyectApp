@@ -108,7 +108,7 @@ namespace SchoolProyectApp.ViewModels
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
         }
 
-        private async Task LoadCoursesAsync()
+        public async Task LoadCoursesAsync()
         {
             var userId = await SecureStorage.GetAsync("user_id");
             var schoolId = await SecureStorage.GetAsync("school_id");

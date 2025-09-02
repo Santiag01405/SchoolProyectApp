@@ -5,10 +5,21 @@ namespace SchoolProyectApp.Views
 {
     public partial class AttendancePage : ContentPage
     {
+        private readonly AttendanceViewModel _viewModel;
         public AttendancePage()
         {
             InitializeComponent();
-            BindingContext = new AttendanceViewModel();
+            _viewModel = new AttendanceViewModel();
+            BindingContext = _viewModel;
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            if (_viewModel.LoadCoursesCommand.CanExecute(null))
+            {
+                await _viewModel.LoadCoursesAsync();
+            }
         }
 
         private async void AnimateButton(object sender, EventArgs e)

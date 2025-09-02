@@ -44,27 +44,7 @@ namespace SchoolProyectApp.ViewModels
             set => SetProperty(ref _studentLapsoAverage, value);
         }
 
-        // Propiedades de colores
-        private Color _primaryColor;
-        public Color PrimaryColor
-        {
-            get => _primaryColor;
-            set => SetProperty(ref _primaryColor, value);
-        }
-
-        private Color _cardBackgroundColor;
-        public Color CardBackgroundColor
-        {
-            get => _cardBackgroundColor;
-            set => SetProperty(ref _cardBackgroundColor, value);
-        }
-
-        private Color _pageBackgroundColor;
-        public Color PageBackgroundColor
-        {
-            get => _pageBackgroundColor;
-            set => SetProperty(ref _pageBackgroundColor, value);
-        }
+        
 
         private Lapso _selectedLapso;
         public Lapso SelectedLapso
@@ -102,25 +82,6 @@ namespace SchoolProyectApp.ViewModels
 
         public async Task LoadDataAsync()
         {
-
-            var schoolIdStr = await SecureStorage.GetAsync("school_id");
-            if (int.TryParse(schoolIdStr, out int schoolId))
-            {
-                // 🎨 aplicar colores dinámicos
-                if (schoolId == 5)
-                {
-                    PrimaryColor = Color.FromArgb("#0d4883");
-                    CardBackgroundColor = Color.FromArgb("#e1f5fe"); // Un azul muy claro
-                    PageBackgroundColor = Colors.White;
-                }
-                else
-                {
-                    PrimaryColor = Color.FromArgb("#0C4251");
-                    CardBackgroundColor = Color.FromArgb("#E0F7FA");
-                    PageBackgroundColor = Colors.White;
-                }
-            }
-
             // ➡️ Se asegura que la carga de lapsos y de promedios se ejecute en orden.
             await LoadLapsosAsync();
             await LoadStudentOverallAverageAsync();

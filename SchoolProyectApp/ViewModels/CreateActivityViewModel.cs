@@ -37,34 +37,6 @@ namespace SchoolProyectApp.ViewModels
             set => SetProperty(ref _selectedDay, value);
         }
 
-        // Propiedades de colores
-        private Color _primaryColor;
-        public Color PrimaryColor
-        {
-            get => _primaryColor;
-            set => SetProperty(ref _primaryColor, value);
-        }
-
-        private Color _secondaryColor;
-        public Color SecondaryColor
-        {
-            get => _secondaryColor;
-            set => SetProperty(ref _secondaryColor, value);
-        }
-
-        private Color _textColor;
-        public Color TextColor
-        {
-            get => _textColor;
-            set => SetProperty(ref _textColor, value);
-        }
-
-        private Color _pageBackgroundColor;
-        public Color PageBackgroundColor
-        {
-            get => _pageBackgroundColor;
-            set => SetProperty(ref _pageBackgroundColor, value);
-        }
 
         public List<string> DaysOfWeek => new List<string> { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes" };
 
@@ -98,20 +70,6 @@ namespace SchoolProyectApp.ViewModels
                 _currentSchoolId = schoolId;
             }
 
-            if (_currentSchoolId == 5)
-            {
-                PrimaryColor = Color.FromArgb("#0d4483");
-                SecondaryColor = Color.FromArgb("#0098da");
-                TextColor = Colors.White;
-                PageBackgroundColor = Color.FromArgb("#f0f2f5");
-            }
-            else
-            {
-                PrimaryColor = Color.FromArgb("#0C4251");
-                SecondaryColor = Colors.Blue;
-                TextColor = Colors.White;
-                PageBackgroundColor = Colors.White;
-            }
         }
 
         private async Task CreateActivityAsync()

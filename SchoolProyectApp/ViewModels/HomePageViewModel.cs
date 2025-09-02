@@ -125,36 +125,7 @@ namespace SchoolProyectApp.ViewModels
         }
 
 
-        // Propiedades de colores
-        private Color _primaryColor = Color.FromArgb("#0C4251");
-        public Color PrimaryColor
-        {
-            get => _primaryColor;
-            set => SetProperty(ref _primaryColor, value);
-        }
-
-        private Color _secondaryColor = Color.FromArgb("#6bbdda");
-        public Color SecondaryColor
-        {
-            get => _secondaryColor;
-            set => SetProperty(ref _secondaryColor, value);
-        }
-
-        private Color _textColor = Colors.Black;
-        public Color TextColor
-        {
-            get => _textColor;
-            set => SetProperty(ref _textColor, value);
-        }
-
-        private Color _pageBackgroundColor = Colors.White;
-        public Color PageBackgroundColor
-        {
-            get => _pageBackgroundColor;
-            set => SetProperty(ref _pageBackgroundColor, value);
-        }
-
-
+        
         public HomePageViewModel()
         {
             _apiService = new ApiService();
@@ -244,23 +215,6 @@ namespace SchoolProyectApp.ViewModels
                     _schoolId = user.SchoolID;
                     SchoolName = user.School?.Name ?? "Mi Colegio";
                     RoleID = user.RoleID;
-
-                    // 🎨 aplicar colores dinámicos
-                    // 🎨 aplicar colores dinámicos
-                    if (_schoolId == 5)
-                    {
-                        PrimaryColor = Color.FromArgb("#0d4483");       // PrimaryColor
-                        SecondaryColor = Color.FromArgb("#0098da");     // SecondaryColor
-                        TextColor = Color.FromArgb("#FFFFFF");          // PrimaryTextColor
-                        PageBackgroundColor = Color.FromArgb("#FFFFFF");// PageBackgroundColor
-                    }
-                    else
-                    {
-                        PrimaryColor = Color.FromArgb("#0C4251");
-                        SecondaryColor = Color.FromArgb("#6bbdda");
-                        TextColor = Colors.Black;
-                        PageBackgroundColor = Colors.White;
-                    }
 
 
                     if (IsParent)

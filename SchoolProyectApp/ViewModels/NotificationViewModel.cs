@@ -35,48 +35,6 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
-        // Propiedades de colores
-        private Color _primaryColor;
-        public Color PrimaryColor
-        {
-            get => _primaryColor;
-            set => SetProperty(ref _primaryColor, value);
-        }
-
-        private Color _secondaryColor;
-        public Color SecondaryColor
-        {
-            get => _secondaryColor;
-            set => SetProperty(ref _secondaryColor, value);
-        }
-
-        private Color _accentColor;
-        public Color AccentColor
-        {
-            get => _accentColor;
-            set => SetProperty(ref _accentColor, value);
-        }
-
-        private Color _textColor;
-        public Color TextColor
-        {
-            get => _textColor;
-            set => SetProperty(ref _textColor, value);
-        }
-
-        private Color _pageBackgroundColor;
-        public Color PageBackgroundColor
-        {
-            get => _pageBackgroundColor;
-            set => SetProperty(ref _pageBackgroundColor, value);
-        }
-
-        private Color _cardBackgroundColor;
-        public Color CardBackgroundColor
-        {
-            get => _cardBackgroundColor;
-            set => SetProperty(ref _cardBackgroundColor, value);
-        }
 
         public ICommand SwitchTabCommand => new Command<string>((tab) => SelectedTab = tab);
 
@@ -217,25 +175,7 @@ namespace SchoolProyectApp.ViewModels
                 if (token.IsCancellationRequested || user == null) return;
                 var schoolId = user.SchoolID;
 
-                // 🎨 aplicar colores dinámicos
-                if (schoolId == 5)
-                {
-                    PrimaryColor = Color.FromArgb("#0d4483");
-                    SecondaryColor = Color.FromArgb("#0098da");
-                    AccentColor = Color.FromArgb("#0000FF");
-                    TextColor = Colors.DarkGray;
-                    PageBackgroundColor = Colors.White;
-                    CardBackgroundColor = Color.FromArgb("#e1f5fe");
-                }
-                else
-                {
-                    PrimaryColor = Color.FromArgb("#0C4251");
-                    SecondaryColor = Color.FromArgb("#6bbdda");
-                    AccentColor = Color.FromArgb("#f1c864");
-                    TextColor = Colors.DarkGray;
-                    PageBackgroundColor = Colors.White;
-                    CardBackgroundColor = Color.FromArgb("#E0F7FA");
-                }
+                
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {

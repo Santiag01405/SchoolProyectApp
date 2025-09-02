@@ -86,31 +86,6 @@ namespace SchoolProyectApp.ViewModels
             set { _gradeText = value; OnPropertyChanged(); }
         }
 
-      
-        // Propiedades de colores
-        private Color _primaryColor;
-        public Color PrimaryColor
-        {
-            get => _primaryColor;
-            set => SetProperty(ref _primaryColor, value);
-        }
-
-        private Color _secondaryColor;
-        public Color SecondaryColor
-        {
-            get => _secondaryColor;
-            set => SetProperty(ref _secondaryColor, value);
-        }
-
-        private Color _pageBackgroundColor;
-        public Color PageBackgroundColor
-        {
-            get => _pageBackgroundColor;
-            set => SetProperty(ref _pageBackgroundColor, value);
-        }
-
-        
-
         public ICommand LoadCoursesCommand { get; }
         public ICommand LoadEvaluationsCommand { get; }
         public ICommand LoadStudentsCommand { get; }
@@ -131,8 +106,6 @@ namespace SchoolProyectApp.ViewModels
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
             OpenMenuCommand = new Command(async () => await Shell.Current.GoToAsync("///menu"));
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
-
-            Task.Run(async () => await InitializeAsync());
         }
 
         private async Task LoadCoursesAsync()
@@ -243,26 +216,6 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
-        private async Task InitializeAsync()
-        {
-            var schoolIdStr = await SecureStorage.GetAsync("school_id");
-            if (int.TryParse(schoolIdStr, out _schoolId))
-            {
-                // 🎨 aplicar colores dinámicos
-                if (_schoolId == 5)
-                {
-                    PrimaryColor = Color.FromArgb("#0d4483");
-                    SecondaryColor = Color.FromArgb("#0098da");
-                    PageBackgroundColor = Colors.White;
-                }
-                else
-                {
-                    PrimaryColor = Color.FromArgb("#0C4251");
-                    SecondaryColor = Color.FromArgb("#6bbdda");
-                    PageBackgroundColor = Colors.White;
-                }
-            }
-            await LoadCoursesAsync();
-        }
+        
     }
 }

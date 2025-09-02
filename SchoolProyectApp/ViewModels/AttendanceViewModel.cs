@@ -43,35 +43,7 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
-        // Propiedades de colores
-        private Color _primaryColor;
-        public Color PrimaryColor
-        {
-            get => _primaryColor;
-            set => SetProperty(ref _primaryColor, value);
-        }
-
-        private Color _secondaryColor;
-        public Color SecondaryColor
-        {
-            get => _secondaryColor;
-            set => SetProperty(ref _secondaryColor, value);
-        }
-
-        private Color _pageBackgroundColor;
-        public Color PageBackgroundColor
-        {
-            get => _pageBackgroundColor;
-            set => SetProperty(ref _pageBackgroundColor, value);
-        }
-
-        private Color _dangerColor;
-        public Color DangerColor
-        {
-            get => _dangerColor;
-            set => SetProperty(ref _dangerColor, value);
-        }
-
+       
         public ICommand LoadCoursesCommand { get; }
         public ICommand LoadStudentsCommand { get; }
         public ICommand MarkAttendanceCommand { get; }
@@ -100,9 +72,6 @@ namespace SchoolProyectApp.ViewModels
             CourseCommand = new Command(async () => await Shell.Current.GoToAsync("///courses"));
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firtsprofile"));
 
-
-
-            Task.Run(async () => await InitializeAsync());
         }
 
         private async Task LoadCoursesAsync()
@@ -170,29 +139,6 @@ namespace SchoolProyectApp.ViewModels
                 await Application.Current.MainPage.DisplayAlert("❌", "Error al registrar asistencia", "OK");
         }
 
-        private async Task InitializeAsync()
-        {
-            var schoolIdStr = await SecureStorage.GetAsync("school_id");
-            if (int.TryParse(schoolIdStr, out _schoolId))
-            {
-                // 🎨 aplicar colores dinámicos
-                if (_schoolId == 5)
-                {
-                    PrimaryColor = Color.FromArgb("#0d4483");
-                    SecondaryColor = Color.FromArgb("#0098da");
-                    PageBackgroundColor = Colors.White;
-                    DangerColor = Color.FromArgb("#E53935"); // Un rojo más intenso para el tema
-                }
-                else
-                {
-                    PrimaryColor = Color.FromArgb("#0C4251");
-                    SecondaryColor = Color.FromArgb("#6bbdda");
-                    PageBackgroundColor = Colors.White;
-                    DangerColor = Colors.LightCoral;
-                }
-            }
-            await LoadCoursesAsync();
-        }
     }
 
 }

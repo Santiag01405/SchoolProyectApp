@@ -61,3 +61,8 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+# Proteger archivos y carpetas específicas del cliente
+SchoolProyectApp/ViewModels/ThemeColors.cs merge=ours
+
+SchoolProyectApp/Resources/ merge=ours

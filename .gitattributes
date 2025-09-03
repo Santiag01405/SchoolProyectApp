@@ -61,3 +61,9 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+
+# Proteger el archivo de colores para que no se sobreescriba en los merges
+SchoolProyectApp/ViewModels/ThemeColors.cs merge=ours
+
+SchoolProyectApp/Resources/ merge=ours

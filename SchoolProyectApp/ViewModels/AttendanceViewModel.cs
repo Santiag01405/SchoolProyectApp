@@ -74,7 +74,7 @@ namespace SchoolProyectApp.ViewModels
 
         }
 
-        private async Task LoadCoursesAsync()
+        public async Task LoadCoursesAsync()
         {
             var userId = await SecureStorage.GetAsync("user_id");
             var schoolId = await SecureStorage.GetAsync("school_id");

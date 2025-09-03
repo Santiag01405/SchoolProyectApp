@@ -6,7 +6,7 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
              x:Class="SchoolProyectApp.Views.AssignGradesPage"
-             droid:NavigationBar.Color="white"
+             droid:NavigationBar.Color="{x:Static vm:ThemeColors.PageBackgroundColor}"
              droid:NavigationBar.Style="LightContent"
              Title="Asignar Calificaciones"
              BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}">
@@ -21,21 +21,17 @@
     </ContentPage.BindingContext>
 
     <AbsoluteLayout>
-        <BoxView Color="{x:Static vm:ThemeColors.PrimaryColor}"
-                 AbsoluteLayout.LayoutBounds="0,0,1,70"
-                 AbsoluteLayout.LayoutFlags="WidthProportional" />
+        <Grid AbsoluteLayout.LayoutBounds="0,0,1,1" 
+              AbsoluteLayout.LayoutFlags="All"
+              RowDefinitions="*,Auto">
 
-        <Image Source="Images/artboard.png"
-               AbsoluteLayout.LayoutBounds="0.5,0,170,90"
-               AbsoluteLayout.LayoutFlags="PositionProportional"
-               Aspect="AspectFit"
-               BackgroundColor="Transparent" />
-
-        <ContentView x:Name="MainContent"
-                     AbsoluteLayout.LayoutBounds="0,110,1,0.85"
-                     AbsoluteLayout.LayoutFlags="WidthProportional,HeightProportional">
-            <ScrollView>
+            <ScrollView Grid.Row="0">
                 <VerticalStackLayout Padding="20" Spacing="15">
+                    <Label Text="Asignar calificación" 
+                           FontSize="30" FontAttributes="Bold" 
+                           HorizontalOptions="Center" 
+                           Margin="0,30,0,30" 
+                           TextColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 
                     <Label Text="Selecciona un curso:" FontAttributes="Bold" FontSize="18"/>
                     <Picker ItemsSource="{Binding Courses}"
@@ -95,7 +91,6 @@
                                 <x:String>No logrado</x:String>
                             </Picker.Items>
                         </Picker>
-
                         <Entry Grid.Column="1"
                                WidthRequest="180"
                                Placeholder="o escribe aquí"
@@ -110,13 +105,39 @@
                     <Button Text="Asignar Calificación"
                             CornerRadius="8"
                             BackgroundColor="{x:Static vm:ThemeColors.SecondaryColor}"
-                            TextColor="White"
+                            TextColor="{x:Static vm:ThemeColors.TextColor}"
                             FontAttributes="Bold"
                             Command="{Binding AssignGradeCommand}" />
-
                 </VerticalStackLayout>
             </ScrollView>
-        </ContentView>
+
+            <Grid Grid.Row="1" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" Padding="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                    <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
+                            TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" Command="{Binding HomeCommand}" />
+                    <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" TextColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
+                </StackLayout>
+
+                <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                    <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
+                            TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}" Command="{Binding FirstProfileCommand}" />
+                    <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" TextColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
+                </StackLayout>
+
+                <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                    <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
+                            TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}"
+                            Clicked="MenuButton_Clicked" />
+                    <Label Text="Menú" FontSize="10" HorizontalOptions="Center" TextColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
+                </StackLayout>
+            </Grid>
+        </Grid>
 
         <ContentView x:Name="SideMenu"
                      WidthRequest="260"
@@ -127,34 +148,5 @@
                      AbsoluteLayout.LayoutFlags="PositionProportional,HeightProportional">
             <local:MenuPage />
         </ContentView>
-
-        <Grid BackgroundColor="WhiteSmoke" Padding="10"
-              AbsoluteLayout.LayoutBounds="0,1,1,50"
-              AbsoluteLayout.LayoutFlags="WidthProportional,PositionProportional">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <StackLayout Grid.Column="0" HorizontalOptions="Center">
-                <Button Text="&#xf015;" FontFamily="FontAwesomeSolid" FontSize="24"
-                        TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding HomeCommand}" />
-                <Label Text="Inicio" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
-
-            <StackLayout Grid.Column="1" HorizontalOptions="Center">
-                <Button Text="&#xf007;" FontFamily="FontAwesomeSolid" FontSize="24"
-                        TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke" Command="{Binding FirstProfileCommand}" />
-                <Label Text="Perfil" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
-
-            <StackLayout Grid.Column="2" HorizontalOptions="Center">
-                <Button Text="&#xf0c9;" FontFamily="FontAwesomeSolid" FontSize="24"
-                        TextColor="{x:Static vm:ThemeColors.PrimaryColor}" BackgroundColor="WhiteSmoke"
-                        Clicked="MenuButton_Clicked" />
-                <Label Text="Menú" FontSize="10" HorizontalOptions="Center" />
-            </StackLayout>
-        </Grid>
     </AbsoluteLayout>
 </ContentPage>

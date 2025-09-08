@@ -125,7 +125,7 @@ namespace SchoolProyectApp.ViewModels
         }
 
 
-        
+
         public HomePageViewModel()
         {
             _apiService = new ApiService();
@@ -339,16 +339,15 @@ namespace SchoolProyectApp.ViewModels
         {
             try
             {
-                var hijosList = await _apiService.GetHijosAsync(_userId, _schoolId);
+                // Trae TODOS los hijos (multi-sede) sin filtrar por _schoolId
+                var hijosList = await _apiService.GetHijosAllAsync(_userId);
                 if (hijosList != null)
                 {
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
                         Hijos.Clear();
                         foreach (var hijo in hijosList)
-                        {
                             Hijos.Add(hijo);
-                        }
                     });
                 }
             }
@@ -358,18 +357,16 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+
         private async Task OnSelectChild(Child child)
         {
-            if (child == null)
-                return;
+            if (child == null) return;
 
             try
             {
-                // Navegamos al dashboard del hijo, pasando su UserID en la URL.
-                // Esta es la forma recomendada y más robusta.
-                await Shell.Current.GoToAsync($"childDashboard?studentId={child.UserID}&childName={Uri.EscapeDataString(child.StudentName)}");
-
-
+                await Shell.Current.GoToAsync(
+                    $"childDashboard?studentId={child.UserID}&childName={Uri.EscapeDataString(child.StudentName)}&schoolId={child.SchoolID}"
+                );
             }
             catch (Exception ex)
             {

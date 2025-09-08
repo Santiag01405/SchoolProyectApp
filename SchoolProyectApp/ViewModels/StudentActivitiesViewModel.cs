@@ -14,6 +14,8 @@ namespace SchoolProyectApp.ViewModels
     // CAMBIO 1: Añadimos QueryProperty para recibir el ID del hijo desde el dashboard
     // =========================================================================
     [QueryProperty(nameof(StudentId), "studentId")]
+    [QueryProperty(nameof(ChildSchoolId), "schoolId")]
+
     public class StudentActivitiesViewModel : BaseViewModel
     {
         private readonly ApiService _apiService;
@@ -46,6 +48,12 @@ namespace SchoolProyectApp.ViewModels
             set => SetProperty(ref _pageTitle, value);
         }
 
+        private int _childSchoolId;
+        public int ChildSchoolId
+        {
+            get => _childSchoolId;
+            set => SetProperty(ref _childSchoolId, value);
+        }
         public ObservableCollection<ExtracurricularActivity> Activities
         {
             get => _activities;
@@ -173,6 +181,6 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
-       
+
     }
 }

@@ -2,12 +2,13 @@
 using SchoolProyectApp.Views;
 using System.Windows.Input;
 using System.Threading.Tasks;
-using System.Diagnostics; // Añadir para Debug.WriteLine
+using System.Diagnostics;
 
 namespace SchoolProyectApp.ViewModels
 {
     [QueryProperty(nameof(StudentId), "studentId")]
     [QueryProperty(nameof(ChildName), "childName")]
+    [QueryProperty(nameof(ChildSchoolId), "schoolId")]
     public class ChildDashboardViewModel : BaseViewModel
     {
         private int _studentId;
@@ -17,7 +18,14 @@ namespace SchoolProyectApp.ViewModels
             set => SetProperty(ref _studentId, value);
         }
 
-        private string _childName = string.Empty; // Inicializar para evitar advertencia de nulidad
+        private int _childSchoolId;
+        public int ChildSchoolId
+        {
+            get => _childSchoolId;
+            set => SetProperty(ref _childSchoolId, value);
+        }
+
+        private string _childName = string.Empty;
         public string ChildName
         {
             get => _childName;
@@ -32,7 +40,6 @@ namespace SchoolProyectApp.ViewModels
 
         public ChildDashboardViewModel()
         {
-
             Debug.WriteLine("DEBUG: ChildDashboardViewModel constructor llamado.");
 
             GoToScheduleCommand = new Command(async () => {
@@ -45,33 +52,27 @@ namespace SchoolProyectApp.ViewModels
                 await NavigateToChildPage("evaluation");
             });
 
-            // ----- AQUÍ VA LA LÍNEA DE DEBUG -----
             GoBackCommand = new Command(async () =>
             {
-                // Esta es la línea que necesitamos ver en la consola.
                 Debug.WriteLine("DEBUG: GoBackCommand fue PRESIONADO.");
                 await Shell.Current.GoToAsync("..");
             });
 
-            // --> AÑADE ESTE BLOQUE NUEVO <--
             GoToGradesCommand = new Command(async () => {
                 Debug.WriteLine("DEBUG: GoToGradesCommand ejecutado.");
                 await NavigateToChildPage("seeGrades");
             });
 
-            // -----IR A ACTIVIDADES EXTRACURRICULARES----
             GoToExtraActivitiesCommand = new Command(async () => {
                 Debug.WriteLine("DEBUG: GoToExtraActivitiesCommand ejecutado.");
                 await NavigateToChildPage("seeExtra");
             });
         }
 
-
         private async Task NavigateToChildPage(string route)
         {
             Debug.WriteLine($"DEBUG: NavigateToChildPage llamado para la ruta: {route}");
 
-            // Ahora validamos usando el StudentId que recibimos
             if (StudentId == 0)
             {
                 Debug.WriteLine($"DEBUG: StudentId es cero, no se puede navegar.");
@@ -81,19 +82,17 @@ namespace SchoolProyectApp.ViewModels
 
             try
             {
-                // Construimos la ruta y le pasamos el ID del hijo.
-                // Usamos la ruta "seeGrades" que ya tienes registrada en AppShell.
-                await Shell.Current.GoToAsync($"{route}?studentId={StudentId}");
+                // Pasamos SIEMPRE studentId, schoolId y childName
+                var safeName = Uri.EscapeDataString(ChildName ?? string.Empty);
+                await Shell.Current.GoToAsync($"{route}?studentId={StudentId}&schoolId={ChildSchoolId}&childName={safeName}");
 
-                Debug.WriteLine($"DEBUG: Navegación a {route}?studentId={StudentId} iniciada.");
+                Debug.WriteLine($"DEBUG: Navegación a {route}?studentId={StudentId}&schoolId={ChildSchoolId}&childName={safeName} iniciada.");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"❌ Error al navegar a la página '{route}': {ex.Message}");
                 await Application.Current.MainPage!.DisplayAlert("Error", "No se pudo abrir esta sección: " + ex.Message, "OK");
             }
-
-
         }
     }
 }

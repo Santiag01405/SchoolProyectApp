@@ -175,7 +175,7 @@ namespace SchoolProyectApp.ViewModels
                 if (token.IsCancellationRequested || user == null) return;
                 var schoolId = user.SchoolID;
 
-                
+
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
@@ -204,11 +204,10 @@ namespace SchoolProyectApp.ViewModels
             if (token.IsCancellationRequested) return;
 
             var userId = await SecureStorage.GetAsync("user_id");
-            var schoolId = await SecureStorage.GetAsync("school_id");
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(schoolId)) return;
+            if (string.IsNullOrEmpty(userId)) return;
 
-            var notifications = await _apiService.GetUserNotifications(int.Parse(userId), int.Parse(schoolId));
-            var success = await _apiService.MarkAllNotificationsAsReadAsync(int.Parse(userId), int.Parse(schoolId));
+            var notifications = await _apiService.GetUserNotifications(int.Parse(userId));
+            var success = await _apiService.MarkAllNotificationsAsReadAsync(int.Parse(userId));
 
             if (notifications != null)
             {
@@ -236,10 +235,9 @@ namespace SchoolProyectApp.ViewModels
             if (token.IsCancellationRequested) return;
 
             var userId = await SecureStorage.GetAsync("user_id");
-            var schoolId = await SecureStorage.GetAsync("school_id");
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(schoolId)) return;
+            if (string.IsNullOrEmpty(userId)) return;
 
-            var attendanceRecords = await _apiService.GetAttendanceNotifications(int.Parse(userId), int.Parse(schoolId));
+            var attendanceRecords = await _apiService.GetAttendanceNotifications(int.Parse(userId));
             if (token.IsCancellationRequested || attendanceRecords == null || attendanceRecords.Count == 0) return;
 
             // 🆕 Ordena las notificaciones de asistencia por fecha de forma descendente
@@ -277,11 +275,9 @@ namespace SchoolProyectApp.ViewModels
         {
             // Obtener los IDs del usuario y de la escuela
             var userId = await SecureStorage.GetAsync("user_id");
-            var schoolId = await SecureStorage.GetAsync("school_id");
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(schoolId)) return;
-
+            if (string.IsNullOrEmpty(userId)) return;
             // Llamar a la API para marcar todas las notificaciones como leídas
-            var success = await _apiService.MarkAllNotificationsAsReadAsync(int.Parse(userId), int.Parse(schoolId));
+            var success = await _apiService.MarkAllNotificationsAsReadAsync(int.Parse(userId));
             if (success)
             {
                 // Opcional: Actualizar el estado en el ObservableCollection
@@ -307,9 +303,3 @@ namespace SchoolProyectApp.ViewModels
         }
     }
 }
-
-
-
-
-
-

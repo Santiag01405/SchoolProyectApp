@@ -1,5 +1,4 @@
-﻿// SchoolProyectApp/ViewModels/GradesViewModel.cs
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Input;
 using SchoolProyectApp.Models;
@@ -7,29 +6,68 @@ using SchoolProyectApp.Services;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Microsoft.Maui.Controls; // Importante para Device.BeginInvokeOnMainThread
+using Microsoft.Maui.Controls;
+using System.Diagnostics;
 
 namespace SchoolProyectApp.ViewModels
 {
     [QueryProperty(nameof(StudentId), "studentId")]
+    [QueryProperty(nameof(ChildSchoolId), "schoolId")]
     public class GradesViewModel : BaseViewModel
     {
-        private int studentId;
+        private readonly ApiService _apiService;
+
+        // Estado / control de carga
+        private int _activeSchoolId;
+        private bool _lapsosLoaded;
+        private bool _alreadyLoaded;
+        private bool _isBusy;
+
+        // Flags para saber cuándo llegaron ambos parámetros en modo hijo
+        private bool _studentIdArrived;
+        private bool _childSchoolIdArrived;
+
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set => SetProperty(ref _isBusy, value);
+        }
+
+        // -------- Query Properties --------
+        private int _studentId;
         public int StudentId
         {
-            get => studentId;
+            get => _studentId;
             set
             {
-                if (studentId != value)
+                if (SetProperty(ref _studentId, value))
                 {
-                    studentId = value;
-                    _ = LoadDataAsync();
+                    _studentIdArrived = true;
+                    Debug.WriteLine($"[Grades] Setter StudentId={_studentId}");
+                    TryLoadIfReady();
                 }
             }
         }
 
-        private readonly ApiService _apiService;
+        private int _childSchoolId;
+        public int ChildSchoolId
+        {
+            get => _childSchoolId;
+            set
+            {
+                if (SetProperty(ref _childSchoolId, value))
+                {
+                    _childSchoolIdArrived = true;
+                    Debug.WriteLine($"[Grades] Setter ChildSchoolId={_childSchoolId}");
+                    // Como cambió la sede activa, invalidamos cualquier cache previo
+                    _lapsosLoaded = false;
+                    _alreadyLoaded = false;
+                    TryLoadIfReady();
+                }
+            }
+        }
 
+        // -------- UI data --------
         private string _studentOverallAverage;
         public string StudentOverallAverage
         {
@@ -44,8 +82,6 @@ namespace SchoolProyectApp.ViewModels
             set => SetProperty(ref _studentLapsoAverage, value);
         }
 
-        
-
         private Lapso _selectedLapso;
         public Lapso SelectedLapso
         {
@@ -56,8 +92,6 @@ namespace SchoolProyectApp.ViewModels
                 {
                     if (_selectedLapso != null)
                     {
-                        // ➡️ Await en las llamadas para garantizar el orden.
-                        // Esto elimina la condición de carrera.
                         _ = LoadGradesAsync();
                         _ = LoadOverallByLapsoAsync();
                     }
@@ -68,6 +102,7 @@ namespace SchoolProyectApp.ViewModels
         public ObservableCollection<Lapso> Lapsos { get; } = new ObservableCollection<Lapso>();
         public ObservableCollection<GradesByCourseGroup> GradesByCourse { get; set; } = new();
 
+        // -------- Commands --------
         public ICommand HomeCommand { get; }
         public ICommand FirstProfileCommand { get; }
         public ICommand LoadGradesCommand { get; }
@@ -78,79 +113,130 @@ namespace SchoolProyectApp.ViewModels
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
             FirstProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///firstprofile"));
             LoadGradesCommand = new Command(async () => await LoadDataAsync());
+            // 🚫 Nada de cargas automáticas aquí: esperamos TryLoadIfReady()
         }
 
+        /// <summary>
+        /// Dispara la carga inicial sólo cuando:
+        /// - Modo hijo: StudentId>0 y ChildSchoolId>0 (ambos llegaron)
+        /// - Modo propio: StudentId==0 y ChildSchoolId==0
+        /// </summary>
+        private void TryLoadIfReady()
+        {
+            if (IsBusy) return;
+
+            // Modo hijo → espera ambos parámetros
+            if (StudentId > 0)
+            {
+                if (!_studentIdArrived || !_childSchoolIdArrived)
+                {
+                    Debug.WriteLine("[Grades] Esperando parámetros del hijo (studentId y schoolId)...");
+                    return;
+                }
+
+                if (_alreadyLoaded) return;
+                Debug.WriteLine("[Grades] Ready (modo hijo). Cargando con la sede del hijo...");
+                _ = LoadDataAsync();
+                return;
+            }
+
+            // Modo propio → ambos parámetros vacíos
+            if (!_alreadyLoaded && StudentId == 0 && ChildSchoolId == 0)
+            {
+                Debug.WriteLine("[Grades] Ready (modo propio). Cargando con la sede del usuario...");
+                _ = LoadDataAsync();
+            }
+        }
+
+        /// <summary>
+        /// Punto de entrada para cargar todo: lapsos y promedios (global).
+        /// </summary>
         public async Task LoadDataAsync()
         {
-            // ➡️ Se asegura que la carga de lapsos y de promedios se ejecute en orden.
-            await LoadLapsosAsync();
-            await LoadStudentOverallAverageAsync();
+            if (IsBusy) return;
+            IsBusy = true;
+
+            try
+            {
+                // Determinar sede activa
+                if (StudentId > 0 && ChildSchoolId > 0)
+                    _activeSchoolId = ChildSchoolId;
+                else
+                    _activeSchoolId = int.TryParse(await SecureStorage.GetAsync("school_id"), out var sid) ? sid : 0;
+
+                Debug.WriteLine($"[Grades] LoadDataAsync con activeSchoolId={_activeSchoolId}");
+
+                await LoadLapsosAsync();                 // usa _activeSchoolId
+                await LoadStudentOverallAverageAsync();  // usa _activeSchoolId
+
+                _alreadyLoaded = true;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task LoadLapsosAsync()
         {
-            var schoolId = await SecureStorage.GetAsync("school_id");
-            if (!int.TryParse(schoolId, out int schId)) return;
+            if (_activeSchoolId == 0) return;
 
-            var lapsosList = await _apiService.GetLapsosAsync(schId);
-            if (lapsosList != null)
+            // Evita doble carga
+            if (_lapsosLoaded) return;
+
+            Debug.WriteLine($"[Grades] GET lapsos para schoolId={_activeSchoolId}");
+            var lapsosList = await _apiService.GetLapsosAsync(_activeSchoolId);
+            if (lapsosList == null) return;
+
+            var filtered = lapsosList.Where(l => l.SchoolID == _activeSchoolId).ToList();
+
+            MainThread.BeginInvokeOnMainThread(() =>
             {
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    Lapsos.Clear();
-                    foreach (var lapso in lapsosList)
-                    {
-                        Lapsos.Add(lapso);
-                    }
-                    if (Lapsos.Any())
-                    {
-                        SelectedLapso = Lapsos.FirstOrDefault();
-                    }
-                });
-            }
+                Lapsos.Clear();
+                foreach (var lapso in filtered)
+                    Lapsos.Add(lapso);
+
+                if (Lapsos.Any())
+                    SelectedLapso = Lapsos.First(); // asegura que las siguientes llamadas usen el lapso de la sede activa
+            });
+
+            _lapsosLoaded = true;
         }
 
         public async Task LoadStudentOverallAverageAsync()
         {
+            // Usuario objetivo
             var userIdToLoad = StudentId > 0 ? StudentId.ToString() : await SecureStorage.GetAsync("user_id");
-            var schoolId = await SecureStorage.GetAsync("school_id");
+            if (!int.TryParse(userIdToLoad, out var uId)) return;
 
-            if (!int.TryParse(userIdToLoad, out int uId) || !int.TryParse(schoolId, out int schId))
-                return;
+            if (_activeSchoolId == 0) return;
 
-            var averageDto = await _apiService.GetStudentOverallAverageAsync(uId, schId);
-
-            // Se corrige la propiedad para que coincida con la del modelo de datos
+            Debug.WriteLine($"[Grades] GET overall average userId={uId}, schoolId={_activeSchoolId}");
+            var averageDto = await _apiService.GetStudentOverallAverageAsync(uId, _activeSchoolId);
             StudentOverallAverage = averageDto?.OverallAverage.ToString("F2", CultureInfo.InvariantCulture) ?? "N/A";
         }
 
         public async Task LoadOverallByLapsoAsync()
         {
-            if (SelectedLapso == null) return;
+            if (SelectedLapso == null || _activeSchoolId == 0) return;
 
             var userIdToLoad = StudentId > 0 ? StudentId.ToString() : await SecureStorage.GetAsync("user_id");
-            var schoolId = await SecureStorage.GetAsync("school_id");
+            if (!int.TryParse(userIdToLoad, out int uId)) return;
 
-            if (!int.TryParse(userIdToLoad, out int uId) || !int.TryParse(schoolId, out int schId))
-                return;
-
-            // ➡️ Corrección: Llama a un nuevo método de la API que espera un objeto simple, no una lista.
-            // Para resolver este error, la API debe devolver un objeto directamente.
-            // Asumimos que GetOverallByLapsoAsync ahora retorna un objeto simple.
-            var overallByLapso = await _apiService.GetOverallByLapsoAsync(uId, SelectedLapso.LapsoID, schId);
-
-            // ➡️ Accede directamente a la propiedad `AverageGrade` del objeto.
+            Debug.WriteLine($"[Grades] GET overall-by-lapso userId={uId}, lapsoId={SelectedLapso.LapsoID}, schoolId={_activeSchoolId}");
+            var overallByLapso = await _apiService.GetOverallByLapsoAsync(uId, SelectedLapso.LapsoID, _activeSchoolId);
             StudentLapsoAverage = overallByLapso?.AverageGrade.ToString("F2", CultureInfo.InvariantCulture) ?? "N/A";
         }
+
         public async Task LoadGradesAsync()
         {
-            if (SelectedLapso == null) return;
+            if (SelectedLapso == null || _activeSchoolId == 0) return;
 
             var userIdToLoad = StudentId > 0 ? StudentId.ToString() : await SecureStorage.GetAsync("user_id");
-            var schoolId = await SecureStorage.GetAsync("school_id");
-            if (!int.TryParse(userIdToLoad, out int uId) || !int.TryParse(schoolId, out int schId)) return;
+            if (!int.TryParse(userIdToLoad, out int uId)) return;
 
-            var response = await _apiService.GetGradesByLapsoAsync(uId, SelectedLapso.LapsoID, schId);
+            Debug.WriteLine($"[Grades] GET grades-by-lapso userId={uId}, lapsoId={SelectedLapso.LapsoID}, schoolId={_activeSchoolId}");
+            var response = await _apiService.GetGradesByLapsoAsync(uId, SelectedLapso.LapsoID, _activeSchoolId);
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
@@ -158,40 +244,34 @@ namespace SchoolProyectApp.ViewModels
                 if (response != null)
                 {
                     var grouped = response
-        .Where(g => g.Course != null)
-        .GroupBy(g => g.Course.Name)
-        .Select(gr => new GradesByCourseGroup
-        {
-            Curso = gr.Key,
-            Calificaciones = gr.Select(grade =>
-            {
-                var dec = grade.GradeValue;         // double? desde la API con includes
-                var txt = grade.GradeText;          // texto cualitativo
+                        .Where(g => g.Course != null)
+                        .GroupBy(g => g.Course.Name)
+                        .Select(gr => new GradesByCourseGroup
+                        {
+                            Curso = gr.Key,
+                            Calificaciones = gr.Select(grade =>
+                            {
+                                var dec = grade.GradeValue;
+                                var txt = grade.GradeText;
+                                decimal? decNullable = dec.HasValue ? (decimal?)dec.Value : null;
 
-                // Convierte double? -> decimal?
-                decimal? decNullable = dec.HasValue ? (decimal?)dec.Value : null;
-
-                return new GradeResult
-                {
-                    GradeID = grade.GradeID,
-                    UserID = grade.UserID,
-                    Curso = grade.Course?.Name,
-                    CourseID = grade.CourseID,
-                    Evaluacion = grade.Evaluation?.Title,
-                    GradeValue = decNullable,
-                    GradeText = string.IsNullOrWhiteSpace(txt) ? null : txt,
-                    Comments = grade.Comments,
-
-                    // 👇 Única propiedad para la UI
-                    DisplayGrade = decNullable.HasValue
-                        ? decNullable.Value.ToString("0.00")
-                        : (!string.IsNullOrWhiteSpace(txt) ? txt : "—")
-                };
-            }).ToList()
-        })
-        .ToList();
-
-
+                                return new GradeResult
+                                {
+                                    GradeID = grade.GradeID,
+                                    UserID = grade.UserID,
+                                    Curso = grade.Course?.Name,
+                                    CourseID = grade.CourseID,
+                                    Evaluacion = grade.Evaluation?.Title,
+                                    GradeValue = decNullable,
+                                    GradeText = string.IsNullOrWhiteSpace(txt) ? null : txt,
+                                    Comments = grade.Comments,
+                                    DisplayGrade = decNullable.HasValue
+                                        ? decNullable.Value.ToString("0.00")
+                                        : (!string.IsNullOrWhiteSpace(txt) ? txt : "—")
+                                };
+                            }).ToList()
+                        })
+                        .ToList();
 
                     foreach (var group in grouped)
                         GradesByCourse.Add(group);

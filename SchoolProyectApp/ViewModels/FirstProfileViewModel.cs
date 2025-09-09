@@ -115,7 +115,7 @@ namespace SchoolProyectApp.ViewModels
                 {
                     UserName = user.UserName;
                     Email = user.Email;
-                    Role = user.RoleID == 1 ? "Estudiante" : user.RoleID == 2 ? "Profesor" : user.RoleID == 3 ? "Padre" : "Desconocido";
+                    Role = user.RoleID == 1 ? "Estudiante" : user.RoleID == 2 ? "Profesor" : user.RoleID == 3 ? "Padre" : user.RoleID == 4 ? "Psicólogo" : "Desconocido";
                     Cedula = user.Cedula; // 👈 ASIGNACIÓN DE LA CÉDULA
                     RoleID = user.RoleID;
                     OnPropertyChanged(nameof(RoleID));

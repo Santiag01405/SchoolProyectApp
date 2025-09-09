@@ -1,14 +1,20 @@
-﻿using System.Text.Json.Serialization;
+﻿// SchoolProyectApp/Models/Child.cs
+using System.Text.Json.Serialization;
 
 namespace SchoolProyectApp.Models
 {
     public class Child
     {
-        [JsonPropertyName("userID")]
+        [JsonPropertyName("studentUserID")] // si en API pusiste StudentUserID
         public int UserID { get; set; }
 
-        // Aquí usamos el nombre que viene de la API de hijos
         [JsonPropertyName("studentName")]
         public string StudentName { get; set; }
+
+        [JsonPropertyName("schoolID")]
+        public int SchoolID { get; set; }
+
+        [JsonPropertyName("schoolName")]
+        public string? SchoolName { get; set; }
     }
 }

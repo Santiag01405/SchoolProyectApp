@@ -599,14 +599,20 @@ namespace SchoolProyectApp.Services
             return await GetAsync<List<Enrollment>>($"api/enrollments/user/{userId}/schedule");
         }*/
 
-        public async Task<List<Notification>> GetUserNotifications(int userId, int schoolId)
+        public async Task<List<Notification>> GetUserNotifications(int userId, int? schoolId = null)
         {
-            return await _httpClient.GetFromJsonAsync<List<Notification>>($"api/notifications?userID={userId}&schoolId={schoolId}");
+            var url = schoolId.HasValue && schoolId.Value > 0
+                ? $"api/notifications?userID={userId}&schoolID={schoolId.Value}"
+                : $"api/notifications?userID={userId}";
+            return await _httpClient.GetFromJsonAsync<List<Notification>>(url);
         }
 
-        public async Task<List<AttendanceNotification>> GetAttendanceNotifications(int userId, int schoolId)
+        public async Task<List<AttendanceNotification>> GetAttendanceNotifications(int userId, int? schoolId = null)
         {
-            return await _httpClient.GetFromJsonAsync<List<AttendanceNotification>>($"api/attendance/parent/{userId}?schoolId={schoolId}");
+            var url = schoolId.HasValue && schoolId.Value > 0
+                ? $"api/attendance/parent/{userId}?schoolId={schoolId.Value}"
+                : $"api/attendance/parent/{userId}";
+            return await _httpClient.GetFromJsonAsync<List<AttendanceNotification>>(url);
         }
 
 
@@ -1091,31 +1097,53 @@ namespace SchoolProyectApp.Services
             }
         }
         //Obtener hijos de padre
-        public async Task<List<Child>?> GetHijosAsync(int userId, int schoolId)
+        /*  public async Task<List<Child>?> GetHijosAsync(int userId, int schoolId)
+          {
+              try
+              {
+                  var url = $"api/relationships/user/{userId}/children?schoolId={schoolId}";
+                  Console.WriteLine($"🌍 Buscando hijos con la URL: {url}");
+
+                  var response = await _httpClient.GetAsync(url);
+                  if (!response.IsSuccessStatusCode)
+                  {
+                      Console.WriteLine($"❌ Error al obtener los hijos: {response.StatusCode}");
+                      return new List<Child>();
+                  }
+
+                  var responseJson = await response.Content.ReadAsStringAsync();
+                  Console.WriteLine($"✅ Hijos obtenidos desde la app móvil: {responseJson}");
+
+                  return JsonSerializer.Deserialize<List<Child>>(responseJson, _jsonOptions);
+              }
+              catch (Exception ex)
+              {
+                  Console.WriteLine($"❌ Excepción en GetHijosAsync: {ex.Message}");
+                  return new List<Child>();
+              }
+          }*/
+
+        // ApiService
+        public async Task<List<Child>?> GetHijosAllAsync(int userId)
         {
             try
             {
-                var url = $"api/relationships/user/{userId}/children?schoolId={schoolId}";
-                Console.WriteLine($"🌍 Buscando hijos con la URL: {url}");
+                var url = $"api/relationships/user/{userId}/children"; // sin schoolId
+                Console.WriteLine($"🌍 Buscando hijos (todas las sedes): {url}");
 
-                var response = await _httpClient.GetAsync(url);
-                if (!response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine($"❌ Error al obtener los hijos: {response.StatusCode}");
-                    return new List<Child>();
-                }
+                var resp = await _httpClient.GetAsync(url);
+                if (!resp.IsSuccessStatusCode) return new List<Child>();
 
-                var responseJson = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"✅ Hijos obtenidos desde la app móvil: {responseJson}");
-
-                return JsonSerializer.Deserialize<List<Child>>(responseJson, _jsonOptions);
+                var json = await resp.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<List<Child>>(json, _jsonOptions);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Excepción en GetHijosAsync: {ex.Message}");
+                Console.WriteLine($"❌ Excepción en GetHijosAllAsync: {ex.Message}");
                 return new List<Child>();
             }
         }
+
 
 
         //ACTIVIDADES EXTRACURRICULARES
@@ -1215,7 +1243,7 @@ namespace SchoolProyectApp.Services
 
         //**********************PROMEDIO DE ESTUDIANTES*****************************************************
 
-       
+
         public async Task<StudentAverageDto> GetStudentOverallAverageAsync(int userId, int schoolId)
         {
             try
@@ -1329,24 +1357,23 @@ namespace SchoolProyectApp.Services
             return await GetAsync<OverallByLapso>(url);
         }
 
-        public async Task<bool> MarkAllNotificationsAsReadAsync(int userId, int schoolId)
+        public async Task<bool> MarkAllNotificationsAsReadAsync(int userId, int? schoolId = null)
         {
             try
             {
-                var url = $"api/notifications/read-all?userID={userId}&schoolID={schoolId}";
+                var url = schoolId.HasValue && schoolId.Value > 0
+                    ? $"api/notifications/read-all?userID={userId}&schoolID={schoolId.Value}"
+                    : $"api/notifications/read-all?userID={userId}";
                 var response = await _httpClient.PutAsync(url, null);
-
                 response.EnsureSuccessStatusCode();
-
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al marcar todas las notificaciones como leídas: {ex.Message}");
+                Console.WriteLine($"Error al marcar todas como leídas: {ex.Message}");
                 return false;
             }
         }
-
         // ✅ Método para buscar un usuario por su cédula
         // ✅ Método para buscar un usuario por su cédula
         public async Task<User?> GetUserByCedulaAsync(string cedula, int schoolId)
@@ -1374,5 +1401,6 @@ namespace SchoolProyectApp.Services
                 return null;
             }
         }
+
     }
 }

@@ -99,7 +99,7 @@
 
                 <StackLayout Orientation="Horizontal" Padding="5" IsVisible="{Binding IsNurse}">
                     <Label Text="&#xf479;" FontSize="24" FontFamily="FontAwesomeSolid" TextColor="{x:Static vm:ThemeColors.AccentColor}" Margin="0,0,18,0" />
-                    <Button Text="Visita a la enfermeria" Command="{Binding NurseVisitCommand}" TextColor="{x:Static vm:ThemeColors.TextColor}" BackgroundColor="Transparent" Padding="0" />
+                    <Button Text="Visita al psicólogo" Command="{Binding NurseVisitCommand}" TextColor="{x:Static vm:ThemeColors.TextColor}" BackgroundColor="Transparent" Padding="0" />
                 </StackLayout>
                 <BoxView HeightRequest="1" BackgroundColor="{x:Static vm:ThemeColors.SecondaryColor}" IsVisible="{Binding IsNurse}" />
 

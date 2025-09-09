@@ -40,7 +40,7 @@
 
 				<ScrollView Grid.Row="0">
 					<StackLayout Padding="20" Spacing="20">
-						<Label Text="Registrar Visita a Enfermería" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{x:Static vm:ThemeColors.PrimaryColor}" />
+						<Label Text="Registrar Visita a Psicología" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{x:Static vm:ThemeColors.PrimaryColor}" />
 
 						<ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" Color="{x:Static vm:ThemeColors.SecondaryColor}" />
 
@@ -84,7 +84,7 @@
 
 						<Entry Placeholder="Razón de la visita..." Text="{Binding Reason}" />
 
-						<Entry Placeholder="Tratamiento aplicado (opcional)..." Text="{Binding Treatment}" />
+						<Entry Placeholder="Recomendaciones..." Text="{Binding Treatment}" />
 
 						<Button Text="Registrar Visita"
                                 Command="{Binding PostVisitCommand}"

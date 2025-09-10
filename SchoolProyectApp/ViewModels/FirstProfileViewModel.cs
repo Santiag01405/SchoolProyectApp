@@ -34,6 +34,18 @@ namespace SchoolProyectApp.ViewModels
             }
         }
 
+        private string _phoneNumber;
+
+        public string PhoneNumber
+        {
+            get => _phoneNumber;
+            set
+            {
+                _phoneNumber = value;
+                OnPropertyChanged();
+            }
+        }
+
         public bool IsProfessor => RoleID == 2;
         public bool IsStudent => RoleID == 1;
         public bool IsParent => RoleID == 3;
@@ -117,7 +129,8 @@ namespace SchoolProyectApp.ViewModels
                     Email = user.Email;
                     Role = user.RoleID == 1 ? "Estudiante" : user.RoleID == 2 ? "Profesor" : user.RoleID == 3 ? "Padre" : user.RoleID == 4 ? "Psicólogo" : "Desconocido";
                     Cedula = user.Cedula; // 👈 ASIGNACIÓN DE LA CÉDULA
-                    RoleID = user.RoleID;
+                    PhoneNumber = user.PhoneNumber;
+                    RoleID = user.RoleID;
                     OnPropertyChanged(nameof(RoleID));
                     OnPropertyChanged(nameof(IsProfessor));
                     OnPropertyChanged(nameof(IsStudent));

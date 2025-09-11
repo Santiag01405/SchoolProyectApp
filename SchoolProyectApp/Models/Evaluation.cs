@@ -14,8 +14,8 @@ public class Evaluation
     public int UserID { get; set; }
     public int SchoolID { get; set; }
 
-    [JsonPropertyName("lapsoID")]
-    public int? LapsoID { get; set; }
+    //[JsonPropertyName("lapsoID")]
+    //public int? LapsoID { get; set; }
 
     // Propiedades que pueden ser null, usa el operador '?'
     public School? School { get; set; } // <-- Hacemos esta propiedad nullable

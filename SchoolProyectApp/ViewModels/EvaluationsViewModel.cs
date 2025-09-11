@@ -5,6 +5,7 @@ using Microsoft.Maui.Controls;
 using SchoolProyectApp.Models;
 using SchoolProyectApp.Services;
 using CommunityToolkit.Mvvm.Input;
+using System; // Agrega esto para DateTime
 
 namespace SchoolProyectApp.ViewModels
 {
@@ -12,21 +13,27 @@ namespace SchoolProyectApp.ViewModels
     {
         private readonly ApiService _apiService;
         private int _userId;
-        private int _roleId;
-        private int _schoolId;
+        private int _schoolId; // Asegúrate de que schoolId se inicialice
 
+        private Course _selectedCourse;
+        private string _evaluationTitle;
+        private string _description;
+        private DateTime _selectedDate = DateTime.Today; // Inicializa con la fecha actual
+
+        // Propiedad para el rol del usuario, asegurando que se notifique el cambio
+        private int _roleId;
         public int RoleID
         {
             get => _roleId;
             set
             {
-                if (_roleId != value)
+                if (SetProperty(ref _roleId, value))
                 {
-                    _roleId = value;
-                    OnPropertyChanged();
                     OnPropertyChanged(nameof(IsProfessor));
                     OnPropertyChanged(nameof(IsStudent));
                     OnPropertyChanged(nameof(IsParent));
+                    // Al cambiar el rol, recargamos la lógica de visibilidad si es necesario
+                    UpdateControlVisibilities();
                 }
             }
         }
@@ -35,20 +42,20 @@ namespace SchoolProyectApp.ViewModels
         public bool IsStudent => RoleID == 1;
         public bool IsParent => RoleID == 3;
 
-        private Course _selectedCourse;
-        private string _evaluationTitle;
-        private string _description;
-
         public ObservableCollection<Course> Courses { get; set; } = new();
-        public ObservableCollection<Evaluation> Evaluations { get; set; } = new();
 
         public Course SelectedCourse
         {
             get => _selectedCourse;
             set
             {
-                SetProperty(ref _selectedCourse, value);
-                IsTitleVisible = _selectedCourse != null;
+                if (SetProperty(ref _selectedCourse, value))
+                {
+                    UpdateControlVisibilities();
+                    // Al seleccionar un curso, automáticamente cargamos las evaluaciones existentes si el rol lo requiere
+                    // Aunque en esta página es para CREAR, si se quiere una vista combinada, este sería el lugar.
+                    // Para la página de creación, no es estrictamente necesario cargar evaluaciones aquí.
+                }
             }
         }
 
@@ -57,8 +64,10 @@ namespace SchoolProyectApp.ViewModels
             get => _evaluationTitle;
             set
             {
-                SetProperty(ref _evaluationTitle, value);
-                IsDescriptionVisible = !string.IsNullOrWhiteSpace(_evaluationTitle);
+                if (SetProperty(ref _evaluationTitle, value))
+                {
+                    UpdateControlVisibilities();
+                }
             }
         }
 
@@ -67,27 +76,26 @@ namespace SchoolProyectApp.ViewModels
             get => _description;
             set
             {
-                SetProperty(ref _description, value);
-                IsDateVisible = !string.IsNullOrWhiteSpace(_description);
+                if (SetProperty(ref _description, value))
+                {
+                    UpdateControlVisibilities();
+                }
             }
         }
 
         public DateTime SelectedDate
         {
-            get => NewEvaluation.Date;
+            get => _selectedDate;
             set
             {
-                if (NewEvaluation.Date != value)
+                if (SetProperty(ref _selectedDate, value))
                 {
-                    NewEvaluation.Date = value;
-                    OnPropertyChanged();
-                    IsCreateButtonVisible = NewEvaluation.Date >= DateTime.Today;
+                    UpdateControlVisibilities();
                 }
             }
         }
 
-        public Evaluation NewEvaluation { get; set; } = new() { Date = DateTime.Now };
-
+        // Propiedades de visibilidad
         private bool _isTitleVisible;
         public bool IsTitleVisible
         {
@@ -116,9 +124,8 @@ namespace SchoolProyectApp.ViewModels
             set => SetProperty(ref _isCreateButtonVisible, value);
         }
 
-
+        // Comandos
         public ICommand CreateEvaluationCommand { get; }
-        public ICommand LoadCoursesCommand { get; }
         public ICommand HomeCommand { get; }
         public ICommand ProfileCommand { get; }
         public ICommand OpenMenuCommand { get; }
@@ -129,25 +136,36 @@ namespace SchoolProyectApp.ViewModels
         {
             _apiService = new ApiService();
             CreateEvaluationCommand = new AsyncRelayCommand(CreateEvaluation);
-            LoadCoursesCommand = new AsyncRelayCommand(LoadCourses);
             HomeCommand = new AsyncRelayCommand(() => Shell.Current.GoToAsync("///homepage"));
             ProfileCommand = new AsyncRelayCommand(() => Shell.Current.GoToAsync("///profile"));
             OpenMenuCommand = new AsyncRelayCommand(() => Shell.Current.GoToAsync("///menu"));
             FirstProfileCommand = new AsyncRelayCommand(() => Shell.Current.GoToAsync("///firtsprofile"));
             ResetCommand = new RelayCommand(ResetPage);
 
-            Task.Run(async () =>
+            // ❌ Elimina la inicialización en el constructor. Usa OnAppearing para esto.
+            // Task.Run(async () => { ... });
+        }
+
+        // Nuevo método InitializeAsync para ser llamado desde OnAppearing
+        public async Task InitializeAsync()
+        {
+            if (IsBusy) return; // Evita múltiples inicializaciones
+            IsBusy = true;
+            try
             {
                 await LoadUserData();
-                if (IsProfessor)
+                if (IsProfessor) // Solo carga cursos si es profesor
                 {
                     await LoadCourses();
                 }
-                else
-                {
-                    await LoadEvaluations();
-                }
-            });
+                // Los estudiantes no necesitan cursos ni evaluaciones en esta vista de "Crear Evaluación"
+                // La página ListEvaluations se encargará de las evaluaciones para estudiantes/padres
+                UpdateControlVisibilities(); // Asegura que las visibilidades se actualicen al cargar
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task LoadUserData()
@@ -161,85 +179,108 @@ namespace SchoolProyectApp.ViewModels
                 {
                     _userId = userId;
                 }
+                else
+                {
+                    // Manejar caso donde no hay userId (ej. redirigir a login o mostrar error)
+                    await Application.Current.MainPage.DisplayAlert("Error de Sesión", "No se encontró el ID de usuario. Por favor, inicie sesión de nuevo.", "OK");
+                    await Shell.Current.GoToAsync("///login"); // O la ruta a tu página de login
+                    return;
+                }
+
+                if (!string.IsNullOrEmpty(storedSchoolId) && int.TryParse(storedSchoolId, out int schoolId))
+                {
+                    _schoolId = schoolId;
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error de Sesión", "No se encontró el ID del colegio. Por favor, inicie sesión de nuevo.", "OK");
+                    await Shell.Current.GoToAsync("///login");
+                    return;
+                }
 
                 if (_userId > 0)
                 {
                     var user = await _apiService.GetUserDetailsAsync(_userId);
                     if (user != null)
                     {
-                        RoleID = user.RoleID;
-                        OnPropertyChanged(nameof(RoleID));
-                        OnPropertyChanged(nameof(IsProfessor));
-                        OnPropertyChanged(nameof(IsStudent));
-                        OnPropertyChanged(nameof(IsParent));
+                        RoleID = user.RoleID; // Esto ya notifica cambios y llama a UpdateControlVisibilities
                     }
-                }
-                else
-                {
-                    RoleID = 0;
                 }
             }
             catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "No se pudo cargar el usuario: " + ex.Message, "OK");
+                Console.WriteLine($"Error al cargar datos de usuario: {ex.Message}");
+                await Application.Current.MainPage.DisplayAlert("Error", "No se pudo cargar los datos de usuario: " + ex.Message, "OK");
             }
         }
 
-        public async Task LoadEvaluations()
+        // Método para cargar cursos
+        private async Task LoadCourses()
         {
-            _userId = int.Parse(await SecureStorage.GetAsync("user_id") ?? "0");
-            _schoolId = int.Parse(await SecureStorage.GetAsync("school_id") ?? "0");
+            if (_schoolId == 0)
+            {
+                Console.WriteLine("Advertencia: schoolId es 0 al intentar cargar cursos.");
+                return;
+            }
 
-            if (_userId == 0 || _schoolId == 0) return;
-
-            var evaluations = await _apiService.GetEvaluationsAsync(_userId, _schoolId);
+            var courses = await _apiService.GetCoursesAsync(_schoolId);
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                Evaluations.Clear();
-                foreach (var eval in evaluations)
+                Courses.Clear();
+                if (courses != null)
                 {
-                    Evaluations.Add(eval);
+                    foreach (var course in courses)
+                    {
+                        Courses.Add(course);
+                    }
                 }
             });
         }
 
+        // Método de reinicio para la página
         private void ResetPage()
         {
             SelectedCourse = null;
             EvaluationTitle = string.Empty;
             Description = string.Empty;
-            NewEvaluation = new Evaluation { Date = DateTime.Today };
+            SelectedDate = DateTime.Today; // Reinicia la fecha al día actual
 
-            IsTitleVisible = false;
-            IsDescriptionVisible = false;
-            IsDateVisible = false;
-            IsCreateButtonVisible = false;
-
-            OnPropertyChanged(nameof(SelectedCourse));
-            OnPropertyChanged(nameof(EvaluationTitle));
-            OnPropertyChanged(nameof(Description));
-            OnPropertyChanged(nameof(NewEvaluation));
+            // Las propiedades de visibilidad se actualizarán automáticamente
+            // al cambiar SelectedCourse, EvaluationTitle, Description y SelectedDate
         }
 
-        private async Task LoadCourses()
+        // Lógica unificada para actualizar la visibilidad de los controles
+        private void UpdateControlVisibilities()
         {
-            int schoolId = int.Parse(await SecureStorage.GetAsync("school_id") ?? "0");
-            if (schoolId == 0) return;
-
-            var courses = await _apiService.GetCoursesAsync(schoolId);
-            MainThread.BeginInvokeOnMainThread(() =>
+            // Solo si es profesor
+            if (!IsProfessor)
             {
-                Courses.Clear();
-                foreach (var course in courses)
-                {
-                    Courses.Add(course);
-                }
-            });
+                IsTitleVisible = false;
+                IsDescriptionVisible = false;
+                IsDateVisible = false;
+                IsCreateButtonVisible = false;
+                return;
+            }
+
+            IsTitleVisible = SelectedCourse != null;
+            IsDescriptionVisible = !string.IsNullOrWhiteSpace(EvaluationTitle);
+            IsDateVisible = !string.IsNullOrWhiteSpace(Description);
+            IsCreateButtonVisible = SelectedDate >= DateTime.Today &&
+                                    SelectedCourse != null &&
+                                    !string.IsNullOrWhiteSpace(EvaluationTitle) &&
+                                    !string.IsNullOrWhiteSpace(Description); // Asegúrate de que todos los campos requeridos estén llenos
         }
 
         private async Task CreateEvaluation()
         {
             Console.WriteLine("📌 Intentando crear evaluación...");
+
+            // Validaciones antes de enviar
+            if (!IsProfessor)
+            {
+                await Shell.Current.DisplayAlert("Permiso Denegado", "Solo los profesores pueden crear evaluaciones.", "OK");
+                return;
+            }
 
             if (SelectedCourse == null)
             {
@@ -253,25 +294,39 @@ namespace SchoolProyectApp.ViewModels
                 return;
             }
 
-            if (NewEvaluation.Date < DateTime.Today)
+            // La descripción es opcional, así que no es una validación obligatoria aquí,
+            // pero si la quieres obligatoria, añádela.
+            // if (string.IsNullOrWhiteSpace(Description)) { ... }
+
+            if (SelectedDate < DateTime.Today)
             {
                 await Shell.Current.DisplayAlert("Fecha inválida", "No puedes asignar evaluaciones con fecha pasada.", "OK");
                 return;
             }
 
-            NewEvaluation.Title = EvaluationTitle;
-            NewEvaluation.Description = Description;
-            NewEvaluation.UserID = _userId; // Asignamos el ID del profesor
-            NewEvaluation.CourseID = SelectedCourse.CourseID;
-            NewEvaluation.SchoolID = _schoolId;
+            if (_userId == 0 || _schoolId == 0)
+            {
+                await Shell.Current.DisplayAlert("Error de Datos", "ID de usuario o de colegio no disponible. Por favor, intente de nuevo o re-inicie sesión.", "OK");
+                return;
+            }
 
-            bool success = await _apiService.CreateEvaluationAsync(NewEvaluation);
+            var newEvaluation = new Evaluation
+            {
+                Title = EvaluationTitle,
+                Description = Description,
+                Date = SelectedDate, // Usa SelectedDate directamente
+                UserID = _userId,
+                CourseID = SelectedCourse.CourseID,
+                SchoolID = _schoolId
+            };
+
+            bool success = await _apiService.CreateEvaluationAsync(newEvaluation);
             if (success)
             {
                 await Shell.Current.DisplayAlert("Éxito", "Evaluación creada correctamente.", "OK");
-                // Cargar de nuevo las evaluaciones para el profesor (si es el caso)
-                await LoadEvaluations();
-                ResetPage();
+                // No necesitas cargar evaluaciones aquí, ya que es una página de creación.
+                // Si quieres actualizar la lista de evaluaciones en otra página, hazlo en esa página.
+                ResetPage(); // Resetea la página para crear otra evaluación
             }
             else
             {

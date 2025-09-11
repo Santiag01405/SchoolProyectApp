@@ -1,0 +1,18 @@
+﻿<linker>
+	<!-- Tu ensamblado -->
+	<assembly fullname="SchoolProyectApp">
+		<!-- VMs, Services y Models llamados por XAML/JSON/DI -->
+		<type fullname="SchoolProyectApp.ViewModels.*" preserve="all" />
+		<type fullname="SchoolProyectApp.Services.*" preserve="all" />
+		<type fullname="SchoolProyectApp.Models.*" preserve="all" />
+
+		<!-- Converters (si están en otro namespace, ajusta el fullname) -->
+		<type fullname="SchoolProyectApp.Converters.*" preserve="all" />
+
+		<!-- Clase estática de colores referenciada con x:Static -->
+		<type fullname="SchoolProyectApp.ViewModels.ThemeColors" preserve="all" />
+	</assembly>
+
+	<!-- Newtonsoft casi siempre conviene preservarlo si serializas dinámico -->
+	<assembly fullname="Newtonsoft.Json" preserve="all" />
+</linker>

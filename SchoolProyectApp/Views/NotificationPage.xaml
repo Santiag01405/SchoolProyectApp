@@ -62,7 +62,7 @@
                                     Margin="0,-2,-1,0">
                                     <Label
                                         Text="Leído"
-                                        TextColor="Black"
+                                        TextColor="White"
                                         FontSize="10"
                                         FontAttributes="Bold"
                                         VerticalOptions="Center" />

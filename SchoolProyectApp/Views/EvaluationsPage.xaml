@@ -7,7 +7,7 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
              x:Class="SchoolProyectApp.Views.EvaluationsPage"
-             Title="Evaluaciones"
+             Title="Crear Evaluaciones"
              droid:NavigationBar.Color="white"
              droid:NavigationBar.Style="LightContent"
              BackgroundColor="{x:Static vm:ThemeColors.PageBackgroundColor}">

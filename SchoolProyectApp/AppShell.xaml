@@ -58,14 +58,18 @@
     <ShellContent Title="Crear evaluaciones" Route="createEvaluation" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:EvaluationsPage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 
     <!--Ver evaluaciones-->
-    <ShellContent Title="Plan de evaluación" Route="evaluation" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False">
+    <!--<ShellContent Title="Plan de evaluación" Route="evaluation" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False">
         <ShellContent.ContentTemplate>
             <DataTemplate>
                 <views:EvaluationsListPage />
             </DataTemplate>
         </ShellContent.ContentTemplate>
-    </ShellContent>
-    
+    </ShellContent>-->
+
+    <!--Marcar asistencia-->
+    <ShellContent Title="Ver evaluaciones" Route="evaluation" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:EvaluationsListPage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
+
+
     <!--Marcar asistencia-->
     <ShellContent Title="Asistencia" Route="attendance" Shell.TabBarIsVisible="False" Shell.NavBarIsVisible="False" ContentTemplate="{DataTemplate views:AttendancePage}" Shell.TitleColor="White" Shell.BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"/>
 

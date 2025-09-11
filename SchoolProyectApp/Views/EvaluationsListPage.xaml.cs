@@ -10,19 +10,28 @@ namespace SchoolProyectApp.Views
         public EvaluationsListPage()
         {
             InitializeComponent();
-            _viewModel = new EvaluationsListViewModel();
-            BindingContext = _viewModel;
+            if (BindingContext is null)
+                BindingContext = new SchoolProyectApp.ViewModels.EvaluationsListViewModel();
+
+            // ❌ Elimina estas dos líneas
+            // _viewModel = new EvaluationsListViewModel();
+            // BindingContext = _viewModel;
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-
-            // ✅ Llamamos al método unificado InitializeAsync() del ViewModel.
-            // Este método se encarga de cargar los datos en el orden correcto
-            // (usuario -> cursos -> evaluaciones).
-            await _viewModel.InitializeAsync();
+            try
+            {
+                if (BindingContext is EvaluationsListViewModel vm)
+                    await vm.InitializeAsync();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", ex.Message, "OK");
+            }
         }
+
 
         private async void AnimateButton(object sender, EventArgs e)
         {

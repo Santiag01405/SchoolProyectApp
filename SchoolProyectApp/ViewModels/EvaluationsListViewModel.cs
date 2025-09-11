@@ -7,12 +7,16 @@ using SchoolProyectApp.Models;
 using SchoolProyectApp.Services;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.Maui.Controls.Internals;
 
 namespace SchoolProyectApp.ViewModels
 {
     [QueryProperty(nameof(StudentId), "studentId")]
     [QueryProperty(nameof(ChildName), "childName")]
     [QueryProperty(nameof(ChildSchoolId), "schoolId")]
+
+
+    [Preserve(AllMembers = true)]
     public class EvaluationsListViewModel : BaseViewModel
     {
         private readonly ApiService _apiService;
@@ -106,6 +110,7 @@ namespace SchoolProyectApp.ViewModels
         public ObservableCollection<Course> Courses { get; set; } = new();
 
         public ICommand DeleteEvaluationCommand { get; }
+        public ICommand FilterCommand { get; }
         public ICommand HomeCommand { get; }
         public ICommand ProfileCommand { get; }
         public ICommand CourseCommand { get; }
@@ -118,6 +123,8 @@ namespace SchoolProyectApp.ViewModels
         {
             _apiService = new ApiService();
             DeleteEvaluationCommand = new Command<Evaluation>(async (evaluation) => await DeleteEvaluation(evaluation));
+
+            FilterCommand = new Command<string>(OnFilterSelected);
 
             HomeCommand = new Command(async () => await Shell.Current.GoToAsync("///homepage"));
             ProfileCommand = new Command(async () => await Shell.Current.GoToAsync("///profile"));
@@ -133,6 +140,10 @@ namespace SchoolProyectApp.ViewModels
             await Shell.Current.GoToAsync("..");
         }
 
+        private void OnFilterSelected(string filter)
+        {
+            SelectedFilter = filter;
+        }
         public async Task InitializeAsync()
         {
             if (IsBusy) return;

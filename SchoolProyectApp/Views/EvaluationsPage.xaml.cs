@@ -10,15 +10,22 @@ namespace SchoolProyectApp.Views
         public EvaluationsPage()
         {
             InitializeComponent();
-            _viewModel = new EvaluationsViewModel();
-            BindingContext = _viewModel;
+            // ❌ Elimina estas líneas, el BindingContext ya está en el XAML
+            // _viewModel = new EvaluationsViewModel();
+            // BindingContext = _viewModel;
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            await _viewModel.LoadEvaluations();
+
+            // ✅ Obtén el ViewModel del BindingContext y llama a InitializeAsync
+            if (BindingContext is EvaluationsViewModel viewModel)
+            {
+                await viewModel.InitializeAsync();
+            }
         }
+
 
         private async void AnimateButton(object sender, EventArgs e)
         {

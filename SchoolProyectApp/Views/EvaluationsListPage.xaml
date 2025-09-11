@@ -4,7 +4,7 @@
              xmlns:vm="clr-namespace:SchoolProyectApp.ViewModels"
              xmlns:local="clr-namespace:SchoolProyectApp.Views"
              x:Class="SchoolProyectApp.Views.EvaluationsListPage"
-             Title="Evaluaciones"
+             Title="Ver evaluaciones"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:droid="clr-namespace:CommunityToolkit.Maui.PlatformConfiguration.AndroidSpecific;assembly=CommunityToolkit.Maui"
              droid:NavigationBar.Color="white"
@@ -37,26 +37,26 @@
 
                 <StackLayout Grid.Row="1" Orientation="Horizontal" HorizontalOptions="Center" Spacing="10" Margin="0,0,0,20">
                     <Button Text="Venideras"
-                            FontSize="12"
-                            TextColor="{Binding SelectedFilter, Converter={StaticResource StringToColorConverter}, ConverterParameter='Venideras'}"
-                            BackgroundColor="{Binding SelectedFilter, Converter={StaticResource StringToColorToBackgroundColorConverter}, ConverterParameter='Venideras'}"
-                            CornerRadius="20"
-                            Command="{Binding FilterCommand}"
-                            CommandParameter="Venideras" />
+            FontSize="12"
+            TextColor="White"
+            BackgroundColor="{x:Static vm:ThemeColors.PrimaryColor}"
+            CornerRadius="20"
+            Command="{Binding FilterCommand}"
+            CommandParameter="Venideras" />
                     <Button Text="Pasadas"
-                            FontSize="12"
-                            TextColor="{Binding SelectedFilter, Converter={StaticResource StringToColorConverter}, ConverterParameter='Pasadas'}"
-                            BackgroundColor="{Binding SelectedFilter, Converter={StaticResource StringToColorToBackgroundColorConverter}, ConverterParameter='Pasadas'}"
-                            CornerRadius="20"
-                            Command="{Binding FilterCommand}"
-                            CommandParameter="Pasadas" />
+            FontSize="12"
+            TextColor="White"
+            BackgroundColor="{x:Static vm:ThemeColors.SecondaryColor}"
+            CornerRadius="20"
+            Command="{Binding FilterCommand}"
+            CommandParameter="Pasadas" />
                     <Button Text="Todas"
-                            FontSize="12"
-                            TextColor="{Binding SelectedFilter, Converter={StaticResource StringToColorConverter}, ConverterParameter='Todas'}"
-                            BackgroundColor="{Binding SelectedFilter, Converter={StaticResource StringToColorToBackgroundColorConverter}, ConverterParameter='Todas'}"
-                            CornerRadius="20"
-                            Command="{Binding FilterCommand}"
-                            CommandParameter="Todas" />
+            FontSize="12"
+            TextColor="White"
+            BackgroundColor="Gray"
+            CornerRadius="20"
+            Command="{Binding FilterCommand}"
+            CommandParameter="Todas" />
                 </StackLayout>
 
                 <CollectionView Grid.Row="2" ItemsSource="{Binding Evaluations}" Margin="10">

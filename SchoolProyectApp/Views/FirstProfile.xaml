@@ -47,6 +47,13 @@
                                     <Label Text="{Binding Cedula}" FontSize="16" TextColor="{x:Static vm:ThemeColors.SecondaryColor}"/>
                                 </VerticalStackLayout>
                                 <BoxView HeightRequest="1" BackgroundColor="{x:Static vm:ThemeColors.AccentColor}"/>
+
+                                <VerticalStackLayout>
+                                    <Label Text="Número de teléfono" FontAttributes="Bold" FontSize="14" TextColor="{x:Static vm:ThemeColors.AccentColor}"/>
+                                    <Label Text="{Binding PhoneNumber}" FontSize="16" TextColor="{x:Static vm:ThemeColors.SecondaryColor}"/>
+                                </VerticalStackLayout>
+                                <BoxView HeightRequest="1" BackgroundColor="{x:Static vm:ThemeColors.AccentColor}"/>
+
                                 <VerticalStackLayout>
                                     <Label Text="Rol" FontAttributes="Bold" FontSize="14" TextColor="{x:Static vm:ThemeColors.AccentColor}"/>
                                     <Label Text="{Binding Role}" FontSize="16" TextColor="{x:Static vm:ThemeColors.SecondaryColor}"/>
